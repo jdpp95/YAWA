@@ -13,12 +13,19 @@ export class DarkSkyService {
 
   constructor(private http: HttpClient) {}
   
-  getForecast(coords: string){
+  getWeather(coords: string, now: boolean){
     const headers = new HttpHeaders({
       'Access-Control-Allow-Origin': 'localhost'
     });
     
+    let date = new Date()
+    let timestamp = Math.round(date.getTime()/1000 - 126252000);
     let url = this.proxyServer + this.darkSkyUrl + coords;
+    
+    if(!now)
+    {
+      url += "," + timestamp;
+    }
     
     return this.http.get(url/*, {headers}*/).pipe(map(
       (data: any) => {

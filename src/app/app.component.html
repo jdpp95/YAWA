@@ -19,7 +19,13 @@
               <input type="text" class="form-control" formControlName="coords">
               <!--  *ngClass="{'notValid': !locationForm?.controls['coords']?.valid} -->
             </div>
+            <div class="form-check">
+            <input class="form-check-input" type="checkbox" formControlName="now">
+            <label class="form-check-label" for="defaultCheck1">
+              Now
+            </label>
           </div>
+                    </div>
 
           <button type="submit" class="btn btn-dark">Update</button>
         </form>
