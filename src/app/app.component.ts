@@ -53,13 +53,18 @@ export class AppComponent {
   coords: string;
   now: boolean;
   locationForm: FormGroup;
+  
   date: Date;
   UTC: number;
+  
   temperature: number;
   humidity: number;
   dewPoint: number;
+  apparentT: number;
+  
   cloudiness: number;
   conditions: string;
+  windSpeed: number;
   
   loading: boolean = false;
   
@@ -104,18 +109,28 @@ export class AppComponent {
   getWeather(){
     this._darkSky.getWeather(this.coords, this.now, this.date).subscribe(
       response => {
-        this.temperature = this.tUtils.FtoC(response.currently.temperature);
+        this.temperature = response.currently.temperature;
         if(!this.now){
           this.temperature += Math.random() - 0.5;
         }
-        
         this.humidity = response.currently.humidity;
-        this.dewPoint = this.tUtils.FtoC(response.currently.dewPoint);
+        this.dewPoint = response.currently.dewPoint;
+        this.apparentT = response.currently.apparentTemperature;
+        
         this.cloudiness = response.currently.cloudCover;
         this.conditions = response.currently.summary;
+        this.windSpeed = response.currently.windSpeed;
         
-        let tColorHSL = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.humidity, undefined));
-        document.body.style.backgroundColor = tColorHSL;
+        let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.humidity, undefined));
+        let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.humidity, undefined));
+        
+        //console.log("Color2: " + color2);
+        
+        let gradient = "linear-gradient(" + color1 + ", " + color2 + ")";
+        
+        document.body.style.backgroundImage = gradient;
+        
+        //console.log(gradient);
         
         this.loading = false;
       }
