@@ -65,7 +65,7 @@
           
         </form>
       </div>
-      <div class="col-lg-4 col-md-6" id="indicators">
+      <div class="col-lg-4 col-md-6">
         <ul class="list-group">
           <li class="list-group-item list-group-item-action">Temperature: {{temperature | number:'.0-0'}} °C ({{temperature + 2.8 | number:'.1-1'}})</li>
           <li class="list-group-item list-group-item-action">Humidity: {{humidity*100 | number:'.0-0'}}%</li>
@@ -78,6 +78,11 @@
                       <li id="fog" class="list-group-item list-group-item-action" style="display: none;"></li>
                       <li id="breath" class="list-group-item list-group-item-action" style="display: none;"></li>
   -->
+        </ul>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <ul class="list-group">
+          <li *ngIf="windSpeed > 5" class="list-group-item list-group-item-action">Wind: {{windSpeed | number: '.0-0'}} km/h</li>
         </ul>
       </div>
     </div>
