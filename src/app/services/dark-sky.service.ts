@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators'
 export class DarkSkyService {
   
   proxyServer: string = "https://cors-anywhere.herokuapp.com/"
-  darkSkyUrl: string = "https://api.darksky.net/forecast/api_key/";
+  darkSkyUrl: string = "https://api.darksky.net/forecast/";
   //darkSkyUrl: string = "https://google.com/";
 
   constructor(private http: HttpClient) {}
