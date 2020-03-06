@@ -14,6 +14,7 @@ import { MomentDateAdapter } from '@angular/material-moment-adapter';
 //Custom modules
 import { TutilsModule } from './modules/tutils/tutils.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
     NoopAnimationsModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatIconModule
+    MatIconModule,
+    AppRoutingModule
   ],
   providers: [MatDatepickerModule],
   bootstrap: [AppComponent]

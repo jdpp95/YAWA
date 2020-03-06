@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { map } from 'rxjs/operators'
+import { environment } from './../../environments/environment'
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class DarkSkyService {
 
   constructor(private http: HttpClient) {}
   
-  getWeather(coords: string, now: boolean, date: Date){
+  getWeather(coords: string, now: boolean, date: Date, apiKey: string){
     const headers = new HttpHeaders({
       'Access-Control-Allow-Origin': 'localhost'
     });
@@ -21,7 +22,7 @@ export class DarkSkyService {
     //let date = new Date()
     //let timestamp = Math.round(date.getTime()/1000 - 126252000);
     let timestamp = Math.round(date.getTime()/1000);
-    let url = this.proxyServer + this.darkSkyUrl + coords;
+    let url = this.proxyServer + this.darkSkyUrl + apiKey + "/" + coords;
     
     if(!now)
     {
