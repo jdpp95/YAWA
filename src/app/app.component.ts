@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 //Services
 import { DarkSkyService } from 'src/app/services/dark-sky.service';
@@ -8,14 +9,12 @@ import { DarkSkyService } from 'src/app/services/dark-sky.service';
 import { TutilsModule } from './modules/tutils/tutils.module';
 
 //Angular material
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatIconModule } from '@angular/material/icon';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 
 //Moment.js
 import * as _moment from 'moment';
-//import {default as _rollupMoment} from 'moment';
+
 
 const moment = _moment;
 
@@ -49,6 +48,8 @@ export const MY_FORMATS = {
 })
 export class AppComponent {
   title = 'YAWA';
+
+  private apiKey: string;
   
   coords: string;
   now: boolean;
@@ -61,21 +62,29 @@ export class AppComponent {
   humidity: number;
   dewPoint: number;
   apparentT: number;
+  visibility: number;
   
   cloudiness: number;
   conditions: string;
   windSpeed: number;
   
   loading: boolean = false;
+  loadingFailed: boolean = false;
   
   constructor(
     private _darkSky: DarkSkyService, 
-    private tUtils: TutilsModule
+    private tUtils: TutilsModule,
+    private activeRoute: ActivatedRoute
   ){
+    this.activeRoute.queryParams.subscribe(
+      response => {
+        this.apiKey = response["apiKey"]
+      }
+    )
     this.now = true;
       
     this.locationForm = new FormGroup({
-      'coords' : new FormControl('4.6116, -74.2069', [
+      'coords' : new FormControl('4.7, -74.05', [
         Validators.required
       ]),
       
@@ -107,7 +116,7 @@ export class AppComponent {
   }
   
   getWeather(){
-    this._darkSky.getWeather(this.coords, this.now, this.date).subscribe(
+    this._darkSky.getWeather(this.coords, this.now, this.date, this.apiKey).subscribe(
       response => {
         this.temperature = response.currently.temperature;
         if(!this.now){
@@ -120,9 +129,11 @@ export class AppComponent {
         this.cloudiness = response.currently.cloudCover;
         this.conditions = response.currently.summary;
         this.windSpeed = response.currently.windSpeed;
+        this.visibility = response.currently.visibility;
+        console.log(`Visibility: ${this.visibility} km`);
         
-        let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.humidity, undefined));
-        let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.humidity, undefined));
+        let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.humidity, 10));
+        let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.humidity, this.visibility));
         
         //console.log("Color2: " + color2);
         
@@ -133,6 +144,11 @@ export class AppComponent {
         //console.log(gradient);
         
         this.loading = false;
+        this.loadingFailed = false;
+      },
+      error => {
+        this.loading = false;
+        this.loadingFailed = true;
       }
     );
   }

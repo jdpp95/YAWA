@@ -16,31 +16,31 @@ export class TutilsModule {
       return (f - 32)*(5/9);
   }
   
-  colorT(t: number, rh: number, colors: any) {
+  colorT(t: number, rh: number, visibility: number) {
     //console.log("h: "+rh)
     var hue = 300;
     var sat = (1 - Math.pow((1 - rh), 2)) * 100;
-    var lum = 50;
+    var lum = visibility < 5? (0.67662 - 0.10119 * Math.log(visibility))*100 : 50;
     var t = this.CtoF(t);
 
-    if (!colors) {
-        colors = [
-            [0, 270],
-            [14, 240],
-            [32, 180],
-            //[41, 144],
-            [44.6, 150],
-            [50, 120],
-            [55.4, 90],
-            [68, 60],
-            [80, 45],
-            [90, 30],
-            //[90, 255, 128, 0],
-            [100, 0],
-            [100, 360],
-            [125, 330]
-        ];
-    }
+//    if (!colors) {
+    let colors = [
+        [0, 270],
+        [14, 240],
+        [32, 180],
+        //[41, 144],
+        [44.6, 150],
+        [50, 120],
+        [55.4, 90],
+        [68, 60],
+        [80, 45],
+        [90, 30],
+        //[90, 255, 128, 0],
+        [100, 0],
+        [100, 360],
+        [125, 330]
+    ];
+//    }
 
     if (t <= 0) hue = 270;
     else if (t > 125) hue = 330;
