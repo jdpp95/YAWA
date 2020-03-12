@@ -57,7 +57,13 @@
               </div>
             </div>
           </div>
-          <button type="submit" class="btn btn-dark">
+          <button 
+                  type="submit" 
+                  class="btn" 
+                  [ngClass]="{
+                              'btn-outline-danger' : loadingFailed,
+                              'btn-dark' : !loadingFailed
+                             }">
               Update
             <div *ngIf="loading" class="spinner-border spinner-border-sm text-light ml-2" role="status">
             </div>
@@ -83,6 +89,7 @@
       <div class="col-lg-4 col-md-6">
         <ul class="list-group">
           <li *ngIf="windSpeed > 5" class="list-group-item list-group-item-action">Wind: {{windSpeed | number: '.0-0'}} km/h</li>
+          <li *ngIf="visibility < 5" class="list-group-item list-group-item-action">Visibility: {{visibility*1000 | number: '.0-0'}} m</li>
         </ul>
       </div>
     </div>

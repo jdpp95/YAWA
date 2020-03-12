@@ -62,12 +62,14 @@ export class AppComponent {
   humidity: number;
   dewPoint: number;
   apparentT: number;
+  visibility: number;
   
   cloudiness: number;
   conditions: string;
   windSpeed: number;
   
   loading: boolean = false;
+  loadingFailed: boolean = false;
   
   constructor(
     private _darkSky: DarkSkyService, 
@@ -127,9 +129,11 @@ export class AppComponent {
         this.cloudiness = response.currently.cloudCover;
         this.conditions = response.currently.summary;
         this.windSpeed = response.currently.windSpeed;
+        this.visibility = response.currently.visibility;
+        console.log(`Visibility: ${this.visibility} km`);
         
-        let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.humidity, undefined));
-        let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.humidity, undefined));
+        let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.humidity, 10));
+        let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.humidity, this.visibility));
         
         //console.log("Color2: " + color2);
         
@@ -140,6 +144,11 @@ export class AppComponent {
         //console.log(gradient);
         
         this.loading = false;
+        this.loadingFailed = false;
+      },
+      error => {
+        this.loading = false;
+        this.loadingFailed = true;
       }
     );
   }
