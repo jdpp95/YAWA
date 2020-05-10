@@ -68,6 +68,8 @@ export class AppComponent {
   conditions: string;
   windSpeed: number;
   
+  coronavirus: number;
+  
   loading: boolean = false;
   loadingFailed: boolean = false;
   
@@ -78,7 +80,13 @@ export class AppComponent {
   ){
     this.activeRoute.queryParams.subscribe(
       response => {
-        this.apiKey = response["apiKey"]
+        this.apiKey = response["apiKey"],
+        this.coronavirus = 1.1397*Math.pow(response["coronavirus"], 0.3544)
+        
+        if(!this.coronavirus)
+        {
+          this.coronavirus = 0;
+        }
       }
     )
     this.now = true;
@@ -118,13 +126,13 @@ export class AppComponent {
   getWeather(){
     this._darkSky.getWeather(this.coords, this.now, this.date, this.apiKey).subscribe(
       response => {
-        this.temperature = response.currently.temperature;
+        this.temperature = response.currently.temperature - this.coronavirus;
         if(!this.now){
           this.temperature += Math.random() - 0.5;
         }
         this.humidity = response.currently.humidity;
-        this.dewPoint = response.currently.dewPoint;
-        this.apparentT = response.currently.apparentTemperature;
+        this.dewPoint = response.currently.dewPoint - this.coronavirus;
+        this.apparentT = response.currently.apparentTemperature - this.coronavirus;
         
         this.cloudiness = response.currently.cloudCover;
         this.conditions = response.currently.summary;
