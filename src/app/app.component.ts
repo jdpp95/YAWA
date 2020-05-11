@@ -67,6 +67,7 @@ export class AppComponent {
   cloudiness: number;
   conditions: string;
   windSpeed: number;
+  breathCondensation: number;
   
   coronavirus: number;
   
@@ -138,7 +139,11 @@ export class AppComponent {
         this.conditions = response.currently.summary;
         this.windSpeed = response.currently.windSpeed;
         this.visibility = response.currently.visibility;
-        console.log(`Visibility: ${this.visibility} km`);
+        //console.log(`Visibility: ${this.visibility} km`);
+        
+        let bcInfo = this.tUtils.breathCondensation(this.temperature, this.humidity);
+        let maxH = bcInfo[0];
+        this.breathCondensation = maxH > 1? bcInfo[1] : 0;
         
         let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.humidity, 10));
         let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.humidity, this.visibility));
