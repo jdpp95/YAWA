@@ -67,6 +67,9 @@ export class AppComponent {
   cloudiness: number;
   conditions: string;
   windSpeed: number;
+  breathCondensation: number;
+  
+  coronavirus: number;
   
   loading: boolean = false;
   loadingFailed: boolean = false;
@@ -78,7 +81,13 @@ export class AppComponent {
   ){
     this.activeRoute.queryParams.subscribe(
       response => {
-        this.apiKey = response["apiKey"]
+        this.apiKey = response["apiKey"],
+        this.coronavirus = 1.1397*Math.pow(response["coronavirus"], 0.3544)
+        
+        if(!this.coronavirus)
+        {
+          this.coronavirus = 0;
+        }
       }
     )
     this.now = true;
@@ -118,19 +127,23 @@ export class AppComponent {
   getWeather(){
     this._darkSky.getWeather(this.coords, this.now, this.date, this.apiKey).subscribe(
       response => {
-        this.temperature = response.currently.temperature;
+        this.temperature = response.currently.temperature - this.coronavirus;
         if(!this.now){
           this.temperature += Math.random() - 0.5;
         }
         this.humidity = response.currently.humidity;
-        this.dewPoint = response.currently.dewPoint;
-        this.apparentT = response.currently.apparentTemperature;
+        this.dewPoint = response.currently.dewPoint - this.coronavirus;
+        this.apparentT = response.currently.apparentTemperature - this.coronavirus;
         
         this.cloudiness = response.currently.cloudCover;
         this.conditions = response.currently.summary;
         this.windSpeed = response.currently.windSpeed;
         this.visibility = response.currently.visibility;
-        console.log(`Visibility: ${this.visibility} km`);
+        //console.log(`Visibility: ${this.visibility} km`);
+        
+        let bcInfo = this.tUtils.breathCondensation(this.temperature, this.humidity);
+        let maxH = bcInfo[0];
+        this.breathCondensation = maxH > 1? bcInfo[1] : 0;
         
         let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.humidity, 10));
         let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.humidity, this.visibility));

@@ -90,6 +90,7 @@
         <ul class="list-group">
           <li *ngIf="windSpeed > 5" class="list-group-item list-group-item-action">Wind: {{windSpeed | number: '.0-0'}} km/h</li>
           <li *ngIf="visibility < 5" class="list-group-item list-group-item-action">Visibility: {{visibility*1000 | number: '.0-0'}} m</li>
+          <li *ngIf="breathCondensation > 0" class="list-group-item list-group-item-action">Breath condensation: {{breathCondensation | number: '.0-2'}}</li>
         </ul>
       </div>
     </div>
