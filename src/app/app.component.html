@@ -17,18 +17,18 @@
             <div class="row form-group">
               <div class="col-9 mb-3">
                 <label>Coordinates:</label>
-                <input type="text" class="form-control" formControlName="coords">
+                <input id="coordinates" type="text" class="form-control" formControlName="coords">
                 <!--  *ngClass="{'notValid': !locationForm?.controls['coords']?.valid} -->
               </div>
               <div class="col-3 mb-3">
                 <label>UTC</label>
-                <input type="text" class="form-control" formControlName="UTC">
+                <input id = "utc" type="text" class="form-control" formControlName="UTC">
                 <!--  *ngClass="{'notValid': !locationForm?.controls['coords']?.valid} -->
               </div>
             </div>
             
             <div class="form-check mb-2">
-              <input class="form-check-input" type="checkbox" formControlName="now" (click)="onNowClicked()">
+              <input id="now" class="form-check-input" type="checkbox" formControlName="now" (click)="onNowClicked()">
               <label class="form-check-label" for="defaultCheck1">
                 Now
               </label>
@@ -36,7 +36,7 @@
             <div *ngIf="!now">
               <div class="input-group mb-2">
                 <label class="mr-2">Date:</label>
-                <input [matDatepicker]="myDatepicker" formControlName="myDatepicker">
+                <input id="datepicker" [matDatepicker]="myDatepicker" formControlName="myDatepicker">
                 <mat-datepicker-toggle [for]="myDatepicker" class="text-dark"></mat-datepicker-toggle>
                 <mat-datepicker #myDatepicker></mat-datepicker>
               </div>
