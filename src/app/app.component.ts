@@ -142,6 +142,11 @@ export class AppComponent {
   }
 
   update() {
+    
+    const MINUTES = 60;
+    const HOUR = MINUTES * 60;
+    const DAY = HOUR * 24;
+
     this.coords = this.locationForm.value.coords;
 
     let hours = this.locationForm.value.hour;
@@ -149,9 +154,13 @@ export class AppComponent {
     this.UTC = parseInt(this.locationForm.value.UTC);
 
     this.date = new Date(this.locationForm.value.myDatepicker);
-    this.date.setHours(hours, minutes, 0);
-    this.date.setTime(this.date.getTime() - (5 + this.UTC) * 60 * 60 * 1000);
-    console.log(this.date);
+
+    //console.log("Date1: " + this.date + ", " + this.date.getTime()/1000);
+
+    this.date.setTime(this.date.getTime() - this.UTC * HOUR * 1000 + hours * HOUR * 1000 + minutes * MINUTES * 1000);
+    
+    //this.date.setHours(hours, minutes, 0);
+    console.log("Date3: " + this.date + ", " + this.date.getTime()/1000);
     this.loading = true;
     this.getWeather();
   }
