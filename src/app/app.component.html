@@ -1,14 +1,114 @@
 <div id="background">
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">YAWA - <small>Yet Another Weather App</small></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <ul class="navbar-nav mr-auto">
+      <li>
+        <a class="nav-link" data-toggle="modal" data-target="#exampleModal" href="#">Get bulk data</a>
+      </li>
+    </ul>
     <div class="collapse navbar-collapse" id="navbarText"></div>
     <span class="text-light navbar-text">
       Powered by Dark Sky
     </span>
   </nav>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-dark text-light">
+          <h5 class="modal-title" id="exampleModalLabel">Get bulk data</h5>
+          <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <form [formGroup]="bulkDataForm" (ngSubmit)="onSubmitBulkData()">
+              <div class="row">
+                <div class="col-sm-8 mb-3">
+                  <h6>Initial time</h6>
+
+                  <div class="input-group mb-3">
+                    <small class="mr-2 mt-2">Date</small>
+                    <input id="initDatepicker" [matDatepicker]="initDatepicker" formControlName="initDate">
+                    <mat-datepicker-toggle [for]="initDatepicker" class="text-dark"></mat-datepicker-toggle>
+                    <mat-datepicker #initDatepicker></mat-datepicker>
+                  </div>
+
+                  <div class="input-group" style="width: fit-content;">
+                    <small class="mr-2 mt-2">Hour</small>
+                    <select class="form-control" formControlName="initHour">
+                      <option *ngFor="let i of range(0,24)">{{i}}</option>
+                    </select>
+                  </div>
+
+                  <hr>
+
+                  <h6>Final time</h6>
+
+                  <div class="input-group mb-3">
+                    <small class="mr-2 mt-2">Date</small>
+                    <input id="finalDatepicker" [matDatepicker]="finalDatepicker" formControlName="finalDate">
+                    <mat-datepicker-toggle [for]="finalDatepicker" class="text-dark"></mat-datepicker-toggle>
+                    <mat-datepicker #finalDatepicker></mat-datepicker>
+                  </div>
+
+                  <div class="input-group" style="width: fit-content;">
+                    <small class="mr-2 mt-2">Hour</small>
+                    <select class="form-control" formControlName="finalHour">
+                      <option *ngFor="let i of range(0,24)">{{i}}</option>
+                    </select>
+                  </div>
+
+                  <hr>
+
+                  <button type="submit" class="btn" [ngClass]="{
+                    'btn-outline-warning' : bulkInvalidData,
+                    'btn-outline-danger' : bulkLoadingFailed,
+                    'btn-dark' : !bulkLoadingFailed
+                  }">
+                    Update
+                    <div *ngIf="loading" class="spinner-border spinner-border-sm text-light ml-2" role="status">
+                    </div>
+                  </button>
+                  <div class="alert alert-warning mt-3" *ngIf="bulkInvalidData">
+                    Bulk data is only available for periods shorter than 4 days!
+                  </div>
+                </div>
+                <div class="col-sm-4 border border-secondary p-3">
+
+                  <div class="btn-group-toggle mb-3">
+                    <label class="btn btn-dark">
+                      <input type="checkbox" checked (click)="onDisplayTimeColClicked()">
+                      <div *ngIf="!displayTimeCol">Display time</div>
+                      <div *ngIf="displayTimeCol">Hide time</div>
+                    </label>
+                  </div>
+
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th *ngIf="displayTimeCol">Time</th>
+                        <th>Temperature</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let observation of observations">
+                        <td *ngIf="displayTimeCol">{{ observation.time | date:'dd/MMM HH:mm':'GMT' }}</td>
+                        <td>{{ observation.temperature | number:'1.1-1' | commaDecimal}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="container mt-4">
     <div class="row">
       <div class="col-lg-4 col-md-6 mb-4">
@@ -22,11 +122,11 @@
               </div>
               <div class="col-3 mb-3">
                 <label>UTC</label>
-                <input id = "utc" type="text" class="form-control" formControlName="UTC">
+                <input id="utc" type="text" class="form-control" formControlName="UTC">
                 <!--  *ngClass="{'notValid': !locationForm?.controls['coords']?.valid} -->
               </div>
             </div>
-            
+
             <div class="form-check mb-2">
               <input id="now" class="form-check-input" type="checkbox" formControlName="now" (click)="onNowClicked()">
               <label class="form-check-label" for="defaultCheck1">
@@ -57,23 +157,21 @@
               </div>
             </div>
           </div>
-          <button 
-                  type="submit" 
-                  class="btn" 
-                  [ngClass]="{
+          <button type="submit" class="btn" [ngClass]="{
                               'btn-outline-danger' : loadingFailed,
                               'btn-dark' : !loadingFailed
                              }">
-              Update
+            Update
             <div *ngIf="loading" class="spinner-border spinner-border-sm text-light ml-2" role="status">
             </div>
           </button>
-          
+
         </form>
       </div>
       <div class="col-lg-4 col-md-6">
         <ul class="list-group">
-          <li class="list-group-item list-group-item-action">Temperature: {{temperature | number:'.0-0'}} °C ({{temperature + 2.8 | number:'.1-1'}})</li>
+          <li class="list-group-item list-group-item-action">Temperature: {{temperature | number:'.0-0'}} °C
+            ({{temperature + 2.8 | number:'.1-1'}})</li>
           <li class="list-group-item list-group-item-action">Humidity: {{humidity*100 | number:'.0-0'}}%</li>
           <li class="list-group-item list-group-item-action">Dew point: {{dewPoint | number:'.0-0'}} °C</li>
           <li class="list-group-item list-group-item-action">Cloudiness: {{cloudiness*100 | number:'.0-0'}}%</li>
@@ -88,9 +186,12 @@
       </div>
       <div class="col-lg-4 col-md-6">
         <ul class="list-group">
-          <li *ngIf="windSpeed > 5" class="list-group-item list-group-item-action">Wind: {{windSpeed | number: '.0-0'}} km/h</li>
-          <li *ngIf="visibility < 5" class="list-group-item list-group-item-action">Visibility: {{visibility*1000 | number: '.0-0'}} m</li>
-          <li *ngIf="breathCondensation > 0" class="list-group-item list-group-item-action">Breath condensation: {{breathCondensation | number: '.0-2'}}</li>
+          <li *ngIf="windSpeed > 5" class="list-group-item list-group-item-action">Wind: {{windSpeed | number: '.0-0'}}
+            km/h</li>
+          <li *ngIf="visibility < 5" class="list-group-item list-group-item-action">Visibility:
+            {{visibility*1000 | number: '.0-0'}} m</li>
+          <li *ngIf="breathCondensation > 0" class="list-group-item list-group-item-action">Breath condensation:
+            {{breathCondensation | number: '.0-2'}}</li>
         </ul>
       </div>
     </div>

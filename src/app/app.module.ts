@@ -8,17 +8,19 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 //Angular Material Modules
-import { MatDatepickerModule, MatNativeDateModule, MatIconModule } from '@angular/material';
-import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { MatDatepickerModule, MatNativeDateModule, MatIconModule, MatFormFieldModule } from '@angular/material';
 
 //Custom modules
 import { TutilsModule } from './modules/tutils/tutils.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
+import { DatePipe } from '@angular/common';
+import { CommaDecimalPipe } from './pipes/comma-decimal.pipe';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    CommaDecimalPipe
   ],
   imports: [
     BrowserModule,
@@ -30,9 +32,10 @@ import { AppRoutingModule } from './app-routing.module';
     MatDatepickerModule,
     MatNativeDateModule,
     MatIconModule,
-    AppRoutingModule
+    AppRoutingModule,
+    MatFormFieldModule
   ],
-  providers: [MatDatepickerModule],
+  providers: [MatDatepickerModule, DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
