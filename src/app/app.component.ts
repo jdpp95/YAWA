@@ -258,7 +258,7 @@ export class AppComponent {
             let observation = new Observation();
             observation.timestamp = jsonObservation.time;
             observation.time = new Date((jsonObservation.time + HOUR * this.UTC) * 1000);
-            observation.temperature = jsonObservation.temperature;
+            observation.temperature = jsonObservation.temperature + Math.random() - 0.5;
 
             if(jsonObservation.time >= initTime && jsonObservation.time <= finalTime)
             {
@@ -267,13 +267,13 @@ export class AppComponent {
           }
         }
 
-        
+        /*
         for(let observation of this.observations)
         {
           let date = new Date((observation.timestamp + HOUR * this.UTC) * 1000);
           let formattedDate = this.datePipe.transform(date, 'dd/MMM HH:mm', 'GMT');
-          //console.log(observation.timestamp, formattedDate, observation.temperature);
-        }
+          console.log(observation.timestamp, formattedDate, observation.temperature);
+        }*/
         
       },
 
