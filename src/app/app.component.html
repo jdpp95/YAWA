@@ -96,7 +96,7 @@
                     <tbody>
                       <tr *ngFor="let observation of observations">
                         <td *ngIf="displayTimeCol">{{ observation.time | date:'dd/MMM HH:mm':'GMT' }}</td>
-                        <td>{{ observation.temperature + 2.8 | number:'1.1-1' | commaDecimal}}</td>
+                        <td>{{ observation.temperature | number:'1.1-1' | commaDecimal}}</td>
                       </tr>
                     </tbody>
                   </table>
