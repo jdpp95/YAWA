@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
@@ -14,7 +14,11 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 
 //Moment.js
 import * as _moment from 'moment';
+import { Observation } from './models/observation.model';
+import { forkJoin } from 'rxjs';
 
+//Pipes
+import { DatePipe } from '@angular/common';
 
 const moment = _moment;
 
@@ -29,7 +33,7 @@ export const MY_FORMATS = {
     monthYearLabel: 'MMM YYYY',
     dateA11yLabel: 'LL',
     monthYearA11yLabel: 'MMMM YYYY',
-  },
+  }
 };
 
 @Component({
@@ -42,8 +46,8 @@ export const MY_FORMATS = {
       useClass: MomentDateAdapter,
       deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
     },
-
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: {useUtc: true}}
   ]
 })
 export class AppComponent {
@@ -51,9 +55,11 @@ export class AppComponent {
 
   private darkSkyKey: string;
 
+  //Forms and fields
   coords: string;
   now: boolean;
   locationForm: FormGroup;
+  bulkDataForm: FormGroup;
 
   date: Date;
   UTC: number;
@@ -68,22 +74,31 @@ export class AppComponent {
   conditions: string;
   windSpeed: number;
   breathCondensation: number;
+  
+  observations : Observation[] = [];
 
   coronavirus: number;
 
   loading: boolean = false;
   loadingFailed: boolean = false;
 
+  bulkLoading: boolean = false;
+  bulkLoadingFailed: boolean = false;
+  bulkInvalidData: boolean = false;
+
+  displayTimeCol: boolean = false;
+
   constructor(
     private _darkSky: DarkSkyService,
     private tUtils: TutilsModule,
-    private activeRoute: ActivatedRoute
+    private activeRoute: ActivatedRoute,
+    public datePipe: DatePipe
   ) {
     this.activeRoute.queryParams.subscribe(
       response => {
         
         this.darkSkyKey = response["darkSkyKey"];
-        console.log("darkSkyKey: " + this.darkSkyKey)
+        //console.log("darkSkyKey: " + this.darkSkyKey)
         if (!this.darkSkyKey) {
           this.darkSkyKey = JSON.parse(localStorage.getItem("darkSkyKey"));
         } else {
@@ -113,6 +128,16 @@ export class AppComponent {
       'minute': new FormControl('0', []),
 
       'UTC': new FormControl('-5', [])
+    });
+
+    this.bulkDataForm = new FormGroup({
+      'initDate': new FormControl(moment()),
+  
+      'initHour': new FormControl('0', []),
+
+      'finalDate': new FormControl(moment()),
+  
+      'finalHour': new FormControl('0', []),   
     });
   }
 
@@ -175,6 +200,87 @@ export class AppComponent {
 
   onNowClicked() {
     this.now = !this.locationForm.value.now;
+  }
+
+  onDisplayTimeColClicked(){
+    this.displayTimeCol = !this.displayTimeCol;
+  }
+
+  onSubmitBulkData(){
+    let listOfTimestamps = [];
+    const HOUR = 60 * 60;
+    const DAY = HOUR * 24;
+
+    this.bulkInvalidData = false;
+
+    //Get data from bulk data form
+    let initDate = (new Date(this.bulkDataForm.value.initDate)).getTime()/1000;
+    let finalDate = (new Date(this.bulkDataForm.value.finalDate)).getTime()/1000;
+    let initHour = parseInt(this.bulkDataForm.value.initHour);
+    let finalHour = parseInt(this.bulkDataForm.value.finalHour);
+
+    //Get data from main form
+    this.coords = this.locationForm.value.coords;
+    this.UTC = parseInt(this.locationForm.value.UTC);
+
+    let initTime = initDate + (initHour - this.UTC) * HOUR;
+    let finalTime = finalDate + (finalHour - this.UTC) * HOUR;
+    let time = initTime;
+
+    let dayStart = time - (time + this.UTC * HOUR) % DAY;
+    let dayEnd = dayStart + DAY;
+    
+    this.observations = []
+
+    listOfTimestamps.push(time);
+    while(!(finalTime >= dayStart && finalTime < dayEnd))
+    {
+      dayStart += DAY;
+      time += DAY;
+      dayEnd += DAY;
+      listOfTimestamps.push(time);
+      if(listOfTimestamps.length > 4)
+      {
+        this.bulkInvalidData = true;
+        return;
+      }
+    }
+
+    let listOfResults = this._darkSky.getWeatherInBulk(this.coords, listOfTimestamps, this.darkSkyKey)
+
+    forkJoin(listOfResults).subscribe(
+      results => {
+        this.bulkLoadingFailed = false;
+
+        for (let dailyResult of results) {
+          for (let jsonObservation of dailyResult.hourly.data)
+          {
+            let observation = new Observation();
+            observation.timestamp = jsonObservation.time;
+            observation.time = new Date((jsonObservation.time + HOUR * this.UTC) * 1000);
+            observation.temperature = jsonObservation.temperature;
+
+            if(jsonObservation.time >= initTime && jsonObservation.time <= finalTime)
+            {
+              this.observations.push(observation);
+            }
+          }
+        }
+
+        
+        for(let observation of this.observations)
+        {
+          let date = new Date((observation.timestamp + HOUR * this.UTC) * 1000);
+          let formattedDate = this.datePipe.transform(date, 'dd/MMM HH:mm', 'GMT');
+          //console.log(observation.timestamp, formattedDate, observation.temperature);
+        }
+        
+      },
+
+      error => {
+        this.bulkLoadingFailed = true;
+      }
+    );
   }
 
   range(start: number, end: number) {

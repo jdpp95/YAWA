@@ -8,6 +8,15 @@ import { CommonModule } from '@angular/common';
   ]
 })
 export class TutilsModule {
+
+  private gx(t, h) {
+    return 3.793068 * h * Math.exp(17.2694 * t / (t + 238.3));
+  }
+
+  private hx(t, g) {
+    return 1.007 * t - 0.026 + g * (2.501 + 0.00184 * t) + 0.00419 * t;
+  }
+
   CtoF(c: number) {
     return 1.8 * c + 32;
   }
@@ -112,13 +121,5 @@ export class TutilsModule {
     }
 
     return [maxH, endRatio - startRatio];
-  }
-
-  private gx(t, h) {
-    return 3.793068 * h * Math.exp(17.2694 * t / (t + 238.3));
-  }
-
-  private hx(t, g) {
-    return 1.007 * t - 0.026 + g * (2.501 + 0.00184 * t) + 0.00419 * t;
   }
 }
