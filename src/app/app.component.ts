@@ -152,6 +152,8 @@ export class AppComponent {
     this.UTC = parseInt(this.locationForm.value.UTC);
 
     this.date = new Date(this.locationForm.value.myDatepicker);
+    this.bulkDataForm.controls['initDate'].setValue(this.locationForm.value.myDatepicker);
+    this.bulkDataForm.controls['finalDate'].setValue(this.locationForm.value.myDatepicker);
 
     //console.log("Date1: " + this.date + ", " + this.date.getTime()/1000);
 
