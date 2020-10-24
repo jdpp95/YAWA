@@ -88,6 +88,8 @@ export class AppComponent {
 
   displayTimeCol: boolean = false;
 
+  locationEnabled: boolean = false;
+
   constructor(
     private _darkSky: DarkSkyService,
     private tUtils: TutilsModule,
@@ -115,7 +117,7 @@ export class AppComponent {
     this.now = true;
 
     this.locationForm = new FormGroup({
-      'coords': new FormControl('4.7, -74.05', [
+      'coords': new FormControl('', [
         Validators.required
       ]),
 
@@ -142,13 +144,9 @@ export class AppComponent {
   }
 
   update() {
-    
     const MINUTES = 60;
     const HOUR = MINUTES * 60;
     const DAY = HOUR * 24;
-
-    this.coords = this.locationForm.value.coords;
-
     let hours = this.locationForm.value.hour;
     let minutes = this.locationForm.value.minute;
     this.UTC = parseInt(this.locationForm.value.UTC);
@@ -162,7 +160,31 @@ export class AppComponent {
     //this.date.setHours(hours, minutes, 0);
     console.log("Date3: " + this.date + ", " + this.date.getTime()/1000);
     this.loading = true;
-    this.getWeather();
+
+    let coordsControl = this.locationForm.controls['coords'];
+
+    if(this.locationEnabled) {
+      if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            let lat = position.coords.latitude.toFixed(4);
+            let long = position.coords.longitude.toFixed(4);
+
+            let coords = lat + ", " + long;
+            coordsControl.setValue(coords);
+            this.coords = coords;
+
+            this.getWeather();
+          }
+        )
+      } else {
+        console.error("Location not available!");
+        this.locationEnabled = false;
+      }
+    } else {
+      this.coords = this.locationForm.value.coords;
+      this.getWeather();
+    }
   }
 
   getWeather() {
@@ -209,6 +231,32 @@ export class AppComponent {
 
   onNowClicked() {
     this.now = !this.locationForm.value.now;
+  }
+
+  onLocationClicked() {
+    this.locationEnabled = !this.locationEnabled;
+    let coordsControl = this.locationForm.controls['coords'];
+    
+    if(this.locationEnabled) {
+      if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            let lat = position.coords.latitude.toFixed(4);
+            let long = position.coords.longitude.toFixed(4);
+
+            let coords = lat + ", " + long;
+            //this.locationForm.patchValue({coords: coords});
+            coordsControl.setValue(coords);
+            //coordsControl.disable();
+
+            this.locationEnabled = true;
+          }
+        )
+      } else {
+        console.error("Location not available!");
+        this.locationEnabled = false;
+      }
+    }
   }
 
   onDisplayTimeColClicked(){
