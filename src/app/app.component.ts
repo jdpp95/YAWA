@@ -107,7 +107,7 @@ export class AppComponent {
           localStorage.setItem("darkSkyKey", JSON.stringify(this.darkSkyKey))
         }
 
-        this.coronavirus = 1.1397 * Math.pow(response["coronavirus"], 0.3544)
+        this.coronavirus = 10*(Math.log10(response["coronavirus"]) - 1.7);
 
         if (!this.coronavirus) {
           this.coronavirus = 0;
@@ -152,6 +152,8 @@ export class AppComponent {
     this.UTC = parseInt(this.locationForm.value.UTC);
 
     this.date = new Date(this.locationForm.value.myDatepicker);
+    this.bulkDataForm.controls['initDate'].setValue(this.locationForm.value.myDatepicker);
+    this.bulkDataForm.controls['finalDate'].setValue(this.locationForm.value.myDatepicker);
 
     //console.log("Date1: " + this.date + ", " + this.date.getTime()/1000);
 
@@ -202,7 +204,6 @@ export class AppComponent {
         this.conditions = response.currently.summary;
         this.windSpeed = response.currently.windSpeed;
         this.visibility = response.currently.visibility;
-        //console.log(`Visibility: ${this.visibility} km`);
 
         let bcInfo = this.tUtils.breathCondensation(this.temperature, this.humidity);
         let maxH = bcInfo[0];
@@ -211,14 +212,9 @@ export class AppComponent {
         let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.humidity, 10));
         let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.humidity, this.visibility));
 
-        //console.log("Color2: " + color2);
-
         let gradient = "linear-gradient(" + color1 + ", " + color2 + ")";
 
         document.body.style.backgroundImage = gradient;
-
-        //console.log(gradient);
-
         this.loading = false;
         this.loadingFailed = false;
       },
