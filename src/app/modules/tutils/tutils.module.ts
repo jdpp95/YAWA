@@ -9,6 +9,44 @@ import { CommonModule } from '@angular/common';
 })
 export class TutilsModule {
 
+  range24: number[] = []
+  range60: number[] = []
+
+  constructor (){
+    /*
+    let range24$ = range(24);
+    let range60$ = range(60);
+
+    range24$.pipe(
+      map(
+        (item) => {
+          this.range24.push(item);
+          //return arr;
+        }
+      ),
+      takeLast(1)
+    )
+
+    range60$.pipe(
+      map(
+        (item) => {
+          this.range60.push(item);
+          //return arr;
+        }
+      ),
+      takeLast(1)
+    )*/
+    for(let i=0; i < 60; i++)
+    {
+      if(i < 24)
+      {
+        this.range24.push(i);
+      }
+      
+      this.range60.push(i);
+    }
+  }
+
   private gx(t, h) {
     return 3.793068 * h * Math.exp(17.2694 * t / (t + 238.3));
   }

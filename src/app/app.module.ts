@@ -16,11 +16,13 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { DatePipe } from '@angular/common';
 import { CommaDecimalPipe } from './pipes/comma-decimal.pipe';
+import { BulkDataModalComponent } from './components/bulk-data-modal/bulk-data-modal.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    CommaDecimalPipe
+    CommaDecimalPipe,
+    BulkDataModalComponent
   ],
   imports: [
     BrowserModule,

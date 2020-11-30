@@ -12,102 +12,13 @@
     </span>
   </nav>
 
-  <!-- Modal -->
-  <div class="modal fade" id="exampleModal">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header bg-dark text-light">
-          <h5 class="modal-title" id="exampleModalLabel">Get bulk data</h5>
-          <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="container-fluid">
-            <form [formGroup]="bulkDataForm" (ngSubmit)="onSubmitBulkData()">
-              <div class="row">
-                <div class="col-sm-8 mb-3">
-                  <h6>Initial time</h6>
-
-                  <div class="input-group mb-3">
-                    <small class="mr-2 mt-2">Date</small>
-                    <input id="initDatepicker" [matDatepicker]="initDatepicker" formControlName="initDate">
-                    <mat-datepicker-toggle [for]="initDatepicker" class="text-dark"></mat-datepicker-toggle>
-                    <mat-datepicker #initDatepicker></mat-datepicker>
-                  </div>
-
-                  <div class="input-group" style="width: fit-content;">
-                    <small class="mr-2 mt-2">Hour</small>
-                    <select class="form-control" formControlName="initHour">
-                      <option *ngFor="let i of range(0,24)">{{i}}</option>
-                    </select>
-                  </div>
-
-                  <hr>
-
-                  <h6>Final time</h6>
-
-                  <div class="input-group mb-3">
-                    <small class="mr-2 mt-2">Date</small>
-                    <input id="finalDatepicker" [matDatepicker]="finalDatepicker" formControlName="finalDate">
-                    <mat-datepicker-toggle [for]="finalDatepicker" class="text-dark"></mat-datepicker-toggle>
-                    <mat-datepicker #finalDatepicker></mat-datepicker>
-                  </div>
-
-                  <div class="input-group" style="width: fit-content;">
-                    <small class="mr-2 mt-2">Hour</small>
-                    <select class="form-control" formControlName="finalHour">
-                      <option *ngFor="let i of range(0,24)">{{i}}</option>
-                    </select>
-                  </div>
-
-                  <hr>
-
-                  <button type="submit" class="btn" [ngClass]="{
-                    'btn-outline-warning' : bulkInvalidData,
-                    'btn-outline-danger' : bulkLoadingFailed,
-                    'btn-dark' : !bulkLoadingFailed
-                  }">
-                    Update
-                    <div *ngIf="loading" class="spinner-border spinner-border-sm text-light ml-2" role="status">
-                    </div>
-                  </button>
-                  <div class="alert alert-warning mt-3" *ngIf="bulkInvalidData">
-                    Bulk data is only available for periods shorter than 4 days!
-                  </div>
-                </div>
-                <div class="col-sm-4 border border-secondary p-3">
-
-                  <div class="btn-group-toggle mb-3">
-                    <label class="btn btn-dark">
-                      <input type="checkbox" checked (click)="onDisplayTimeColClicked()">
-                      <div *ngIf="!displayTimeCol">Display time</div>
-                      <div *ngIf="displayTimeCol">Hide time</div>
-                    </label>
-                  </div>
-
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th *ngIf="displayTimeCol">Time</th>
-                        <th>Temperature</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let observation of observations">
-                        <td *ngIf="displayTimeCol">{{ observation.time | date:'dd/MMM HH:mm':'GMT' }}</td>
-                        <td>{{ observation.temperature | number:'1.1-1' | commaDecimal}}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <app-bulk-data-modal 
+    [UTC]="UTC"
+    [coords]="coords" 
+    [darkSkyKey]="darkSkyKey"
+    [date]="date"
+    >
+  </app-bulk-data-modal>
 
   <div class="container mt-4">
     <div class="row">
@@ -118,8 +29,8 @@
               <div class="col-9">
                 <label>Coordinates:</label>
                 <div class="input-group mb-3">
-                  <input id="coordinates" type="text" class="form-control" formControlName="coords"
-                    [readonly] = "locationEnabled">
+                  <input #coordInput id="coordinates" type="text" class="form-control" formControlName="coords"
+                    [readonly] = "locationEnabled" (keyup)="onCoordinatesChange(coordInput.value)">
                   <div class="input-group-append">
                     <button type="button" class="input-group-text" (click)="onLocationClicked()">
                       <em class="material-icons" *ngIf="locationEnabled">gps_fixed</em>
@@ -130,7 +41,8 @@
               </div>
               <div class="col-3">
                 <label>UTC</label>
-                <input id="utc" type="text" class="form-control" formControlName="UTC">
+                <input #UTCinput id="utc" type="text" class="form-control" 
+                  formControlName="UTC" (keyup)="onUTCChange(UTCinput.value)">
               </div>
             </div>
 
@@ -143,7 +55,8 @@
             <div *ngIf="!now">
               <div class="input-group mb-2">
                 <label class="mr-2">Date:</label>
-                <input id="datepicker" [matDatepicker]="myDatepicker" formControlName="myDatepicker">
+                <input #dateInput id="datepicker" [matDatepicker]="myDatepicker" 
+                  formControlName="myDatepicker" (dateChange)="onDateChange(dateInput.value)">
                 <mat-datepicker-toggle [for]="myDatepicker" class="text-dark"></mat-datepicker-toggle>
                 <mat-datepicker #myDatepicker></mat-datepicker>
               </div>
@@ -151,14 +64,14 @@
                 <div class="col-6">
                   <label>Hour</label>
                   <select class="form-control" formControlName="hour">
-                    <option *ngFor="let i of range(0,24)">{{i}}</option>
+                    <option *ngFor="let i of tUtils.range24">{{i}}</option>
                   </select>
                 </div>
 
                 <div class="col-6">
                   <label>Minute</label>
                   <select class="form-control" formControlName="minute">
-                    <option *ngFor="let i of range(0,60)">{{i}}</option>
+                    <option *ngFor="let i of tUtils.range60">{{i}}</option>
                   </select>
                 </div>
               </div>
