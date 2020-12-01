@@ -80,6 +80,7 @@ export class AppComponent implements OnInit {
   //UI metadata
   loading: boolean = false;
   loadingFailed: boolean = false;
+  editHumidity: boolean = false;
 
   constructor(
     private _darkSky: DarkSkyService,
@@ -178,6 +179,8 @@ export class AppComponent implements OnInit {
           this.temperature += Math.random() - 0.5;
         }
         this.humidity = response.currently.humidity;
+        this.editHumidity = false;
+
         this.dewPoint = response.currently.dewPoint - this.coronavirus;
         this.apparentT = response.currently.apparentTemperature - this.coronavirus;
 
@@ -186,16 +189,9 @@ export class AppComponent implements OnInit {
         this.windSpeed = response.currently.windSpeed;
         this.visibility = response.currently.visibility;
 
-        let bcInfo = this.tUtils.breathCondensation(this.temperature, this.humidity);
-        let maxH = bcInfo[0];
-        this.breathCondensation = maxH > 1 ? bcInfo[1] : 0;
+        this.breathCondensation = this.tUtils.breathCondensation(this.temperature, this.humidity);
 
-        let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.humidity, 10));
-        let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.humidity, this.visibility));
-
-        let gradient = "linear-gradient(" + color1 + ", " + color2 + ")";
-
-        document.body.style.backgroundImage = gradient;
+        this.updateBackgroundColor();
         this.loading = false;
         this.loadingFailed = false;
       },
@@ -204,6 +200,15 @@ export class AppComponent implements OnInit {
         this.loadingFailed = true;
       }
     );
+  }
+
+  private updateBackgroundColor() {
+    let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.humidity, 10));
+    let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.humidity, this.visibility));
+
+    let gradient = "linear-gradient(" + color1 + ", " + color2 + ")";
+
+    document.body.style.backgroundImage = gradient;
   }
 
   onNowClicked() {
@@ -251,5 +256,19 @@ export class AppComponent implements OnInit {
     localDate.setUTCHours(0);
     this.date = localDate;
     console.log(this.date);
+  }
+
+  changeHumidity(){
+    this.editHumidity = true;
+  }
+
+  onHumidityChanged(humidity: string){
+    this.humidity = parseInt(humidity)/100.0;
+    this.dewPoint = this.tUtils.dewPoint(this.temperature, this.humidity);
+
+    this.breathCondensation = this.tUtils.breathCondensation(this.temperature, this.humidity);
+    this.apparentT = this.tUtils.heatIndex(this.temperature, this.humidity);
+
+    this.updateBackgroundColor();
   }
 }

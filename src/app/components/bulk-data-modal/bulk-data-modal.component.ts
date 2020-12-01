@@ -41,7 +41,7 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes.date){
+    if(this.dataForm && changes.date){
       this.dataForm.controls['initDate'].setValue(this.date);
       this.dataForm.controls['finalDate'].setValue(this.date);
     }

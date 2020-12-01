@@ -92,7 +92,24 @@
         <ul class="list-group">
           <li class="list-group-item list-group-item-action">Temperature: {{temperature | number:'.0-0'}} °C
             ({{temperature + 2.8 | number:'.1-1'}})</li>
-          <li class="list-group-item list-group-item-action">Humidity: {{humidity*100 | number:'.0-0'}}%</li>
+          <li class="list-group-item list-group-item-action" *ngIf="!editHumidity">
+            Humidity: {{humidity*100 | number:'.0-0'}}%
+            <button type="button" class="btn btn-sm btn-light ml-1" (click)="changeHumidity()">
+              <i style="font-size: 18px;" class="material-icons">edit</i>
+            </button>
+          </li>
+          <li class="list-group-item list-group-item-action" *ngIf="editHumidity">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon3">Humidity: </span>
+              </div>
+              <input #humidity type="text" class="form-control" 
+                (change)="onHumidityChanged(humidity.value)">
+              <div class="input-group-append">
+                <span class="input-group-text">%</span>
+              </div>
+            </div>
+          </li>
           <li class="list-group-item list-group-item-action">Dew point: {{dewPoint | number:'.0-0'}} °C</li>
           <li class="list-group-item list-group-item-action">Cloudiness: {{cloudiness*100 | number:'.0-0'}}%</li>
           <li class="list-group-item list-group-item-action">Conditions: {{conditions}}</li>

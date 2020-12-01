@@ -67,7 +67,6 @@ export class TutilsModule {
     //console.log("h: "+rh)
     var hue = 300;
     var sat = (1 - Math.pow((1 - rh), 2)) * 100;
-    var lum = visibility < 5 ? (0.67662 - 0.10119 * Math.log(visibility)) * 100 : 50;
     var t = this.CtoF(t);
 
     //    if (!colors) {
@@ -85,12 +84,20 @@ export class TutilsModule {
       //[90, 255, 128, 0],
       [100, 0],
       [100, 360],
-      [125, 330]
+      [125, 360]
     ];
-    //    }
+
+    var lum = 0;
+    if(visibility < 5) {
+      lum = (0.67662 - 0.10119 * Math.log(visibility)) * 100;
+    } else if (t > 100) {
+      lum = Math.max(150 - t, 10);
+    } else {
+      lum = 50;
+    }
 
     if (t <= 0) hue = 270;
-    else if (t > 125) hue = 330;
+    else if (t > 125) hue = 360;
     else {
       var index = 0;
       for (index = 0; index < colors.length - 2; index++)
@@ -116,7 +123,7 @@ export class TutilsModule {
     return "hsl(" + h + ", " + s + "%, " + l + "%)";
   }
 
-  breathCondensation(t1, h1) {
+  breathCondensation(t1: number, h1: number) {
     //http://www.sciencebits.com/exhalecondense
     t1 *= 1.0;
     h1 *= 1.0;
@@ -158,6 +165,35 @@ export class TutilsModule {
       }
     }
 
-    return [maxH, endRatio - startRatio];
+    return maxH > 1 ? endRatio - startRatio : 0;
   }
+
+  dewPoint(temperature: number, humidity: number): number {
+    let n = (Math.log(humidity) + (17.27*temperature/(237.3 + temperature)))/17.27;
+    let dewPoint = 237.73 * n / (1 - n);
+    return dewPoint;
+  }
+
+  heatIndex(temperature: number, humidity: number) {
+    //https://www.wpc.ncep.noaa.gov/html/heatindex_equation.shtml
+    var f = this.CtoF(temperature);
+    humidity = humidity * 100.0;
+    var hi = 0
+
+    if (f > 80) {
+        hi = -42.379 + 2.04901523 * f + 10.14333127 * humidity - 0.22475541 * f * humidity - 0.00683783 * f * f - 0.05481717 * humidity * humidity + 0.00122874 * f * f * humidity + 0.00085282 * f * humidity * humidity - 0.00000199 * humidity * humidity * f * f;
+
+        if (humidity < 13 && f >= 80 && f <= 112) {
+            hi -= ((13 - humidity) / 4) * Math.sqrt((17 - Math.abs(humidity - 95.0)) / 17)
+        }
+
+        if (humidity > 85 && f >= 80 && f <= 87) {
+            hi += ((humidity - 85) / 10) * ((87 - humidity) / 5)
+        }
+    } else {
+        hi = 0.5 * (f + 61.0 + ((f - 68.0) * 1.2) + (humidity * 0.094));
+    }
+
+    return this.FtoC(hi);
+}
 }
