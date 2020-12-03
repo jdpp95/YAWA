@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
@@ -14,11 +14,9 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 
 //Moment.js
 import * as _moment from 'moment';
-import { Observation } from './models/observation.model';
-import { forkJoin } from 'rxjs';
 
 //Pipes
-import { DatePipe } from '@angular/common';
+import { DatePipe, PercentPipe } from '@angular/common';
 
 const moment = _moment;
 
@@ -50,52 +48,53 @@ export const MY_FORMATS = {
     { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: {useUtc: true}}
   ]
 })
-export class AppComponent {
+
+export class AppComponent implements OnInit {
   title = 'YAWA';
 
-  private darkSkyKey: string;
+  darkSkyKey: string;
 
   //Forms and fields
   coords: string;
   now: boolean;
   locationForm: FormGroup;
-  bulkDataForm: FormGroup;
 
   date: Date;
   UTC: number;
 
+  //Data from API
   temperature: number;
   humidity: number;
   dewPoint: number;
   apparentT: number;
   visibility: number;
-
   cloudiness: number;
   conditions: string;
   windSpeed: number;
+
+  //Computed data
+  snowProbability: number;
   breathCondensation: number;
-  
-  observations : Observation[] = [];
 
   coronavirus: number;
 
+  //UI metadata
   loading: boolean = false;
   loadingFailed: boolean = false;
-
-  bulkLoading: boolean = false;
-  bulkLoadingFailed: boolean = false;
-  bulkInvalidData: boolean = false;
-
-  displayTimeCol: boolean = false;
-
+  editHumidity: boolean = false;
   locationEnabled: boolean = false;
+  //isRaining: boolean = false;
 
   constructor(
     private _darkSky: DarkSkyService,
-    private tUtils: TutilsModule,
     private activeRoute: ActivatedRoute,
-    public datePipe: DatePipe
+    public tUtils: TutilsModule,
+    public datePipe: DatePipe,
+    public percentPipe: PercentPipe
   ) {
+  }
+
+  ngOnInit(): void {
     this.activeRoute.queryParams.subscribe(
       response => {
         
@@ -115,6 +114,7 @@ export class AppComponent {
       }
     )
     this.now = true;
+    this.UTC = -5;
 
     this.locationForm = new FormGroup({
       'coords': new FormControl('', [
@@ -129,17 +129,7 @@ export class AppComponent {
 
       'minute': new FormControl('0', []),
 
-      'UTC': new FormControl('-5', [])
-    });
-
-    this.bulkDataForm = new FormGroup({
-      'initDate': new FormControl(moment()),
-  
-      'initHour': new FormControl('0', []),
-
-      'finalDate': new FormControl(moment()),
-  
-      'finalHour': new FormControl('0', []),   
+      'UTC': new FormControl(this.UTC, [])
     });
   }
 
@@ -152,10 +142,6 @@ export class AppComponent {
     this.UTC = parseInt(this.locationForm.value.UTC);
 
     this.date = new Date(this.locationForm.value.myDatepicker);
-    this.bulkDataForm.controls['initDate'].setValue(this.locationForm.value.myDatepicker);
-    this.bulkDataForm.controls['finalDate'].setValue(this.locationForm.value.myDatepicker);
-
-    //console.log("Date1: " + this.date + ", " + this.date.getTime()/1000);
 
     this.date.setTime(this.date.getTime() - this.UTC * HOUR * 1000 + hours * HOUR * 1000 + minutes * MINUTES * 1000);
     
@@ -197,24 +183,20 @@ export class AppComponent {
           this.temperature += Math.random() - 0.5;
         }
         this.humidity = response.currently.humidity;
+        this.editHumidity = false;
+
         this.dewPoint = response.currently.dewPoint - this.coronavirus;
         this.apparentT = response.currently.apparentTemperature - this.coronavirus;
+        this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
 
         this.cloudiness = response.currently.cloudCover;
         this.conditions = response.currently.summary;
         this.windSpeed = response.currently.windSpeed;
         this.visibility = response.currently.visibility;
 
-        let bcInfo = this.tUtils.breathCondensation(this.temperature, this.humidity);
-        let maxH = bcInfo[0];
-        this.breathCondensation = maxH > 1 ? bcInfo[1] : 0;
+        this.breathCondensation = this.tUtils.breathCondensation(this.temperature, this.humidity);
 
-        let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.humidity, 10));
-        let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.humidity, this.visibility));
-
-        let gradient = "linear-gradient(" + color1 + ", " + color2 + ")";
-
-        document.body.style.backgroundImage = gradient;
+        this.updateBackgroundColor();
         this.loading = false;
         this.loadingFailed = false;
       },
@@ -223,6 +205,15 @@ export class AppComponent {
         this.loadingFailed = true;
       }
     );
+  }
+
+  private updateBackgroundColor() {
+    let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.humidity, 10));
+    let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.humidity, this.visibility));
+
+    let gradient = "linear-gradient(" + color1 + ", " + color2 + ")";
+
+    document.body.style.backgroundImage = gradient;
   }
 
   onNowClicked() {
@@ -243,6 +234,7 @@ export class AppComponent {
             let coords = lat + ", " + long;
             //this.locationForm.patchValue({coords: coords});
             coordsControl.setValue(coords);
+            this.coords = coords;
             //coordsControl.disable();
 
             this.locationEnabled = true;
@@ -255,92 +247,39 @@ export class AppComponent {
     }
   }
 
-  onDisplayTimeColClicked(){
-    this.displayTimeCol = !this.displayTimeCol;
+  onCoordinatesChange(value: string){
+    this.coords = value;
   }
 
-  onSubmitBulkData(){
-    let listOfTimestamps = [];
-    const HOUR = 60 * 60;
-    const DAY = HOUR * 24;
+  onUTCChange(value: string){
+    this.UTC = parseInt(value);
+  }
 
-    this.bulkInvalidData = false;
-
-    //Get data from bulk data form
-    let initDate = (new Date(this.bulkDataForm.value.initDate)).getTime()/1000;
-    let finalDate = (new Date(this.bulkDataForm.value.finalDate)).getTime()/1000;
-    let initHour = parseInt(this.bulkDataForm.value.initHour);
-    let finalHour = parseInt(this.bulkDataForm.value.finalHour);
-
-    //Get data from main form
-    this.coords = this.locationForm.value.coords;
-    this.UTC = parseInt(this.locationForm.value.UTC);
-
-    let initTime = initDate + (initHour - this.UTC) * HOUR;
-    let finalTime = finalDate + (finalHour - this.UTC) * HOUR;
-    let time = initTime;
-
-    let dayStart = time - (time + this.UTC * HOUR) % DAY;
-    let dayEnd = dayStart + DAY;
+  onDateChange(value: string){
+    let localDate = new Date(value);
     
-    this.observations = []
-
-    listOfTimestamps.push(time);
-    while(!(finalTime >= dayStart && finalTime < dayEnd))
-    {
-      dayStart += DAY;
-      time += DAY;
-      dayEnd += DAY;
-      listOfTimestamps.push(time);
-      if(listOfTimestamps.length > 4)
-      {
-        this.bulkInvalidData = true;
-        return;
-      }
-    }
-
-    let listOfResults = this._darkSky.getWeatherInBulk(this.coords, listOfTimestamps, this.darkSkyKey)
-
-    forkJoin(listOfResults).subscribe(
-      results => {
-        this.bulkLoadingFailed = false;
-
-        for (let dailyResult of results) {
-          for (let jsonObservation of dailyResult.hourly.data)
-          {
-            let observation = new Observation();
-            observation.timestamp = jsonObservation.time;
-            observation.time = new Date((jsonObservation.time + HOUR * this.UTC) * 1000);
-            observation.temperature = jsonObservation.temperature + Math.random() - 0.5;
-
-            if(jsonObservation.time >= initTime && jsonObservation.time <= finalTime)
-            {
-              this.observations.push(observation);
-            }
-          }
-        }
-
-        /*
-        for(let observation of this.observations)
-        {
-          let date = new Date((observation.timestamp + HOUR * this.UTC) * 1000);
-          let formattedDate = this.datePipe.transform(date, 'dd/MMM HH:mm', 'GMT');
-          console.log(observation.timestamp, formattedDate, observation.temperature);
-        }*/
-        
-      },
-
-      error => {
-        this.bulkLoadingFailed = true;
-      }
-    );
+    localDate.setUTCHours(0);
+    this.date = localDate;
+    console.log(this.date);
   }
 
-  range(start: number, end: number) {
-    let arr = [];
-    for (let i = start; i < end; i++) {
-      arr.push(i);
+  changeHumidity(){
+    this.editHumidity = true;
+  }
+
+  onHumidityChanged(humidity: string){
+    this.humidity = parseInt(humidity)/100.0;
+    this.dewPoint = this.tUtils.dewPoint(this.temperature, this.humidity);
+
+    this.breathCondensation = this.tUtils.breathCondensation(this.temperature, this.humidity);
+    
+    if(this.temperature > 15)
+    {
+      this.apparentT = this.tUtils.heatIndex(this.temperature, this.humidity);
     }
-    return arr;
+
+    this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
+
+    this.updateBackgroundColor();
   }
 }
