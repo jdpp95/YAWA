@@ -16,7 +16,7 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import * as _moment from 'moment';
 
 //Pipes
-import { DatePipe } from '@angular/common';
+import { DatePipe, PercentPipe } from '@angular/common';
 
 const moment = _moment;
 
@@ -62,31 +62,35 @@ export class AppComponent implements OnInit {
   date: Date;
   UTC: number;
 
+  //Data from API
   temperature: number;
   humidity: number;
   dewPoint: number;
   apparentT: number;
   visibility: number;
-
   cloudiness: number;
   conditions: string;
   windSpeed: number;
+
+  //Computed data
+  snowProbability: number;
   breathCondensation: number;
 
   coronavirus: number;
-
-  locationEnabled: boolean = false;
 
   //UI metadata
   loading: boolean = false;
   loadingFailed: boolean = false;
   editHumidity: boolean = false;
+  locationEnabled: boolean = false;
+  //isRaining: boolean = false;
 
   constructor(
     private _darkSky: DarkSkyService,
     private activeRoute: ActivatedRoute,
     public tUtils: TutilsModule,
-    public datePipe: DatePipe
+    public datePipe: DatePipe,
+    public percentPipe: PercentPipe
   ) {
   }
 
@@ -183,6 +187,7 @@ export class AppComponent implements OnInit {
 
         this.dewPoint = response.currently.dewPoint - this.coronavirus;
         this.apparentT = response.currently.apparentTemperature - this.coronavirus;
+        this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
 
         this.cloudiness = response.currently.cloudCover;
         this.conditions = response.currently.summary;
@@ -267,7 +272,13 @@ export class AppComponent implements OnInit {
     this.dewPoint = this.tUtils.dewPoint(this.temperature, this.humidity);
 
     this.breathCondensation = this.tUtils.breathCondensation(this.temperature, this.humidity);
-    this.apparentT = this.tUtils.heatIndex(this.temperature, this.humidity);
+    
+    if(this.temperature > 15)
+    {
+      this.apparentT = this.tUtils.heatIndex(this.temperature, this.humidity);
+    }
+
+    this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
 
     this.updateBackgroundColor();
   }

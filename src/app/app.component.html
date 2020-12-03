@@ -112,13 +112,11 @@
           </li>
           <li class="list-group-item list-group-item-action">Dew point: {{dewPoint | number:'.0-0'}} °C</li>
           <li class="list-group-item list-group-item-action">Cloudiness: {{cloudiness*100 | number:'.0-0'}}%</li>
-          <li class="list-group-item list-group-item-action">Conditions: {{conditions}}</li>
-          <!--
-                      <li id="heat-index" class="list-group-item list-group-item-action" style="display: none;"></li>
-                      <li id="snow-prob" class="list-group-item list-group-item-action" style="display: none;"></li>
-                      <li id="fog" class="list-group-item list-group-item-action" style="display: none;"></li>
-                      <li id="breath" class="list-group-item list-group-item-action" style="display: none;"></li>
-  -->
+          <li class="list-group-item list-group-item-action">
+            Conditions: {{conditions}}
+<!--             <button class="btn btn-dark btn-sm">Rain</button> -->
+          </li>
+
         </ul>
       </div>
       <div class="col-lg-4 col-md-6">
@@ -129,6 +127,8 @@
             {{visibility*1000 | number: '.0-0'}} m</li>
           <li *ngIf="breathCondensation > 0" class="list-group-item list-group-item-action">Breath condensation:
             {{breathCondensation | number: '.0-2'}}</li>
+          <li *ngIf="snowProbability > 0" class="list-group-item list-group-item-action">Snow Probability:
+              {{snowProbability | percent}}</li>
         </ul>
       </div>
     </div>

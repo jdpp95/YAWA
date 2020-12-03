@@ -195,5 +195,15 @@ export class TutilsModule {
     }
 
     return this.FtoC(hi);
-}
+  }
+
+  snowProbability(temperature: number, humidity: number) {
+    //http://www.sciencebits.com/SnowAboveFreezing
+    temperature *= 1.0;
+    humidity *= 1.0;
+
+    let p = Math.min(1, Math.max(1.0788 - 0.5809 * (-5.3721 * humidity * humidity + 15.167 * humidity + temperature - 9.9154), 0));
+
+    return p;
+  }
 }

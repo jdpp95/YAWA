@@ -14,7 +14,7 @@ import { MatDatepickerModule, MatNativeDateModule, MatIconModule, MatFormFieldMo
 import { TutilsModule } from './modules/tutils/tutils.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
-import { DatePipe } from '@angular/common';
+import { DatePipe, PercentPipe } from '@angular/common';
 import { CommaDecimalPipe } from './pipes/comma-decimal.pipe';
 import { BulkDataModalComponent } from './components/bulk-data-modal/bulk-data-modal.component';
 
@@ -37,7 +37,7 @@ import { BulkDataModalComponent } from './components/bulk-data-modal/bulk-data-m
     AppRoutingModule,
     MatFormFieldModule
   ],
-  providers: [MatDatepickerModule, DatePipe],
+  providers: [MatDatepickerModule, DatePipe, PercentPipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
