@@ -63,11 +63,18 @@ export class TutilsModule {
     return (f - 32) * (5 / 9);
   }
 
-  colorT(t: number, rh: number, visibility: number) {
-    //console.log("h: "+rh)
-    var hue = 300;
-    var sat = (1 - Math.pow((1 - rh), 2)) * 100;
-    var t = this.CtoF(t);
+  colorT(t: number, cloudiness: number, rainIntensity: number, visibility: number) {
+    if(cloudiness == undefined){
+      cloudiness = 0;
+    }
+
+    var hue;
+    var sat = (1 - cloudiness)*40 + 60;
+    t = this.CtoF(t);
+
+    if(rainIntensity >= 1){
+      sat = Math.max(60 - (rainIntensity - 1)*10, 30);
+    }
 
     //    if (!colors) {
     let colors = [
