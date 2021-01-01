@@ -124,5 +124,8 @@
       }
     }
   },
-  "defaultProject": "YAWA"
+  "defaultProject": "YAWA",
+  "cli": {
+    "analytics": false
+  }
 }
