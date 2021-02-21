@@ -77,11 +77,16 @@
               </div>
             </div>
           </div>
-          <button type="submit" class="btn" [ngClass]="{
-                              'btn-outline-danger' : loadingFailed,
-                              'btn-dark' : !loadingFailed
-                             }">
-            Update
+          <button 
+            type="submit" 
+            class="btn" 
+            [ngClass]="{
+                        'btn-outline-danger' : loadingFailed,
+                        'btn-dark' : !loadingFailed
+                       }"
+            [disabled]="!locationForm.valid"
+          >
+              Update
             <div *ngIf="loading" class="spinner-border spinner-border-sm text-light ml-2" role="status">
             </div>
           </button>
@@ -127,7 +132,7 @@
             {{visibility*1000 | number: '.0-0'}} m</li>
           <li *ngIf="breathCondensation > 0" class="list-group-item list-group-item-action">Breath condensation:
             {{breathCondensation | number: '.0-2'}}</li>
-          <li *ngIf="snowProbability > 0" class="list-group-item list-group-item-action">Snow Probability:
+          <li *ngIf="snowProbability > 0 && rainIntensity >=1" class="list-group-item list-group-item-action">Snow Probability:
               {{snowProbability | percent}}</li>
           <li *ngIf="rainIntensity >= 1" class="list-group-item list-group-item-action">Rain intensity:
             {{rainIntensity | number: '.0-1'}}</li>

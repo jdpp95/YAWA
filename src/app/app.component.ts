@@ -98,7 +98,6 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.activeRoute.queryParams.subscribe(
       response => {
-        
         this.darkSkyKey = response["darkSkyKey"];
         //console.log("darkSkyKey: " + this.darkSkyKey)
         if (!this.darkSkyKey) {
