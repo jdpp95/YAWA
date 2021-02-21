@@ -10,8 +10,8 @@ import { Observation } from '../models/observation.model';
 })
 export class DarkSkyService {
 
-  //proxyServer: string = "https://cors-anywhere.herokuapp.com/"
-  proxyServer: string = "";
+  proxyServer: string = "https://yawa-cors-anywhere.herokuapp.com/"
+  //proxyServer: string = "";
   darkSkyUrl: string = "https://api.darksky.net/forecast/";
 
   constructor(private http: HttpClient) { }
