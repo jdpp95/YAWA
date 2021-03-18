@@ -106,9 +106,14 @@ export class AppComponent implements OnInit {
           localStorage.setItem("darkSkyKey", JSON.stringify(this.darkSkyKey))
         }
 
-        this.coronavirus = 10*(Math.log10(response["coronavirus"]) - 1.7);
+        let population: number = response["pop"];
+        if(!population){
+          population = 51226221; //Colombia population in 16/03/2021
+        }
+        
+        this.coronavirus = 10*(Math.log10(response["coronavirus"]) - (Math.log10(population) - 6));
 
-        if (!this.coronavirus) {
+        if (!this.coronavirus || this.coronavirus < 0) {
           this.coronavirus = 0;
         }
       }
