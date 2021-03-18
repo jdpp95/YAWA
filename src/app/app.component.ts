@@ -110,8 +110,12 @@ export class AppComponent implements OnInit {
         if(!population){
           population = 51226221; //Colombia population in 16/03/2021
         }
+
+        let vaccinated = response["vaccinated"]
+        let vacPercentage = vaccinated/population;
         
         this.coronavirus = 10*(Math.log10(response["coronavirus"]) - (Math.log10(population) - 6));
+        this.coronavirus *= (1 - vacPercentage);
 
         if (!this.coronavirus || this.coronavirus < 0) {
           this.coronavirus = 0;
