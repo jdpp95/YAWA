@@ -64,6 +64,8 @@ export class AppComponent implements OnInit {
 
   //Data from API
   temperature: number;
+  min: number;
+  max: number;
   humidity: number;
   dewPoint: number;
   apparentT: number;
@@ -84,6 +86,7 @@ export class AppComponent implements OnInit {
   loadingFailed: boolean = false;
   editHumidity: boolean = false;
   locationEnabled: boolean = false;
+  displayMinMax: boolean = false;
   //isRaining: boolean = false;
 
   constructor(
@@ -112,6 +115,10 @@ export class AppComponent implements OnInit {
         }
 
         let vaccinated = response["vaccinated"]
+        if(!vaccinated)
+        {
+          vaccinated = 0;
+        }
         let vacPercentage = vaccinated/population;
         
         this.coronavirus = 10*(Math.log10(response["coronavirus"]) - (Math.log10(population) - 6));
@@ -191,6 +198,8 @@ export class AppComponent implements OnInit {
         if (!this.now) {
           this.temperature += Math.random() - 0.5;
         }
+        this.min = response.daily.data[0].temperatureMin - this.coronavirus;
+        this.max = response.daily.data[0].temperatureMax - this.coronavirus;
         this.humidity = response.currently.humidity;
         this.editHumidity = false;
 
@@ -291,5 +300,9 @@ export class AppComponent implements OnInit {
     this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
 
     this.updateBackgroundColor();
+  }
+
+  displayMinMaxClicked(){
+    this.displayMinMax = !this.displayMinMax;
   }
 }

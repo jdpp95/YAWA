@@ -1,12 +1,40 @@
 <div id="background">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
     <a class="navbar-brand" href="#">YAWA - <small>Yet Another Weather App</small></a>
-    <ul class="navbar-nav mr-auto">
-      <li>
-        <a class="nav-link" data-toggle="modal" data-target="#exampleModal" href="#">Get bulk data</a>
-      </li>
-    </ul>
-    <div class="collapse navbar-collapse" id="navbarText"></div>
+    
+    <button 
+      class="navbar-toggler" 
+      type="button" 
+      data-toggle="collapse" 
+      data-target="#navbarSupportedContent" 
+      aria-controls="navbarSupportedContent" 
+      aria-expanded="false" 
+      aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse"  id="navbarSupportedContent">
+      <ul class="navbar-nav">
+        <li>
+          <a 
+            class="btn btn-sm btn-secondary mr-2 mb-2" 
+            data-toggle="modal" 
+            data-target="#exampleModal" 
+            href="#">
+              Get bulk data
+          </a>
+        </li>
+        <li>
+          <button 
+            class="btn btn-sm btn-secondary mr-2" 
+            (click)="displayMinMaxClicked()"
+            [ngClass]="{'btn-info': displayMinMax}"
+          >
+            Display min/max
+          </button>
+        </li>
+      </ul>
+    </div>
     <span class="text-light navbar-text">
       Powered by Dark Sky
     </span>
@@ -95,8 +123,14 @@
       </div>
       <div class="col-lg-4 col-md-6">
         <ul class="list-group">
-          <li class="list-group-item list-group-item-action">Temperature: {{temperature | number:'.0-0'}} °C
-            ({{temperature + 2.8 | number:'.1-1'}})</li>
+          <li class="list-group-item list-group-item-action">
+            Temperature: {{temperature | number:'.0-0'}} °C
+            ({{temperature + 2.8 | number:'.1-1'}})
+          </li>
+          <li *ngIf="displayMinMax" class="list-group-item list-group-item-action">
+            Min: {{min | number:'.0-0'}} °C / 
+            Max: {{max | number:'.0-0'}} °C
+          </li>
           <li class="list-group-item list-group-item-action" *ngIf="!editHumidity">
             Humidity: {{humidity*100 | number:'.0-0'}}%
             <button type="button" class="btn btn-sm btn-light ml-1" (click)="changeHumidity()">
