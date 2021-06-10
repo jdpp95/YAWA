@@ -17,6 +17,7 @@ import * as _moment from 'moment';
 
 //Pipes
 import { DatePipe, PercentPipe } from '@angular/common';
+import { MapboxService } from './services/mapbox.service';
 
 const moment = _moment;
 
@@ -92,6 +93,7 @@ export class AppComponent implements OnInit {
   constructor(
     private _darkSky: DarkSkyService,
     private activeRoute: ActivatedRoute,
+    private _mapbox: MapboxService,
     public tUtils: TutilsModule,
     public datePipe: DatePipe,
     public percentPipe: PercentPipe
@@ -147,19 +149,16 @@ export class AppComponent implements OnInit {
   }
 
   update() {
+    //Read and set time data
     const MINUTES = 60;
     const HOUR = MINUTES * 60;
     const DAY = HOUR * 24;
     let hours = this.locationForm.value.hour;
     let minutes = this.locationForm.value.minute;
     this.UTC = parseInt(this.locationForm.value.UTC);
-
     this.date = new Date(this.locationForm.value.myDatepicker);
-
     this.date.setTime(this.date.getTime() - this.UTC * HOUR * 1000 + hours * HOUR * 1000 + minutes * MINUTES * 1000);
     
-    //this.date.setHours(hours, minutes, 0);
-    console.log("Date3: " + this.date + ", " + this.date.getTime()/1000);
     this.loading = true;
 
     let coordsControl = this.locationForm.controls['coords'];
@@ -184,7 +183,23 @@ export class AppComponent implements OnInit {
       }
     } else {
       this.coords = this.locationForm.value.coords;
-      this.getWeather();
+      
+      //TODO: Add a condition
+      const pattern = new RegExp(/^(-?\d{1,2}(\.\d*)?), ?(-?\d{1,3}(\.\d*)?)$/m);
+      const useMapbox = !pattern.test(this.coords);
+
+      if(useMapbox){
+        this._mapbox.getCoordsFromName(this.coords).subscribe(
+          coords => {
+            this.coords = coords
+            console.log(this.coords)
+            this.getWeather();
+          }
+        );
+      } else {
+        this.coords = this.locationForm.value.coords;
+        this.getWeather();
+      }
     }
   }
 
@@ -201,8 +216,13 @@ export class AppComponent implements OnInit {
         this.editHumidity = false;
 
         this.dewPoint = response.currently.dewPoint - this.coronavirus;
-        this.apparentT = response.currently.apparentTemperature - this.coronavirus;
         this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
+
+        if(this.coronavirus > 0){
+          this.computeApparentTemperature();
+        } else {
+          this.apparentT = response.currently.apparentTemperature - this.coronavirus;
+        }
 
         this.cloudiness = response.currently.cloudCover;
         this.conditions = response.currently.summary;
@@ -248,10 +268,8 @@ export class AppComponent implements OnInit {
             let long = position.coords.longitude.toFixed(4);
 
             let coords = lat + ", " + long;
-            //this.locationForm.patchValue({coords: coords});
             coordsControl.setValue(coords);
             this.coords = coords;
-            //coordsControl.disable();
 
             this.locationEnabled = true;
           }
@@ -283,16 +301,22 @@ export class AppComponent implements OnInit {
     this.editHumidity = true;
   }
 
+  computeApparentTemperature(){
+    if(this.temperature > 15)
+    {
+      this.apparentT = this.tUtils.heatIndex(this.temperature, this.humidity);
+    } else {
+      this.apparentT = this.tUtils.windChill(this.temperature, this.windSpeed);
+    }
+  }
+
   onHumidityChanged(humidity: string){
     this.humidity = parseInt(humidity)/100.0;
     this.dewPoint = this.tUtils.dewPoint(this.temperature, this.humidity);
 
     this.breathCondensation = this.tUtils.breathCondensation(this.temperature, this.humidity);
     
-    if(this.temperature > 15)
-    {
-      this.apparentT = this.tUtils.heatIndex(this.temperature, this.humidity);
-    }
+    this.computeApparentTemperature();
 
     this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
 

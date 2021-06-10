@@ -57,8 +57,14 @@
               <div class="col-9">
                 <label>Coordinates:</label>
                 <div class="input-group mb-3">
-                  <input #coordInput id="coordinates" type="text" class="form-control" formControlName="coords"
-                    [readonly] = "locationEnabled" (keyup)="onCoordinatesChange(coordInput.value)">
+                  <input 
+                    #coordInput 
+                    id="coordinates" 
+                    type="text" 
+                    class="form-control" 
+                    formControlName="coords"
+                    [readonly] = "locationEnabled" 
+                    (keyup)="onCoordinatesChange(coordInput.value)">
                   <div class="input-group-append">
                     <button type="button" class="input-group-text" (click)="onLocationClicked()">
                       <em class="material-icons" *ngIf="locationEnabled">gps_fixed</em>
