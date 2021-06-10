@@ -216,8 +216,13 @@ export class AppComponent implements OnInit {
         this.editHumidity = false;
 
         this.dewPoint = response.currently.dewPoint - this.coronavirus;
-        this.apparentT = response.currently.apparentTemperature - this.coronavirus;
         this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
+
+        if(this.coronavirus > 0){
+          this.computeApparentTemperature();
+        } else {
+          this.apparentT = response.currently.apparentTemperature - this.coronavirus;
+        }
 
         this.cloudiness = response.currently.cloudCover;
         this.conditions = response.currently.summary;
@@ -296,16 +301,22 @@ export class AppComponent implements OnInit {
     this.editHumidity = true;
   }
 
+  computeApparentTemperature(){
+    if(this.temperature > 15)
+    {
+      this.apparentT = this.tUtils.heatIndex(this.temperature, this.humidity);
+    } else {
+      this.apparentT = this.tUtils.windChill(this.temperature, this.windSpeed);
+    }
+  }
+
   onHumidityChanged(humidity: string){
     this.humidity = parseInt(humidity)/100.0;
     this.dewPoint = this.tUtils.dewPoint(this.temperature, this.humidity);
 
     this.breathCondensation = this.tUtils.breathCondensation(this.temperature, this.humidity);
     
-    if(this.temperature > 15)
-    {
-      this.apparentT = this.tUtils.heatIndex(this.temperature, this.humidity);
-    }
+    this.computeApparentTemperature();
 
     this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
 
