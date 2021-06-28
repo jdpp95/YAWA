@@ -244,7 +244,7 @@ export class AppComponent implements OnInit {
   }
 
   private updateBackgroundColor() {
-    let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.cloudiness, this.rainIntensity, 10));
+    let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.cloudiness, this.rainIntensity*2, 10));
     let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.cloudiness, this.rainIntensity, this.visibility));
 
     let gradient = "linear-gradient(" + color1 + ", " + color2 + ")";
@@ -299,6 +299,10 @@ export class AppComponent implements OnInit {
 
   changeHumidity(){
     this.editHumidity = true;
+  }
+
+  onChangeDewPoint(){
+    console.log("Dew")
   }
 
   computeApparentTemperature(){
