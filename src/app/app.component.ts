@@ -218,12 +218,6 @@ export class AppComponent implements OnInit {
         this.dewPoint = response.currently.dewPoint - this.coronavirus;
         this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
 
-        if(this.coronavirus > 0){
-          this.computeApparentTemperature();
-        } else {
-          this.apparentT = response.currently.apparentTemperature - this.coronavirus;
-        }
-
         this.cloudiness = response.currently.cloudCover;
         this.conditions = response.currently.summary;
         this.windSpeed = response.currently.windSpeed;
@@ -231,6 +225,12 @@ export class AppComponent implements OnInit {
         this.rainIntensity = response.currently.precipIntensity;
 
         this.breathCondensation = this.tUtils.breathCondensation(this.temperature, this.humidity);
+
+        if(this.coronavirus > 0){
+          this.computeApparentTemperature();
+        } else {
+          this.apparentT = response.currently.apparentTemperature - this.coronavirus;
+        }
 
         this.updateBackgroundColor();
         this.loading = false;
