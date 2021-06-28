@@ -64,7 +64,7 @@ export class TutilsModule {
   }
 
   colorT(t: number, cloudiness: number, rainIntensity: number, visibility: number) {
-    if(cloudiness == undefined){
+    if(!cloudiness){
       cloudiness = 0;
     }
 
@@ -179,6 +179,15 @@ export class TutilsModule {
     let n = (Math.log(humidity) + (17.27*temperature/(237.3 + temperature)))/17.27;
     let dewPoint = 237.73 * n / (1 - n);
     return dewPoint;
+  }
+
+  humidityFromDewP(dewPoint: number, temperature: number){
+
+    const vaporPressure = (t) => 61.1 * (7.5 * t / (237.3 + t));
+
+    let es = vaporPressure(temperature);
+    let e = vaporPressure(dewPoint);
+    return e/es;
   }
 
   heatIndex(temperature: number, humidity: number) {

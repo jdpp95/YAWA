@@ -86,6 +86,7 @@ export class AppComponent implements OnInit {
   loading: boolean = false;
   loadingFailed: boolean = false;
   editHumidity: boolean = false;
+  editDewPoint: boolean = false;
   locationEnabled: boolean = false;
   displayMinMax: boolean = false;
   //isRaining: boolean = false;
@@ -214,6 +215,7 @@ export class AppComponent implements OnInit {
         this.max = response.daily.data[0].temperatureMax - this.coronavirus;
         this.humidity = response.currently.humidity;
         this.editHumidity = false;
+        this.editDewPoint = false;
 
         this.dewPoint = response.currently.dewPoint - this.coronavirus;
         this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
@@ -301,8 +303,8 @@ export class AppComponent implements OnInit {
     this.editHumidity = true;
   }
 
-  onChangeDewPoint(){
-    console.log("Dew")
+  changeDewPoint(){
+    this.editDewPoint = true;
   }
 
   computeApparentTemperature(){
@@ -325,6 +327,11 @@ export class AppComponent implements OnInit {
     this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
 
     this.updateBackgroundColor();
+  }
+
+  onDewPointChanged(dewPoint: string){
+    this.dewPoint = parseInt(dewPoint);
+    this.humidity = this.tUtils.humidityFromDewP(this.dewPoint, this.temperature);
   }
 
   displayMinMaxClicked(){
