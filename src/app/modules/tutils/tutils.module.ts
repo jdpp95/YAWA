@@ -183,11 +183,11 @@ export class TutilsModule {
 
   humidityFromDewP(dewPoint: number, temperature: number){
 
-    const vaporPressure = (t) => 61.1 * (7.5 * t / (237.3 + t));
+    const vaporPressure = (t) => 6.112 * Math.exp(17.502 * t / (240.97 + t));
 
-    let es = vaporPressure(temperature);
-    let e = vaporPressure(dewPoint);
-    return e/es;
+    let ed = vaporPressure(temperature);
+    let ew = vaporPressure(dewPoint);
+    return Math.min(1, ew/ed);
   }
 
   heatIndex(temperature: number, humidity: number) {
