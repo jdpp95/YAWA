@@ -75,6 +75,7 @@ export class AppComponent implements OnInit {
   conditions: string;
   windSpeed: number;
   rainIntensity: number;
+  minDP: number;
 
   //Computed data
   snowProbability: number;
@@ -86,7 +87,7 @@ export class AppComponent implements OnInit {
   loading: boolean = false;
   loadingFailed: boolean = false;
   editHumidity: boolean = false;
-  editDewPoint: boolean = false;
+  //editDewPoint: boolean = false;
   locationEnabled: boolean = false;
   displayMinMax: boolean = false;
   //isRaining: boolean = false;
@@ -215,9 +216,12 @@ export class AppComponent implements OnInit {
         this.max = response.daily.data[0].temperatureMax - this.coronavirus;
         this.humidity = response.currently.humidity;
         this.editHumidity = false;
-        this.editDewPoint = false;
+        //this.editDewPoint = false;
 
         this.dewPoint = response.currently.dewPoint - this.coronavirus;
+        let dewPoints = response.hourly.data.map(hour => hour.dewPoint);
+        this.minDP = Math.min(...dewPoints) - this.coronavirus;
+
         this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
 
         this.cloudiness = response.currently.cloudCover;
@@ -246,7 +250,7 @@ export class AppComponent implements OnInit {
   }
 
   private updateBackgroundColor() {
-    let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.cloudiness, this.rainIntensity*2, 10));
+    let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.cloudiness, this.rainIntensity, 10));
     let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.cloudiness, 0, this.visibility));
 
     let gradient = "linear-gradient(" + color1 + ", " + color2 + ")";
@@ -304,7 +308,10 @@ export class AppComponent implements OnInit {
   }
 
   changeDewPoint(){
-    this.editDewPoint = true;
+    this.dewPoint = this.minDP;
+    this.humidity = this.tUtils.humidityFromDewP(this.dewPoint, this.temperature);
+    this.onHumidityChanged(false);
+    this.editHumidity = false;
   }
 
   computeApparentTemperature(){
@@ -316,25 +323,39 @@ export class AppComponent implements OnInit {
     }
   }
 
-  onHumidityChanged(humidity: string){
-    this.humidity = parseInt(humidity)/100.0;
-    this.dewPoint = this.tUtils.dewPoint(this.temperature, this.humidity);
+  onHumidityChanged(changeDewPoint: boolean, humidity?: string){
+    if(humidity)
+    {
+      this.humidity = parseInt(humidity)/100.0;
+    }
+
+    if(changeDewPoint)
+    {
+      this.dewPoint = this.tUtils.dewPoint(this.temperature, this.humidity);
+    }
 
     this.breathCondensation = this.tUtils.breathCondensation(this.temperature, this.humidity);
-    
     this.computeApparentTemperature();
-
     this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
-
     this.updateBackgroundColor();
   }
 
-  onDewPointChanged(dewPoint: string){
-    this.dewPoint = parseInt(dewPoint);
-    this.humidity = this.tUtils.humidityFromDewP(this.dewPoint, this.temperature);
+  onTemperatureChanged(){
+    this.computeApparentTemperature();
+    this.updateBackgroundColor();
   }
 
   displayMinMaxClicked(){
     this.displayMinMax = !this.displayMinMax;
+  }
+
+  onAdjustTemperatureClicked(){
+    this.changeDewPoint();
+
+    this.humidity = Math.min(1, this.humidity + (this.rainIntensity - 1)/10);
+    this.onHumidityChanged(false);
+
+    this.temperature = this.tUtils.temperatureFromDewP(this.dewPoint, this.humidity);
+    this.onTemperatureChanged();
   }
 }
