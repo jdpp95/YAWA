@@ -149,17 +149,33 @@
                 <span class="input-group-text" id="basic-addon3">Humidity: </span>
               </div>
               <input #humidity type="text" class="form-control" 
-                (change)="onHumidityChanged(humidity.value)">
+                (change)="onHumidityChanged(true, humidity.value)">
               <div class="input-group-append">
                 <span class="input-group-text">%</span>
               </div>
             </div>
           </li>
-          <li class="list-group-item list-group-item-action">Dew point: {{dewPoint | number:'.0-0'}} °C</li>
+          <li class="list-group-item list-group-item-action">
+            Dew point: {{dewPoint | number:'.0-0'}} °C
+            <button type="button" class="btn btn-sm btn-light ml-1" (click)="changeDewPoint()">
+              Recalculate
+            </button>
+          </li>
+          <!-- <li class="list-group-item list-group-item-action" *ngIf="editDewPoint">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon3">Dew Point: </span>
+              </div>
+              <input #dewPoint type="text" class="form-control" 
+                (change)="onDewPointChanged(dewPoint.value)">
+              <div class="input-group-append">
+                <span class="input-group-text">°C</span>
+              </div>
+            </div>
+          </li> -->
           <li class="list-group-item list-group-item-action">Cloudiness: {{cloudiness*100 | number:'.0-0'}}%</li>
           <li class="list-group-item list-group-item-action">
             Conditions: {{conditions}}
-<!--             <button class="btn btn-dark btn-sm">Rain</button> -->
           </li>
 
         </ul>
@@ -174,8 +190,10 @@
             {{breathCondensation | number: '.0-2'}}</li>
           <li *ngIf="snowProbability > 0 && rainIntensity >=1" class="list-group-item list-group-item-action">Snow Probability:
               {{snowProbability | percent}}</li>
-          <li *ngIf="rainIntensity >= 1" class="list-group-item list-group-item-action">Rain intensity:
-            {{rainIntensity | number: '.0-1'}}</li>
+          <li *ngIf="rainIntensity >= 1" class="list-group-item list-group-item-action">
+            Rain intensity: {{rainIntensity | number: '.0-1'}}
+              <button class="btn btn-light btn-sm" (click)="onAdjustTemperatureClicked()">Adjust Temperature</button>
+          </li>
         </ul>
       </div>
     </div>
