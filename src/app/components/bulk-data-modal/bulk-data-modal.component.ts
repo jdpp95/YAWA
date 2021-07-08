@@ -32,7 +32,6 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
 
   @Input() UTC: number;
   @Input() coords: string;
-  @Input() darkSkyKey: string;
   @Input() date: Date;
 
   constructor(
@@ -81,9 +80,6 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
     let finalHour = parseInt(this.dataForm.value.finalHour);
 
     //Get data from main form
-    /*this.coords = this.locationForm.value.coords;
-    this.UTC = parseInt(this.locationForm.value.UTC);*/
-
     let initTime = initDate + (initHour - this.UTC) * HOUR;
     let finalTime = finalDate + (finalHour - this.UTC) * HOUR;
     let time = initTime;
@@ -105,7 +101,7 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
       }
     }
 
-    let listOfResults = this._darkSky.getWeatherInBulk(this.coords, listOfTimestamps, this.darkSkyKey)
+    let listOfResults = this._darkSky.getWeatherInBulk(this.coords, listOfTimestamps)
 
     forkJoin(listOfResults).subscribe(
       results => {
