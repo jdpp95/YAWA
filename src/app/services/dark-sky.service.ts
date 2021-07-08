@@ -20,6 +20,7 @@ export class DarkSkyService {
     let listOfResults: Observable<any>[] = []
 
     for (let timestamp of listOfTimestamps) {
+      timestamp = Math.floor(timestamp);
       let url = `${this.darkSkyUrl}?coords=${coords}&timestamp=${timestamp}`;
 
       let result = this.http.get(url);
