@@ -124,6 +124,10 @@ export class AppComponent implements OnInit {
     this.now = true;
     this.UTC = -5;
 
+    const initDate = moment().utc();
+    initDate.startOf('day');
+    this.onDateChange(initDate.format())
+
     this.locationForm = new FormGroup({
       'coords': new FormControl('', [
         Validators.required
@@ -131,7 +135,7 @@ export class AppComponent implements OnInit {
 
       'now': new FormControl(true, []),
 
-      'myDatepicker': new FormControl(moment()),
+      'myDatepicker': new FormControl(initDate),
 
       'hour': new FormControl('0', []),
 
