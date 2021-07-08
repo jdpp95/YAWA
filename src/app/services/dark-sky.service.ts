@@ -33,9 +33,9 @@ export class DarkSkyService {
     return listOfResults;
   }
 
-  getWeather(coords: string, now: boolean, date: Date, apiKey: string) {
+  getWeather(coords: string, now: boolean, date: Date, utc: string) {
 
-    const formattedDate = this.datePipe.transform(date, 'yyyy-MM-ddTHH:mm:ss')
+    const formattedDate = this.datePipe.transform(date, `yyyy-MM-ddTHH:mm:ssZZZZZ`, utc)
 
     let url = `${this.darkSkyUrl}?coords=${coords}`;
 

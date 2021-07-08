@@ -206,7 +206,7 @@ export class AppComponent implements OnInit {
   }
 
   getWeather() {
-    this._darkSky.getWeather(this.coords, this.now, this.date, this.darkSkyKey).subscribe(
+    this._darkSky.getWeather(this.coords, this.now, this.date, this.UTC.toString()).subscribe(
       response => {
         this.temperature = response.currently.temperature - this.coronavirus;
         if (!this.now) {
