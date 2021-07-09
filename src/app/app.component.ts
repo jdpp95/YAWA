@@ -53,8 +53,6 @@ export const MY_FORMATS = {
 export class AppComponent implements OnInit {
   title = 'YAWA';
 
-  darkSkyKey: string;
-
   //Forms and fields
   coords: string;
   now: boolean;
@@ -105,13 +103,6 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.activeRoute.queryParams.subscribe(
       response => {
-        this.darkSkyKey = response["darkSkyKey"];
-        //console.log("darkSkyKey: " + this.darkSkyKey)
-        if (!this.darkSkyKey) {
-          this.darkSkyKey = JSON.parse(localStorage.getItem("darkSkyKey"));
-        } else {
-          localStorage.setItem("darkSkyKey", JSON.stringify(this.darkSkyKey))
-        }
 
         let population: number = response["pop"];
         if(!population){
@@ -133,6 +124,10 @@ export class AppComponent implements OnInit {
     this.now = true;
     this.UTC = -5;
 
+    const initDate = moment().utc();
+    initDate.startOf('day');
+    this.onDateChange(initDate.format())
+
     this.locationForm = new FormGroup({
       'coords': new FormControl('', [
         Validators.required
@@ -140,7 +135,7 @@ export class AppComponent implements OnInit {
 
       'now': new FormControl(true, []),
 
-      'myDatepicker': new FormControl(moment()),
+      'myDatepicker': new FormControl(initDate),
 
       'hour': new FormControl('0', []),
 
@@ -150,16 +145,22 @@ export class AppComponent implements OnInit {
     });
   }
 
-  update() {
+  syncDateWithUTC(){
     //Read and set time data
     const MINUTES = 60;
     const HOUR = MINUTES * 60;
-    const DAY = HOUR * 24;
+
     let hours = this.locationForm.value.hour;
     let minutes = this.locationForm.value.minute;
     this.UTC = parseInt(this.locationForm.value.UTC);
+
     this.date = new Date(this.locationForm.value.myDatepicker);
     this.date.setTime(this.date.getTime() - this.UTC * HOUR * 1000 + hours * HOUR * 1000 + minutes * MINUTES * 1000);
+  }
+
+  update() {
+    //Read and set time data
+    this.syncDateWithUTC();
     
     this.loading = true;
 
@@ -206,7 +207,7 @@ export class AppComponent implements OnInit {
   }
 
   getWeather() {
-    this._darkSky.getWeather(this.coords, this.now, this.date, this.darkSkyKey).subscribe(
+    this._darkSky.getWeather(this.coords, this.now, this.date, this.UTC.toString()).subscribe(
       response => {
         this.temperature = response.currently.temperature - this.coronavirus;
         if (!this.now) {

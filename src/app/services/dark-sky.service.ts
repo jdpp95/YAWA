@@ -1,29 +1,27 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { HttpClient } from '@angular/common/http'
 import { map } from 'rxjs/operators'
-import { environment } from './../../environments/environment'
-import { Observable, forkJoin } from 'rxjs';
-import { Observation } from '../models/observation.model';
+import { Observable } from 'rxjs';
+import { DatePipe } from '@angular/common'
+import { environment as env } from './../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DarkSkyService {
 
-  proxyServer: string = "https://yawa-cors-anywhere.herokuapp.com/"
-  //proxyServer: string = "";
-  darkSkyUrl: string = "https://api.darksky.net/forecast/";
+  darkSkyUrl: string = env.backendUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private datePipe: DatePipe) { }
 
   //Calls the API multiple times and returns a list of observables, one per call.
-  getWeatherInBulk(coords: string, listOfTimestamps: number[], apiKey: string) {
+  getWeatherInBulk(coords: string, listOfTimestamps: number[]) {
 
     let listOfResults: Observable<any>[] = []
 
     for (let timestamp of listOfTimestamps) {
-      let url = this.proxyServer + this.darkSkyUrl + apiKey + "/"
-        + coords.replace(" ", "") + "," + timestamp + "?units=si";
+      timestamp = Math.floor(timestamp);
+      let url = `${this.darkSkyUrl}?coords=${coords}&timestamp=${timestamp}`;
 
       let result = this.http.get(url);
       listOfResults.push(result);
@@ -32,16 +30,15 @@ export class DarkSkyService {
     return listOfResults;
   }
 
-  getWeather(coords: string, now: boolean, date: Date, apiKey: string) {
+  getWeather(coords: string, now: boolean, date: Date, utc: string) {
 
-    let timestamp = Math.round(date.getTime() / 1000);
-    let url = this.proxyServer + this.darkSkyUrl + apiKey + "/" + coords;
+    const formattedDate = this.datePipe.transform(date, `yyyy-MM-ddTHH:mm:ssZZZZZ`, utc)
 
-    if (!now) {
-      url += "," + timestamp;
+    let url = `${this.darkSkyUrl}?coords=${coords}`;
+
+    if(!now){
+      url += `&time=${formattedDate}`;
     }
-
-    url += "?units=si"
 
     return this.http.get(url).pipe(map(
       (data: any) => {
