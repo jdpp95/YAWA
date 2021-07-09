@@ -37,16 +37,7 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
   constructor(
     private _darkSky: DarkSkyService,
     public tUtils: TutilsModule
-  ) { }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if(this.dataForm && changes.date){
-      this.dataForm.controls['initDate'].setValue(this.date);
-      this.dataForm.controls['finalDate'].setValue(this.date);
-    }
-  }
-
-  ngOnInit(): void {
+  ) { 
     this.dataForm = new FormGroup({
       'initDate': new FormControl(moment()),
 
@@ -56,6 +47,21 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
 
       'finalHour': new FormControl('0', []),
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes.date){
+      const hour = this.date.getUTCHours();
+      const minutes = this.date.getUTCMinutes();
+
+      if(hour === 0 && minutes === 0){
+        this.dataForm.controls['initDate'].setValue(this.date);
+        this.dataForm.controls['finalDate'].setValue(this.date);
+      }
+    }
+  }
+
+  ngOnInit(): void {
 
     //this.range$ = range(24);
   }

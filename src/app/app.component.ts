@@ -145,16 +145,22 @@ export class AppComponent implements OnInit {
     });
   }
 
-  update() {
+  syncDateWithUTC(){
     //Read and set time data
     const MINUTES = 60;
     const HOUR = MINUTES * 60;
-    const DAY = HOUR * 24;
+
     let hours = this.locationForm.value.hour;
     let minutes = this.locationForm.value.minute;
     this.UTC = parseInt(this.locationForm.value.UTC);
+
     this.date = new Date(this.locationForm.value.myDatepicker);
     this.date.setTime(this.date.getTime() - this.UTC * HOUR * 1000 + hours * HOUR * 1000 + minutes * MINUTES * 1000);
+  }
+
+  update() {
+    //Read and set time data
+    this.syncDateWithUTC();
     
     this.loading = true;
 
