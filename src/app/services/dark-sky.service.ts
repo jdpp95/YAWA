@@ -3,14 +3,14 @@ import { HttpClient } from '@angular/common/http'
 import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs';
 import { DatePipe } from '@angular/common'
+import { environment as env } from './../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DarkSkyService {
 
-  proxyServer: string = "https://yawa-cors-anywhere.herokuapp.com/"
-  darkSkyUrl: string = "http://localhost:8080"
+  darkSkyUrl: string = env.backendUrl;
 
   constructor(private http: HttpClient, private datePipe: DatePipe) { }
 
