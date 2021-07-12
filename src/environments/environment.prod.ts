@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  backendUrl: "https://yawa-backend.herokuapp.com"
+  backendUrl: "https://yawa-backend.herokuapp.com",
+  darkSkyPath: '/darkSky'
 };

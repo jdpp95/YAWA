@@ -11,6 +11,7 @@ import { environment as env } from './../../environments/environment';
 export class DarkSkyService {
 
   darkSkyUrl: string = env.backendUrl;
+  darkSkyPath: string = env.darkSkyPath;
 
   constructor(private http: HttpClient, private datePipe: DatePipe) { }
 
@@ -21,7 +22,7 @@ export class DarkSkyService {
 
     for (let timestamp of listOfTimestamps) {
       timestamp = Math.floor(timestamp);
-      let url = `${this.darkSkyUrl}?coords=${coords}&timestamp=${timestamp}`;
+      let url = `${this.darkSkyUrl}${this.darkSkyPath}?coords=${coords}&timestamp=${timestamp}`;
 
       let result = this.http.get(url);
       listOfResults.push(result);
@@ -34,7 +35,7 @@ export class DarkSkyService {
 
     const formattedDate = this.datePipe.transform(date, `yyyy-MM-ddTHH:mm:ssZZZZZ`, utc)
 
-    let url = `${this.darkSkyUrl}?coords=${coords}`;
+    let url = `${this.darkSkyUrl}${this.darkSkyPath}?coords=${coords}`;
 
     if(!now){
       url += `&time=${formattedDate}`;
