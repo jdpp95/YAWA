@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   backendUrl: "http://localhost:8080",
-  darkSkyPath: '/darkSky'
+  darkSkyPath: '/darkSky',
+  mapboxPath: '/mapbox'
 };
 
 /*
