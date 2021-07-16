@@ -239,6 +239,8 @@ export class AppComponent implements OnInit {
           this.apparentT = response.currently.apparentTemperature - this.coronavirus;
         }
 
+        this.displayRainData(response.daily.data[0]);
+
         this.updateBackgroundColor();
         this.loading = false;
         this.loadingFailed = false;
@@ -358,5 +360,16 @@ export class AppComponent implements OnInit {
 
     this.temperature = this.tUtils.temperatureFromDewP(this.dewPoint, this.humidity);
     this.onTemperatureChanged();
+  }
+
+  displayRainData(dailyData){
+    console.log(dailyData)
+
+    const maxPrecipitation = parseFloat(dailyData.precipIntensityMax).toFixed(1);
+    //const maxPrecipTime = new Date(dailyData.precipIntensityMaxTime * 1000);
+    const maxPrecipTime = moment.unix(dailyData.precipIntensityMaxTime).format("YYYY-MM-DD HH:mm")
+
+    console.log(`Max precip intensity: ${maxPrecipitation}`);
+    console.log(`Max precip time: ${maxPrecipTime}`);
   }
 }
