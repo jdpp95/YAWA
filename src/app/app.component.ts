@@ -253,8 +253,8 @@ export class AppComponent implements OnInit {
   }
 
   private updateBackgroundColor() {
-    let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.cloudiness, this.rainIntensity, 10));
-    let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.cloudiness, 0, this.visibility));
+    let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.cloudiness, 0, 10));
+    let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.cloudiness, this.rainIntensity, this.visibility));
 
     let gradient = "linear-gradient(" + color1 + ", " + color2 + ")";
 
