@@ -12,7 +12,7 @@
           <div class="container-fluid">
             <form [formGroup]="dataForm" (ngSubmit)="onSubmitBulkData()">
               <div class="row">
-                <div class="col-sm-8 mb-3">
+                <div class="col mb-3">
                   <h6>Initial time</h6>
 
                   <div class="input-group mb-3">
@@ -62,7 +62,7 @@
                     Bulk data is only available for periods shorter than 4 days!
                   </div>
                 </div>
-                <div class="col-sm-4 border border-secondary p-3">
+                <div class="col-sm-4 border border-secondary p-3 fitContent">
 
                   <div class="btn-group-toggle mb-3">
                     <label class="btn btn-dark">
@@ -77,12 +77,14 @@
                       <tr>
                         <th *ngIf="displayTimeCol">Time</th>
                         <th>Temperature</th>
+                        <th *ngIf="displayTimeCol">Cloudiness</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr *ngFor="let observation of observations">
                         <td *ngIf="displayTimeCol">{{ observation.time | date:'dd/MMM HH:mm':'GMT' }}</td>
-                        <td>{{ observation.temperature | number:'1.1-1' | commaDecimal}}</td>
+                        <td>{{ observation.temperature | number:'1.1-1' | commaDecimal }}</td>
+                        <td *ngIf="displayTimeCol">{{ observation.cloudiness | percent }}</td>
                       </tr>
                     </tbody>
                   </table>

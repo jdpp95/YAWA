@@ -120,6 +120,7 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
             observation.timestamp = jsonObservation.time;
             observation.time = new Date((jsonObservation.time + HOUR * this.UTC) * 1000);
             observation.temperature = jsonObservation.temperature + Math.random() - 0.5;
+            observation.cloudiness = jsonObservation.cloudCover;
 
             if (jsonObservation.time >= initTime && jsonObservation.time <= finalTime) {
               this.observations.push(observation);
