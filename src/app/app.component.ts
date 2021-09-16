@@ -355,10 +355,20 @@ export class AppComponent implements OnInit {
   onAdjustTemperatureClicked(){
     this.changeDewPoint();
 
-    this.humidity = Math.min(1, this.humidity + (this.rainIntensity - 1)/10);
-    this.onHumidityChanged(false);
+    if(this.humidity < 0.9){
+      const MAX_HUMIDITY = 0.9;
 
+      const rDiff = Math.max(MAX_HUMIDITY - this.humidity, 0);
+      const hDiff = rDiff/Math.max(this.rainIntensity, 1);
+      this.humidity = MAX_HUMIDITY - hDiff;
+    }
+
+    if(this.humidity < 0.7){
+      this.rainIntensity -= (0.7 - this.humidity);
+    }
+    
     this.temperature = this.tUtils.temperatureFromDewP(this.dewPoint, this.humidity);
+    this.onHumidityChanged(false);
     this.onTemperatureChanged();
   }
 
