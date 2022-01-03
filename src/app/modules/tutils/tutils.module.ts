@@ -63,7 +63,7 @@ export class TutilsModule {
     return (f - 32) * (5 / 9);
   }
 
-  colorT(t: number, cloudiness: number, rainIntensity: number, visibility: number) {
+  colorT(t: number, cloudiness: number, rainIntensity: number, visibility: number, sunAngle: number) {
     if(!cloudiness){
       cloudiness = 0;
     }
@@ -101,6 +101,12 @@ export class TutilsModule {
       lum = Math.max(150 - t, 10);
     } else {
       lum = 50;
+    }
+
+    if (sunAngle <= -12){
+        lum *= 0.3;
+    } else if (sunAngle > -12 && sunAngle < 0){
+        lum *= this.transicion(0.3, 1, -12, 0, sunAngle);
     }
 
     if (t <= 0) hue = 270;

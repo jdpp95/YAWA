@@ -16,13 +16,13 @@ export class DarkSkyService {
   constructor(private http: HttpClient, private datePipe: DatePipe) { }
 
   //Calls the API multiple times and returns a list of observables, one per call.
-  getWeatherInBulk(coords: string, listOfTimestamps: number[]) {
+  getWeatherInBulk(coords: string, listOfTimestamps: number[], utc: number) {
 
     let listOfResults: Observable<any>[] = []
 
     for (let timestamp of listOfTimestamps) {
       timestamp = Math.floor(timestamp);
-      let url = `${this.backendURL}${this.darkSkyPath}?coords=${coords}&timestamp=${timestamp}`;
+      let url = `${this.backendURL}${this.darkSkyPath}?coords=${coords}&timestamp=${timestamp}&utc=${utc}`;
 
       let result = this.http.get(url);
       listOfResults.push(result);
@@ -35,7 +35,7 @@ export class DarkSkyService {
 
     const formattedDate = this.datePipe.transform(date, `yyyy-MM-ddTHH:mm:ssZZZZZ`, utc)
 
-    let url = `${this.backendURL}${this.darkSkyPath}?coords=${coords}`;
+    let url = `${this.backendURL}${this.darkSkyPath}?coords=${coords}&utc=${utc}`;
 
     if(!now){
       url += `&time=${formattedDate}`;

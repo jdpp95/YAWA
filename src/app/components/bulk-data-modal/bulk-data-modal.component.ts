@@ -107,7 +107,7 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
       }
     }
 
-    let listOfResults = this._darkSky.getWeatherInBulk(this.coords, listOfTimestamps)
+    let listOfResults = this._darkSky.getWeatherInBulk(this.coords, listOfTimestamps, this.UTC)
 
     forkJoin(listOfResults).subscribe(
       results => {
