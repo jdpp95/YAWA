@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
@@ -18,6 +18,7 @@ import * as _moment from 'moment';
 //Pipes
 import { DatePipe, PercentPipe } from '@angular/common';
 import { MapboxService } from './services/mapbox.service';
+import { TempGradientComponent } from './components/temp-gradient/temp-gradient.component';
 
 const moment = _moment;
 
@@ -85,10 +86,12 @@ export class AppComponent implements OnInit {
   loading: boolean = false;
   loadingFailed: boolean = false;
   editHumidity: boolean = false;
-  //editDewPoint: boolean = false;
   locationEnabled: boolean = false;
   displayMinMax: boolean = false;
-  //isRaining: boolean = false;
+
+  //Children components
+  @ViewChild(TempGradientComponent)
+  gradientComponent: TempGradientComponent;
 
   constructor(
     private _darkSky: DarkSkyService,
@@ -241,6 +244,7 @@ export class AppComponent implements OnInit {
 
         this.displayRainData(response.daily.data[0]);
 
+        this.gradientComponent.update(response?.hourly?.data);
         this.updateBackgroundColor();
         this.loading = false;
         this.loadingFailed = false;
@@ -373,10 +377,7 @@ export class AppComponent implements OnInit {
   }
 
   displayRainData(dailyData){
-    console.log(dailyData)
-
     const maxPrecipitation = parseFloat(dailyData.precipIntensityMax).toFixed(1);
-    //const maxPrecipTime = new Date(dailyData.precipIntensityMaxTime * 1000);
     const maxPrecipTime = moment.unix(dailyData.precipIntensityMaxTime).format("YYYY-MM-DD HH:mm")
 
     console.log(`Max precip intensity: ${maxPrecipitation}`);

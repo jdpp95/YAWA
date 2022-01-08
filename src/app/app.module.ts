@@ -17,12 +17,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { DatePipe, PercentPipe } from '@angular/common';
 import { CommaDecimalPipe } from './pipes/comma-decimal.pipe';
 import { BulkDataModalComponent } from './components/bulk-data-modal/bulk-data-modal.component';
+import { TempGradientComponent } from './components/temp-gradient/temp-gradient.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CommaDecimalPipe,
-    BulkDataModalComponent
+    BulkDataModalComponent,
+    TempGradientComponent
   ],
   imports: [
     BrowserModule,

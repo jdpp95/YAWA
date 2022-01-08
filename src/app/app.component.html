@@ -19,7 +19,7 @@
           <a 
             class="btn btn-sm btn-secondary mr-2 mb-2" 
             data-toggle="modal" 
-            data-target="#exampleModal" 
+            data-target="#bulkDataModal" 
             href="#">
               Get bulk data
           </a>
@@ -31,6 +31,15 @@
             [ngClass]="{'btn-info': displayMinMax}"
           >
             Display min/max
+          </button>
+        </li>
+        <li>
+          <button
+            class="btn btn-sm btn-secondary mr-2"
+            data-toggle="modal" 
+            data-target="#gradientModal"
+            >
+              Display gradient
           </button>
         </li>
       </ul>
@@ -46,6 +55,14 @@
     [date]="date"
     >
   </app-bulk-data-modal>
+
+  <temp-gradient
+    [hourlyData]="response?.hourly?.data"
+    [UTC]="UTC"
+    [coronavirus]="coronavirus"
+  >
+    
+  </temp-gradient>
 
   <div class="container mt-4">
     <div class="row">
