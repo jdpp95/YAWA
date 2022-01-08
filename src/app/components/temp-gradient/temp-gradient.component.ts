@@ -1,6 +1,6 @@
-import { NgIf } from '@angular/common';
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { TutilsModule } from 'src/app/modules/tutils/tutils.module';
+import { environment as env } from './../../../environments/environment';
 
 @Component({
   selector: 'temp-gradient',
@@ -27,19 +27,27 @@ export class TempGradientComponent {
     this.hourlyData.forEach(item => {
       let weatherItem: WeatherItem = new WeatherItem;
 
+      // Set time
       let time = new Date(item.time * 1000);
       let localHours = (time.getUTCHours() + 24 + this.UTC) % 24;
 
+      // Set clouds
       let clouds = item.cloudCover
       let precipIntensity = item.precipIntensity;
       if(precipIntensity && precipIntensity >= 1){
         clouds = Math.min(2.5, 1 + precipIntensity/4);
+        
       }
 
       weatherItem.time = localHours;
       weatherItem.temperature = item.temperature - this.coronavirus;
       weatherItem.sunAngle = item.sunAngle;
       weatherItem.clouds = clouds;
+
+      // Restraint
+      if(weatherItem.temperature > env.maxTemp){
+        weatherItem.clouds = 10;
+      }
       
       weatherData.push(weatherItem);
     })
