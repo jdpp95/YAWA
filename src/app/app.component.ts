@@ -75,6 +75,7 @@ export class AppComponent implements OnInit {
   windSpeed: number;
   rainIntensity: number;
   minDP: number;
+  sunAngle: number;
 
   //Computed data
   snowProbability: number;
@@ -233,6 +234,8 @@ export class AppComponent implements OnInit {
         this.windSpeed = response.currently.windSpeed;
         this.visibility = response.currently.visibility;
         this.rainIntensity = response.currently.precipIntensity;
+        
+        this.sunAngle = response.sunAngle;
 
         this.breathCondensation = this.tUtils.breathCondensation(this.temperature, this.humidity);
 
@@ -257,8 +260,8 @@ export class AppComponent implements OnInit {
   }
 
   private updateBackgroundColor() {
-    let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.cloudiness, 0, 10));
-    let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.cloudiness, this.rainIntensity, this.visibility));
+    let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.cloudiness, 0, 10, this.sunAngle));
+    let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.cloudiness, this.rainIntensity, this.visibility, this.sunAngle));
 
     let gradient = "linear-gradient(" + color1 + ", " + color2 + ")";
 
