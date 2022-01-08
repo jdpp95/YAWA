@@ -50,19 +50,20 @@ export class TempGradientComponent {
   setColors(weatherData: WeatherItem[]) {
     let tempGradient = document.getElementById("tempGradient");
     let style = "";
+    console.log(weatherData);
 
     if (weatherData.length == 1) {
-      style = this.tUtils.formatHSL(this.tUtils.colorT(weatherData[0]['temperature'], weatherData[0]['clouds'], 0, 10));
+      style = this.tUtils.formatHSL(this.tUtils.colorT(weatherData[0]['temperature'], weatherData[0]['clouds'], 0, 10, weatherData[0]['sunAngle']));
     } else {
       style = "linear-gradient(90deg, ";
 
       for (let i = 0; i < 24; i++) {
-        let hourlyWeather = weatherData[i];
+        let hourlyWeather: WeatherItem = weatherData[i];
 
         let position = Math.round(100 * i / 24);
 
         if (weatherData[i]) {
-          style += `${this.tUtils.formatHSL(this.tUtils.colorT(hourlyWeather.temperature, hourlyWeather.clouds, 0, 10))} ${position}%, `;
+          style += `${this.tUtils.formatHSL(this.tUtils.colorT(hourlyWeather.temperature, hourlyWeather.clouds, 0, 10, hourlyWeather.sunAngle))} ${position}%, `;
         }
 
         if (i == 23) {
