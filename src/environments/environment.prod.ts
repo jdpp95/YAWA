@@ -3,5 +3,5 @@ export const environment = {
   backendUrl: "https://yawa-backend.herokuapp.com",
   darkSkyPath: '/darkSky',
   mapboxPath: '/mapbox',
-  maxTemp: 13,
+  maxTemp: 21,
 };
