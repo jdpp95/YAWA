@@ -246,7 +246,7 @@ export class AppComponent implements OnInit {
 
         this.breathCondensation = this.tUtils.breathCondensation(this.temperature, this.humidity);
 
-        if(this.coronavirus > 0){
+        if(this.coronavirus > 0 || this.elevation > 0){
           this.computeApparentTemperature();
         } else {
           this.apparentT = response.currently.apparentTemperature - this.coronavirus - this.elevation/180;
