@@ -7,7 +7,7 @@ export const environment = {
   backendUrl: "http://localhost:8080",
   darkSkyPath: '/darkSky',
   mapboxPath: '/mapbox',
-  maxTemp: 5,
+  maxTemp: 26,
 };
 
 /*
