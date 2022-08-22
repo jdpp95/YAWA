@@ -124,12 +124,13 @@ export class AppComponent implements OnInit {
         if (!this.coronavirus || this.coronavirus < 0) {
           this.coronavirus = 0;
         }
+        
+        this.elevation = response["elevation"];
 
         if(!this.elevation || this.elevation < 0) {
           this.elevation = 0;
         }
 
-        this.elevation = response["elevation"];
       }
     )
     this.now = true;
