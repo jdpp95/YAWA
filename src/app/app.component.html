@@ -34,6 +34,15 @@
           </button>
         </li>
         <li>
+          <button 
+            class="btn btn-sm btn-secondary mr-2" 
+            (click)="displayAverageTempClicked()"
+            [ngClass]="{'btn-info': displayAverageTemp}"
+          >
+            Display daily average temperature
+          </button>
+        </li>
+        <li>
           <button
             class="btn btn-sm btn-secondary mr-2"
             data-toggle="modal" 
@@ -152,6 +161,9 @@
           <li *ngIf="displayMinMax" class="list-group-item list-group-item-action">
             Min: {{min | number:'.0-0'}} °C / 
             Max: {{max | number:'.0-0'}} °C
+          </li>
+          <li *ngIf="displayAverageTemp" class="list-group-item list-group-item-action">
+            Average temperature {{averageTemperature | number: '.0-1'}} °C
           </li>
           <li class="list-group-item list-group-item-action" *ngIf="!editHumidity">
             Humidity: {{humidity*100 | number:'.0-0'}}%
