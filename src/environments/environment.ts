@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  backendUrl: "http://localhost:8080",
+  backendUrl: "https://yawa-backend.fly.dev",
   darkSkyPath: '/darkSky',
   mapboxPath: '/mapbox',
   maxTemp: 26,
