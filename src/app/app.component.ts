@@ -129,7 +129,7 @@ export class AppComponent implements OnInit {
 
         this.elevation = response["elevation"];
 
-        if (!this.elevation || this.elevation < 0) {
+        if (!this.elevation || this.elevation === 0) {
           this.elevation = 0;
         }
 
