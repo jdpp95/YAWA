@@ -24,9 +24,14 @@ export class TempGradientComponent {
     public tUtils: TutilsModule,
   ) { }
 
-  update(hourlyData: any[]){
+  update(hourlyData: any[]) {
     this.hourlyData = hourlyData;
     let weatherData: WeatherItem[] = [];
+
+    if (!hourlyData) {
+      return;
+    }
+
     this.hourlyData.forEach(item => {
       let weatherItem: WeatherItem = new WeatherItem;
 
@@ -37,21 +42,21 @@ export class TempGradientComponent {
       // Set clouds
       let clouds = item.cloudCover
       let precipIntensity = item.precipIntensity;
-      if(precipIntensity && precipIntensity >= 1){
-        clouds = Math.min(2.5, 1 + precipIntensity/4);
-        
+      if (precipIntensity && precipIntensity >= 1) {
+        clouds = Math.min(2.5, 1 + precipIntensity / 4);
+
       }
 
       weatherItem.time = localHours;
-      weatherItem.temperature = item.temperature - this.coronavirus - this.elevation/180;
+      weatherItem.temperature = item.temperature - this.coronavirus - this.elevation / 180;
       weatherItem.sunAngle = item.sunAngle;
       weatherItem.clouds = clouds;
 
       // Restraint
-      if(weatherItem.temperature > env.maxTemp){
+      if (weatherItem.temperature > env.maxTemp) {
         weatherItem.clouds = 10;
       }
-      
+
       weatherData.push(weatherItem);
     })
 
@@ -87,7 +92,7 @@ export class TempGradientComponent {
   }
 }
 
-class WeatherItem{
+class WeatherItem {
   time: number;
   temperature: number;
   sunAngle: number;

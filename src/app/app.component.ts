@@ -76,6 +76,7 @@ export class AppComponent implements OnInit {
   rainIntensity: number;
   minDP: number;
   sunAngle: number;
+  actualElevation: number;
 
   //Computed data
   snowProbability: number;
@@ -83,7 +84,7 @@ export class AppComponent implements OnInit {
   averageTemperature: number = 0;
 
   coronavirus: number;
-  elevation: number;
+  fakeElevation: number;
 
   //UI metadata
   loading: boolean = false;
@@ -127,10 +128,10 @@ export class AppComponent implements OnInit {
           this.coronavirus = 0;
         }
 
-        this.elevation = response["elevation"];
+        this.fakeElevation = response["elevation"];
 
-        if (!this.elevation || this.elevation === 0) {
-          this.elevation = 0;
+        if (!this.fakeElevation || this.fakeElevation === 0) {
+          this.fakeElevation = 0;
         }
 
       }
@@ -223,12 +224,12 @@ export class AppComponent implements OnInit {
   getWeather() {
     this._darkSky.getWeather(this.coords, this.now, this.date, this.UTC.toString()).subscribe(
       response => {
-        this.temperature = response.currently.temperature - this.coronavirus - this.elevation / 180;
+        this.temperature = response.currently.temperature - this.coronavirus - this.fakeElevation / 180;
         if (!this.now) {
           this.temperature += Math.random() - 0.5;
         }
-        this.min = response.daily.data[0].temperatureMin - this.coronavirus - this.elevation / 180;
-        this.max = response.daily.data[0].temperatureMax - this.coronavirus - this.elevation / 180;
+        this.min = response.daily.data[0].temperatureMin - this.coronavirus - this.fakeElevation / 180;
+        this.max = response.daily.data[0].temperatureMax - this.coronavirus - this.fakeElevation / 180;
 
         if (response.hourly?.data) {
           response.hourly.data.forEach(weatherItem => {
@@ -236,17 +237,20 @@ export class AppComponent implements OnInit {
           });
 
           this.averageTemperature /= response.hourly.data.length;
-          
-          this.averageTemperature - this.coronavirus - this.elevation / 180;
+
+          this.averageTemperature - this.coronavirus - this.fakeElevation / 180;
         }
 
         this.humidity = response.currently.humidity;
         this.editHumidity = false;
         //this.editDewPoint = false;
 
-        this.dewPoint = response.currently.dewPoint - this.coronavirus - this.elevation / 180;
-        let dewPoints = response.hourly.data.map(hour => hour.dewPoint);
-        this.minDP = Math.min(...dewPoints) - this.coronavirus - this.elevation / 180;
+        this.dewPoint = response.currently.dewPoint - this.coronavirus - this.fakeElevation / 180;
+        let dewPoints = response.hourly?.data.map(hour => hour.dewPoint);
+
+        if (dewPoints) {
+          this.minDP = Math.min(...dewPoints) - this.coronavirus - this.fakeElevation / 180;
+        }
 
         this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
 
@@ -260,10 +264,12 @@ export class AppComponent implements OnInit {
 
         this.breathCondensation = this.tUtils.breathCondensation(this.temperature, this.humidity);
 
-        if (this.coronavirus > 0 || this.elevation > 0) {
+        this.actualElevation = response.elevation;
+
+        if (this.coronavirus > 0 || this.fakeElevation > 0) {
           this.computeApparentTemperature();
         } else {
-          this.apparentT = response.currently.apparentTemperature - this.coronavirus - this.elevation / 180;
+          this.apparentT = response.currently.apparentTemperature - this.coronavirus - this.fakeElevation / 180;
         }
 
         this.displayRainData(response.daily.data[0]);
