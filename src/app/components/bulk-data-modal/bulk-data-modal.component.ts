@@ -4,7 +4,7 @@ import * as moment from 'moment';
 import { forkJoin } from 'rxjs';
 import { Observation } from 'src/app/models/observation.model';
 import { TutilsModule } from 'src/app/modules/tutils/tutils.module';
-import { DarkSkyService } from 'src/app/services/dark-sky.service';
+import { YawaBackendService } from 'src/app/services/dark-sky.service';
 
 @Component({
   selector: 'app-bulk-data-modal',
@@ -35,7 +35,7 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
   @Input() date: Date;
 
   constructor(
-    private _darkSky: DarkSkyService,
+    private _yawaBackend: YawaBackendService,
     public tUtils: TutilsModule
   ) { 
     this.dataForm = new FormGroup({
@@ -107,7 +107,7 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
       }
     }
 
-    let listOfResults = this._darkSky.getWeatherInBulk(this.coords, listOfTimestamps, this.UTC)
+    let listOfResults = this._yawaBackend.getWeatherInBulk(this.coords, listOfTimestamps, this.UTC)
 
     forkJoin(listOfResults).subscribe(
       results => {

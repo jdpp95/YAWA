@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  backendUrl: "https://yawa-backend.fly.dev",
-  darkSkyPath: '/openMeteo',
+  backendUrl: "http://localhost:8080",
+  openMeteoPath: '/openMeteo',
   mapboxPath: '/mapbox',
   maxTemp: 26,
 };
