@@ -6,6 +6,7 @@ export const environment = {
   production: false,
   backendUrl: "https://yawa-backend.fly.dev",
   darkSkyPath: '/darkSky',
+  openMeteoPath: '/openMeteo',
   mapboxPath: '/mapbox',
   maxTemp: 26,
 };

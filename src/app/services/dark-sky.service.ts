@@ -33,12 +33,14 @@ export class DarkSkyService {
 
   getWeather(coords: string, now: boolean, date: Date, utc: string) {
 
-    const formattedDate = this.datePipe.transform(date, `yyyy-MM-ddTHH:mm:ssZZZZZ`, utc)
+    let [lat, long] = coords.split(",");
 
-    let url = `${this.backendURL}${this.darkSkyPath}?coords=${coords}&utc=${utc}`;
+    let url = `${this.backendURL}${this.darkSkyPath}?lat=${lat}&long=${Number(long)}&utc=${utc}`;
 
-    if(!now){
-      url += `&time=${formattedDate}`;
+    let unixTime = Math.floor(Number(date));
+
+    if (!now) {
+      url += `&timestamp=${unixTime / 1000}`;
     }
 
     return this.http.get(url).pipe(map(
