@@ -8,10 +8,10 @@ import { environment as env } from './../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class DarkSkyService {
+export class YawaBackendService {
 
   backendURL: string = env.backendUrl;
-  darkSkyPath: string = env.darkSkyPath;
+  yawaBackendPath: string = env.openMeteoPath;
 
   constructor(private http: HttpClient, private datePipe: DatePipe) { }
 
@@ -22,7 +22,7 @@ export class DarkSkyService {
 
     for (let timestamp of listOfTimestamps) {
       timestamp = Math.floor(timestamp);
-      let url = `${this.backendURL}${this.darkSkyPath}?coords=${coords}&timestamp=${timestamp}&utc=${utc}`;
+      let url = `${this.backendURL}${this.yawaBackendPath}?coords=${coords}&timestamp=${timestamp}&utc=${utc}`;
 
       let result = this.http.get(url);
       listOfResults.push(result);
@@ -35,7 +35,7 @@ export class DarkSkyService {
 
     let [lat, long] = coords.split(",");
 
-    let url = `${this.backendURL}${this.darkSkyPath}?lat=${lat}&long=${Number(long)}&utc=${utc}`;
+    let url = `${this.backendURL}${this.yawaBackendPath}?lat=${lat}&long=${Number(long)}&utc=${utc}`;
 
     let unixTime = Math.floor(Number(date));
 

@@ -3,7 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
 //Services
-import { DarkSkyService } from 'src/app/services/dark-sky.service';
+import { YawaBackendService } from 'src/app/services/dark-sky.service';
 
 //Internal modules
 import { TutilsModule } from './modules/tutils/tutils.module';
@@ -99,7 +99,7 @@ export class AppComponent implements OnInit {
   gradientComponent: TempGradientComponent;
 
   constructor(
-    private _darkSky: DarkSkyService,
+    private _yawaBackend: YawaBackendService,
     private activeRoute: ActivatedRoute,
     private _mapbox: MapboxService,
     public tUtils: TutilsModule,
@@ -222,7 +222,7 @@ export class AppComponent implements OnInit {
   }
 
   getWeather() {
-    this._darkSky.getWeather(this.coords, this.now, this.date, this.UTC.toString()).subscribe(
+    this._yawaBackend.getWeather(this.coords, this.now, this.date, this.UTC.toString()).subscribe(
       response => {
         this.temperature = response.currently.temperature - this.coronavirus - this.fakeElevation / 180;
         if (!this.now) {
