@@ -16,19 +16,14 @@ export class YawaBackendService {
   constructor(private http: HttpClient, private datePipe: DatePipe) { }
 
   //Calls the API multiple times and returns a list of observables, one per call.
-  getWeatherInBulk(coords: string, listOfTimestamps: number[], utc: number) {
+  getWeatherInBulk(coords: string, initTime: number, endTime: number, utc: number) {
 
-    let listOfResults: Observable<any>[] = []
+    let [lat, long] = coords.split(",");
+    let url = `${this.backendURL}${this.yawaBackendPath}?lat=${lat}&long=${Number(long)}&start_timestamp=${initTime}&end_timestamp=${endTime}&utc=${utc}`;
 
-    for (let timestamp of listOfTimestamps) {
-      timestamp = Math.floor(timestamp);
-      let url = `${this.backendURL}${this.yawaBackendPath}?coords=${coords}&timestamp=${timestamp}&utc=${utc}`;
+    let result = this.http.get(url);
 
-      let result = this.http.get(url);
-      listOfResults.push(result);
-    }
-
-    return listOfResults;
+    return result;
   }
 
   getWeather(coords: string, now: boolean, date: Date, utc: string) {

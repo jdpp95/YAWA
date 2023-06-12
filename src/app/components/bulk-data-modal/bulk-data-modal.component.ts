@@ -37,7 +37,7 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
   constructor(
     private _yawaBackend: YawaBackendService,
     public tUtils: TutilsModule
-  ) { 
+  ) {
     this.dataForm = new FormGroup({
       'initDate': new FormControl(moment()),
 
@@ -50,11 +50,11 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes.date){
+    if (changes.date) {
       const hour = this.date.getUTCHours();
       const minutes = this.date.getUTCMinutes();
 
-      if(hour === 0 && minutes === 0){
+      if (hour === 0 && minutes === 0) {
         this.dataForm.controls['initDate'].setValue(this.date);
         this.dataForm.controls['finalDate'].setValue(this.date);
       }
@@ -73,7 +73,6 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
   onSubmitBulkData() {
     this.loading = true;
 
-    let listOfTimestamps = [];
     const HOUR = 60 * 60;
     const DAY = HOUR * 24;
 
@@ -88,43 +87,30 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
     //Get data from main form
     let initTime = initDate + (initHour - this.UTC) * HOUR;
     let finalTime = finalDate + (finalHour - this.UTC) * HOUR;
-    let time = initTime;
-
-    let dayStart = time - (time + this.UTC * HOUR) % DAY;
-    let dayEnd = dayStart + DAY;
 
     this.observations = []
 
-    listOfTimestamps.push(time);
-    while (!(finalTime >= dayStart && finalTime < dayEnd)) {
-      dayStart += DAY;
-      time += DAY;
-      dayEnd += DAY;
-      listOfTimestamps.push(time);
-      if (listOfTimestamps.length > 4) {
-        this.invalidData = true;
-        return;
-      }
+    if (finalTime / DAY - initTime / DAY > 4) {
+      this.invalidData = true;
+      return;
     }
 
-    let listOfResults = this._yawaBackend.getWeatherInBulk(this.coords, listOfTimestamps, this.UTC)
+    let listOfResults = this._yawaBackend.getWeatherInBulk(this.coords, initTime, finalTime, this.UTC);
 
-    forkJoin(listOfResults).subscribe(
-      results => {
+    listOfResults.subscribe(
+      (results: any) => {
         this.loadingFailed = false;
         this.loading = false;
 
-        for (let dailyResult of results) {
-          for (let jsonObservation of dailyResult.hourly.data) {
-            let observation = new Observation();
-            observation.timestamp = jsonObservation.time;
-            observation.time = new Date((jsonObservation.time + HOUR * this.UTC) * 1000);
-            observation.temperature = jsonObservation.temperature + Math.random() - 0.5;
-            observation.cloudiness = jsonObservation.cloudCover;
+        for (let jsonObservation of results.hourly.data) {
+          let observation = new Observation();
+          observation.timestamp = jsonObservation.time;
+          observation.time = new Date((jsonObservation.time + HOUR * this.UTC) * 1000);
+          observation.temperature = jsonObservation.temperature + Math.random() - 0.5;
+          observation.cloudiness = jsonObservation.cloudCover;
 
-            if (jsonObservation.time >= initTime && jsonObservation.time <= finalTime) {
-              this.observations.push(observation);
-            }
+          if (jsonObservation.time >= initTime && jsonObservation.time <= finalTime) {
+            this.observations.push(observation);
           }
         }
       },
