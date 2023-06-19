@@ -214,11 +214,23 @@ export class AppComponent implements OnInit {
         this.max = response.daily.data[0].temperatureMax - this.fakeElevation / 180;
 
         if (response.hourly?.data) {
-          response.hourly.data.forEach(weatherItem => {
+
+          let todayWeather = [];
+          
+          response.hourly.data.forEach((weatherItem) => {
+            let weatherItemDate = new Date(weatherItem.time * 1000);
+            let weatherItemDayOfMonth = weatherItemDate.getDate();
+            
+            if(weatherItemDayOfMonth === this.date.getDate()) {
+              todayWeather.push(weatherItem);
+            }
+          });
+          
+          todayWeather.forEach(weatherItem => {
             this.averageTemperature += weatherItem.temperature;
           });
 
-          this.averageTemperature /= response.hourly.data.length;
+          this.averageTemperature /= todayWeather.length;
 
           this.averageTemperature - this.fakeElevation / 180;
         }

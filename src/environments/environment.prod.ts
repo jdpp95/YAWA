@@ -3,5 +3,5 @@ export const environment = {
   backendUrl: "https://yawa-backend.fly.dev",
   openMeteoPath: '/openMeteo',
   mapboxPath: '/mapbox',
-  maxTemp: 27.5,
+  maxTemp: 30,
 };
