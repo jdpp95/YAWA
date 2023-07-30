@@ -201,6 +201,10 @@ export class AppComponent implements OnInit {
         this.getWeather();
       }
     }
+
+    if (this.now) {
+      this.date = new Date();
+    }
   }
 
   getWeather() {
@@ -216,16 +220,16 @@ export class AppComponent implements OnInit {
         if (response.hourly?.data) {
 
           let todayWeather = [];
-          
+
           response.hourly.data.forEach((weatherItem) => {
             let weatherItemDate = new Date(weatherItem.time * 1000);
             let weatherItemDayOfMonth = weatherItemDate.getDate();
-            
-            if(weatherItemDayOfMonth === this.date.getDate()) {
+
+            if (weatherItemDayOfMonth === this.date.getDate()) {
               todayWeather.push(weatherItem);
             }
           });
-          
+
           todayWeather.forEach(weatherItem => {
             this.averageTemperature += weatherItem.temperature;
           });
@@ -407,5 +411,18 @@ export class AppComponent implements OnInit {
 
     console.log(`Max precip intensity: ${maxPrecipitation}`);
     console.log(`Max precip time: ${maxPrecipTime}`);
+  }
+
+  copyPromptClicked() {
+    let text = "";
+    // text += "\nDate: ";
+    text += `\nTime of day: ${moment(this.date).format('HH:mm')}`;
+    text += `\nTemperature: ${this.temperature.toFixed(0)} °C`;
+    text += `\nCloud cover: ${(this.cloudiness * 100).toFixed(0)}%`;
+    text += `\nRelative Humidity: ${(this.humidity * 100).toFixed(0)}%`;
+    text += `\nWind speed: ${this.windSpeed.toFixed(0)} km/h`;
+    text += `\nActivity: `;
+
+    navigator.clipboard.writeText(text);
   }
 }
