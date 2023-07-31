@@ -416,7 +416,7 @@ export class AppComponent implements OnInit {
   copyPromptClicked() {
     let text = "";
     // text += "\nDate: ";
-    text += `\nTime of day: ${moment(this.date).format('HH:mm')}`;
+    text += `Time of day: ${moment(this.date).format('HH:mm')}`;
     text += `\nTemperature: ${this.temperature.toFixed(0)} °C`;
     text += `\nCloud cover: ${(this.cloudiness * 100).toFixed(0)}%`;
     text += `\nRelative Humidity: ${(this.humidity * 100).toFixed(0)}%`;
