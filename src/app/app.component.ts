@@ -264,11 +264,7 @@ export class AppComponent implements OnInit {
 
         this.actualElevation = response.elevation;
 
-        if (this.fakeElevation > 0) {
-          this.computeApparentTemperature();
-        } else {
-          this.apparentT = response.currently.apparentTemperature - this.fakeElevation / 180;
-        }
+        this.computeApparentTemperature();
 
         this.displayRainData(response.daily.data[0]);
 
