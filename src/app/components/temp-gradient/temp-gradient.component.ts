@@ -13,9 +13,6 @@ export class TempGradientComponent {
   UTC: number;
 
   @Input()
-  coronavirus: number;
-
-  @Input()
   elevation: number;
 
   hourlyData: any[];
@@ -48,7 +45,7 @@ export class TempGradientComponent {
       }
 
       weatherItem.time = localHours;
-      weatherItem.temperature = item.temperature - this.coronavirus - this.elevation / 180;
+      weatherItem.temperature = item.temperature - this.elevation / 180;
       weatherItem.sunAngle = item.sunAngle;
       weatherItem.clouds = clouds;
 
