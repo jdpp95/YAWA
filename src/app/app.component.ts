@@ -112,7 +112,7 @@ export class AppComponent implements OnInit {
     this.activeRoute.queryParams.subscribe(
       response => {
         this.fakeElevation = response["elevation"] || 0;
-        this.fakeElevationFt = response["ft"] || 0;
+        this.fakeElevationFt = response["ft"];
       }
     )
     this.now = true;
@@ -421,10 +421,14 @@ export class AppComponent implements OnInit {
 
   computeTemperature(temperature: number){
     const FT_TO_M = 0.3048;
-    let meters = this.fakeElevationFt * FT_TO_M;
-    let ratio = meters / 2550;
 
-    this.fakeElevation = (ratio - 1) * this.actualElevation;
+    if(this.fakeElevationFt) {
+      let meters = this.fakeElevationFt * FT_TO_M;
+      let ratio = meters / 2550;
+    
+      this.fakeElevation = (ratio - 1) * this.actualElevation;
+    }
+    
     return temperature - this.fakeElevation / 180;
   }
 }
