@@ -84,6 +84,7 @@ export class AppComponent implements OnInit {
   averageTemperature: number = 0;
 
   fakeElevation: number;
+  fakeElevationFt: number;
 
   //UI metadata
   loading: boolean = false;
@@ -110,12 +111,8 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.activeRoute.queryParams.subscribe(
       response => {
-        this.fakeElevation = response["elevation"];
-
-        if (!this.fakeElevation || this.fakeElevation === 0) {
-          this.fakeElevation = 0;
-        }
-
+        this.fakeElevation = response["elevation"] || 0;
+        this.fakeElevationFt = response["ft"] || 0;
       }
     )
     this.now = true;
@@ -210,12 +207,14 @@ export class AppComponent implements OnInit {
   getWeather() {
     this._yawaBackend.getWeather(this.coords, this.now, this.date, this.UTC.toString()).subscribe(
       response => {
-        this.temperature = response.currently.temperature - this.fakeElevation / 180;
+        this.actualElevation = response.elevation;
+        
+        this.temperature = this.computeTemperature(response.currently.temperature);
         if (!this.now) {
           this.temperature += Math.random() - 0.5;
         }
-        this.min = response.daily.data[0].temperatureMin - this.fakeElevation / 180;
-        this.max = response.daily.data[0].temperatureMax - this.fakeElevation / 180;
+        this.min = this.computeTemperature(response.daily.data[0].temperatureMin);
+        this.max = this.computeTemperature(response.daily.data[0].temperatureMax);
 
         if (response.hourly?.data) {
 
@@ -236,18 +235,18 @@ export class AppComponent implements OnInit {
 
           this.averageTemperature /= todayWeather.length;
 
-          this.averageTemperature - this.fakeElevation / 180;
+          this.averageTemperature = this.computeTemperature(this.averageTemperature);
         }
 
         this.humidity = response.currently.humidity;
         this.editHumidity = false;
         //this.editDewPoint = false;
 
-        this.dewPoint = response.currently.dewPoint - this.fakeElevation / 180;
+        this.dewPoint = this.computeTemperature(response.currently.dewPoint);
         let dewPoints = response.hourly?.data.map(hour => hour.dewPoint);
 
         if (dewPoints) {
-          this.minDP = Math.min(...dewPoints) - this.fakeElevation / 180;
+          this.minDP = this.computeTemperature(Math.min(...dewPoints));
         }
 
         this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
@@ -261,8 +260,6 @@ export class AppComponent implements OnInit {
         this.sunAngle = response.sunAngle;
 
         this.breathCondensation = this.tUtils.breathCondensation(this.temperature, this.humidity);
-
-        this.actualElevation = response.elevation;
 
         this.computeApparentTemperature();
 
@@ -420,5 +417,14 @@ export class AppComponent implements OnInit {
     text += `\nActivity: `;
 
     navigator.clipboard.writeText(text);
+  }
+
+  computeTemperature(temperature: number){
+    const FT_TO_M = 0.3048;
+    let meters = this.fakeElevationFt * FT_TO_M;
+    let ratio = meters / 2550;
+
+    this.fakeElevation = (ratio - 1) * this.actualElevation;
+    return temperature - this.fakeElevation / 180;
   }
 }
