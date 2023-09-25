@@ -208,7 +208,7 @@ export class AppComponent implements OnInit {
     this._yawaBackend.getWeather(this.coords, this.now, this.date, this.UTC.toString()).subscribe(
       response => {
         this.actualElevation = response.elevation;
-        
+
         this.temperature = this.computeTemperature(response.currently.temperature);
         if (!this.now) {
           this.temperature += Math.random() - 0.5;
@@ -229,9 +229,15 @@ export class AppComponent implements OnInit {
             }
           });
 
-          this.averageTemperature = 0;
+          if (todayWeather.length > 0) {
+            this.averageTemperature = 0;
+            this.min = Infinity;
+            this.max = -Infinity;
+          }
           todayWeather.forEach(weatherItem => {
             this.averageTemperature += weatherItem.temperature;
+            this.min = weatherItem.temperature < this.min ? weatherItem.temperature : this.min;
+            this.max = weatherItem.temperature > this.max ? weatherItem.temperature : this.max;
           });
 
           this.averageTemperature /= todayWeather.length;
@@ -420,16 +426,16 @@ export class AppComponent implements OnInit {
     navigator.clipboard.writeText(text);
   }
 
-  computeTemperature(temperature: number){
+  computeTemperature(temperature: number) {
     const FT_TO_M = 0.3048;
 
-    if(this.fakeElevationFt) {
+    if (this.fakeElevationFt) {
       let meters = this.fakeElevationFt * FT_TO_M;
       let ratio = meters / 2550;
-    
+
       this.fakeElevation = (ratio - 1) * this.actualElevation;
     }
-    
+
     return temperature - this.fakeElevation / 180;
   }
 }
