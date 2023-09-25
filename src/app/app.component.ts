@@ -229,6 +229,7 @@ export class AppComponent implements OnInit {
             }
           });
 
+          this.averageTemperature = 0;
           todayWeather.forEach(weatherItem => {
             this.averageTemperature += weatherItem.temperature;
           });
