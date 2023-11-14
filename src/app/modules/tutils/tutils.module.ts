@@ -209,7 +209,7 @@ export class TutilsModule {
         hi = -42.379 + 2.04901523 * f + 10.14333127 * humidity - 0.22475541 * f * humidity - 0.00683783 * f * f - 0.05481717 * humidity * humidity + 0.00122874 * f * f * humidity + 0.00085282 * f * humidity * humidity - 0.00000199 * humidity * humidity * f * f;
 
         if (humidity < 13 && f >= 80 && f <= 112) {
-            hi -= ((13 - humidity) / 4) * Math.sqrt((17 - Math.abs(humidity - 95.0)) / 17)
+            hi -= ((13 - humidity) / 4) * Math.sqrt((17 - Math.abs(f - 95.0)) / 17)
         }
 
         if (humidity > 85 && f >= 80 && f <= 87) {
