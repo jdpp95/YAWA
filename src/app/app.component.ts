@@ -239,6 +239,8 @@ export class AppComponent implements OnInit {
             this.min = weatherItem.temperature < this.min ? weatherItem.temperature : this.min;
             this.max = weatherItem.temperature > this.max ? weatherItem.temperature : this.max;
           });
+          this.min = this.computeTemperature(this.min);
+          this.max = this.computeTemperature(this.max);
 
           this.averageTemperature /= todayWeather.length;
 
