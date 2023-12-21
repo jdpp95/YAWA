@@ -147,22 +147,7 @@
           </li>
           <li class="list-group-item list-group-item-action">
             Dew point: {{dewPoint | number:'.0-0'}} °C
-            <button type="button" class="btn btn-sm btn-light ml-1" (click)="changeDewPoint()">
-              Recalculate
-            </button>
           </li>
-          <!-- <li class="list-group-item list-group-item-action" *ngIf="editDewPoint">
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon3">Dew Point: </span>
-              </div>
-              <input #dewPoint type="text" class="form-control" 
-                (change)="onDewPointChanged(dewPoint.value)">
-              <div class="input-group-append">
-                <span class="input-group-text">°C</span>
-              </div>
-            </div>
-          </li> -->
           <li class="list-group-item list-group-item-action">Cloudiness: {{cloudiness*100 | number:'.0-0'}}%</li>
           <!-- <li class="list-group-item list-group-item-action">
             Conditions: {{conditions}}
@@ -183,7 +168,6 @@
             {{snowProbability | percent}}</li>
           <li *ngIf="rainIntensity >= 1" class="list-group-item list-group-item-action">
             Rain intensity: {{rainIntensity | number: '.0-1'}}
-            <button class="btn btn-light btn-sm" (click)="onAdjustTemperatureClicked()">Adjust Temperature</button>
           </li>
           <li class="list-group-item list-group-item-action">Elevation: {{actualElevation}} m</li>
         </ul>

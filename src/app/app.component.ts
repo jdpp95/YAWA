@@ -74,7 +74,6 @@ export class AppComponent implements OnInit {
   conditions: string;
   windSpeed: number;
   rainIntensity: number;
-  minDP: number;
   sunAngle: number;
   actualElevation: number;
 
@@ -252,11 +251,6 @@ export class AppComponent implements OnInit {
         //this.editDewPoint = false;
 
         this.dewPoint = this.computeTemperature(response.currently.dewPoint);
-        let dewPoints = response.hourly?.data.map(hour => hour.dewPoint);
-
-        if (dewPoints) {
-          this.minDP = this.computeTemperature(Math.min(...dewPoints));
-        }
 
         this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
 
@@ -344,13 +338,6 @@ export class AppComponent implements OnInit {
     this.editHumidity = true;
   }
 
-  changeDewPoint() {
-    this.dewPoint = this.minDP;
-    this.humidity = this.tUtils.humidityFromDewP(this.dewPoint, this.temperature);
-    this.onHumidityChanged(false);
-    this.editHumidity = false;
-  }
-
   computeApparentTemperature() {
     if (this.temperature > 15) {
       this.apparentT = this.tUtils.heatIndex(this.temperature, this.humidity);
@@ -387,25 +374,25 @@ export class AppComponent implements OnInit {
     this.displayAverageTemp = !this.displayAverageTemp;
   }
 
-  onAdjustTemperatureClicked() {
-    this.changeDewPoint();
+  // onAdjustTemperatureClicked() {
+  //   this.changeDewPoint();
 
-    if (this.humidity < 0.9) {
-      const MAX_HUMIDITY = 0.9;
+  //   if (this.humidity < 0.9) {
+  //     const MAX_HUMIDITY = 0.9;
 
-      const rDiff = Math.max(MAX_HUMIDITY - this.humidity, 0);
-      const hDiff = rDiff / Math.max(this.rainIntensity, 1);
-      this.humidity = MAX_HUMIDITY - hDiff;
-    }
+  //     const rDiff = Math.max(MAX_HUMIDITY - this.humidity, 0);
+  //     const hDiff = rDiff / Math.max(this.rainIntensity, 1);
+  //     this.humidity = MAX_HUMIDITY - hDiff;
+  //   }
 
-    if (this.humidity < 0.7) {
-      this.rainIntensity -= (0.7 - this.humidity);
-    }
+  //   if (this.humidity < 0.7) {
+  //     this.rainIntensity -= (0.7 - this.humidity);
+  //   }
 
-    this.temperature = this.tUtils.temperatureFromDewP(this.dewPoint, this.humidity);
-    this.onHumidityChanged(false);
-    this.onTemperatureChanged();
-  }
+  //   this.temperature = this.tUtils.temperatureFromDewP(this.dewPoint, this.humidity);
+  //   this.onHumidityChanged(false);
+  //   this.onTemperatureChanged();
+  // }
 
   displayRainData(dailyData) {
     const maxPrecipitation = parseFloat(dailyData.precipIntensityMax).toFixed(1);
