@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'rain-simulator',
@@ -7,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
 export class RainSimulatorComponent implements OnInit {
 
   displayRainControls: boolean;
+  @Output() onRainTypeSelected: EventEmitter<string> = new EventEmitter();
 
   constructor() { }
 
@@ -19,17 +20,6 @@ export class RainSimulatorComponent implements OnInit {
   }
 
   onOptionSelected(event): void {
-    console.log(event.srcElement.id)
-    // switch(event.srcElement.id){
-    //   case 'noRainOption':
-    //     break;
-    //   case 'drizzleOption':
-    //     break;
-    //   case 'rainOption':
-    //     break;
-    //   case 'heavyRainOption':
-    //     break;
-    // }
+    this.onRainTypeSelected.emit(event.srcElement.id);
   }
-
 }

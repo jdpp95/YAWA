@@ -171,7 +171,7 @@
           </li>
           <li class="list-group-item list-group-item-action">Elevation: {{actualElevation}} m</li>
           <li class="list-group-item list-group-item-action">
-            <rain-simulator></rain-simulator>
+            <rain-simulator (onRainTypeSelected)="onRainTypeSelected($event)"></rain-simulator>
           </li>
         </ul>
       </div>

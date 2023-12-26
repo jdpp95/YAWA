@@ -427,4 +427,18 @@ export class AppComponent implements OnInit {
 
     return temperature - this.fakeElevation / 180;
   }
+
+  onRainTypeSelected(rainType) {
+    console.log(rainType);
+    // switch(rainType){
+    //   case 'noRainOption':
+    //     break;
+    //   case 'drizzleOption':
+    //     break;
+    //   case 'rainOption':
+    //     break;
+    //   case 'heavyRainOption':
+    //     break;
+    // }
+  }
 }
