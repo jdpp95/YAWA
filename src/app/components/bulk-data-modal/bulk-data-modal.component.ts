@@ -95,9 +95,7 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
       return;
     }
 
-    let listOfResults = this._yawaBackend.getWeatherInBulk(this.coords, initTime, finalTime, this.UTC);
-
-    listOfResults.subscribe(
+    this._yawaBackend.getWeatherInBulk(this.coords, initTime, finalTime, this.UTC).subscribe(
       (results: any) => {
         this.loadingFailed = false;
         this.loading = false;
@@ -114,7 +112,6 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
           }
         }
       },
-
       error => {
         this.loadingFailed = true;
         this.loading = false;

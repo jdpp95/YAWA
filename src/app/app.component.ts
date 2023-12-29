@@ -56,7 +56,7 @@ export class AppComponent implements OnInit {
 
   //Forms and fields
   coords: string;
-  now: boolean;
+  nowIsChecked: boolean;
   locationForm: FormGroup;
 
   date: Date;
@@ -98,9 +98,9 @@ export class AppComponent implements OnInit {
   gradientComponent: TempGradientComponent;
 
   constructor(
-    private _yawaBackend: YawaBackendService,
-    private activeRoute: ActivatedRoute,
+    private _yawaBackendService: YawaBackendService,
     private _mapbox: MapboxService,
+    private activeRoute: ActivatedRoute,
     public tUtils: TutilsModule,
     public datePipe: DatePipe,
     public percentPipe: PercentPipe
@@ -114,7 +114,7 @@ export class AppComponent implements OnInit {
         this.fakeElevationFt = response["ft"];
       }
     )
-    this.now = true;
+    this.nowIsChecked = true;
     this.UTC = -5;
 
     const initDate = moment().utc();
@@ -198,18 +198,18 @@ export class AppComponent implements OnInit {
       }
     }
 
-    if (this.now) {
+    if (this.nowIsChecked) {
       this.date = new Date();
     }
   }
 
   getWeather() {
-    this._yawaBackend.getWeather(this.coords, this.now, this.date, this.UTC.toString()).subscribe(
+    this._yawaBackendService.getWeather(this.coords, this.nowIsChecked, this.date, this.UTC.toString()).subscribe(
       response => {
         this.actualElevation = response.elevation;
 
         this.temperature = this.computeTemperature(response.currently.temperature);
-        if (!this.now) {
+        if (!this.nowIsChecked) {
           this.temperature += Math.random() - 0.5;
         }
         this.min = this.computeTemperature(response.daily.data[0].temperatureMin);
@@ -290,7 +290,7 @@ export class AppComponent implements OnInit {
   }
 
   onNowClicked() {
-    this.now = !this.locationForm.value.now;
+    this.nowIsChecked = !this.locationForm.value.now;
   }
 
   onLocationClicked() {
@@ -374,32 +374,9 @@ export class AppComponent implements OnInit {
     this.displayAverageTemp = !this.displayAverageTemp;
   }
 
-  // onAdjustTemperatureClicked() {
-  //   this.changeDewPoint();
-
-  //   if (this.humidity < 0.9) {
-  //     const MAX_HUMIDITY = 0.9;
-
-  //     const rDiff = Math.max(MAX_HUMIDITY - this.humidity, 0);
-  //     const hDiff = rDiff / Math.max(this.rainIntensity, 1);
-  //     this.humidity = MAX_HUMIDITY - hDiff;
-  //   }
-
-  //   if (this.humidity < 0.7) {
-  //     this.rainIntensity -= (0.7 - this.humidity);
-  //   }
-
-  //   this.temperature = this.tUtils.temperatureFromDewP(this.dewPoint, this.humidity);
-  //   this.onHumidityChanged(false);
-  //   this.onTemperatureChanged();
-  // }
-
   displayRainData(dailyData) {
     const maxPrecipitation = parseFloat(dailyData.precipIntensityMax).toFixed(1);
     const maxPrecipTime = moment.unix(dailyData.precipIntensityMaxTime).format("YYYY-MM-DD HH:mm")
-
-    console.log(`Max precip intensity: ${maxPrecipitation}`);
-    console.log(`Max precip time: ${maxPrecipTime}`);
   }
 
   copyPromptClicked() {
@@ -428,8 +405,8 @@ export class AppComponent implements OnInit {
     return temperature - this.fakeElevation / 180;
   }
 
-  onRainTypeSelected(rainType) {
-    console.log(rainType);
+  onRainTypeSelected(rainType: string) {
+    
     // switch(rainType){
     //   case 'noRainOption':
     //     break;

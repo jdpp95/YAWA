@@ -79,7 +79,7 @@
                 Now
               </label>
             </div>
-            <div *ngIf="!now">
+            <div *ngIf="!nowIsChecked">
               <div class="input-group mb-2">
                 <label class="mr-2">Date:</label>
                 <input #dateInput id="datepicker" [matDatepicker]="myDatepicker" formControlName="myDatepicker"
@@ -171,7 +171,12 @@
           </li>
           <li class="list-group-item list-group-item-action">Elevation: {{actualElevation}} m</li>
           <li class="list-group-item list-group-item-action">
-            <rain-simulator (onRainTypeSelected)="onRainTypeSelected($event)"></rain-simulator>
+            <rain-simulator 
+              [date]="date"
+              [coords]="coords"
+              [UTC]="UTC"
+              (onRainTypeSelected)="onRainTypeSelected($event)" 
+            ></rain-simulator>
           </li>
         </ul>
       </div>

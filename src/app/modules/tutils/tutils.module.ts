@@ -12,7 +12,7 @@ export class TutilsModule {
   range24: number[] = []
   range60: number[] = []
 
-  constructor (){
+  constructor() {
     /*
     let range24$ = range(24);
     let range60$ = range(60);
@@ -36,13 +36,11 @@ export class TutilsModule {
       ),
       takeLast(1)
     )*/
-    for(let i=0; i < 60; i++)
-    {
-      if(i < 24)
-      {
+    for (let i = 0; i < 60; i++) {
+      if (i < 24) {
         this.range24.push(i);
       }
-      
+
       this.range60.push(i);
     }
   }
@@ -64,16 +62,16 @@ export class TutilsModule {
   }
 
   colorT(t: number, cloudiness: number, rainIntensity: number, visibility: number, sunAngle: number) {
-    if(!cloudiness){
+    if (!cloudiness) {
       cloudiness = 0;
     }
 
     var hue;
-    var sat = (1 - cloudiness)*40 + 60;
+    var sat = (1 - cloudiness) * 40 + 60;
     t = this.CtoF(t);
 
-    if(rainIntensity >= 1){
-      sat = Math.max(60 - (rainIntensity - 1)*10, 30);
+    if (rainIntensity >= 1) {
+      sat = Math.max(60 - (rainIntensity - 1) * 10, 30);
     }
 
     //    if (!colors) {
@@ -95,7 +93,7 @@ export class TutilsModule {
     ];
 
     var lum = 0;
-    if(visibility < 5) {
+    if (visibility < 5) {
       lum = (0.67662 - 0.10119 * Math.log(visibility)) * 100;
     } else if (t > 100) {
       lum = Math.max(150 - t, 10);
@@ -103,10 +101,10 @@ export class TutilsModule {
       lum = 50;
     }
 
-    if (sunAngle <= -12){
-        lum *= 0.3;
-    } else if (sunAngle > -12 && sunAngle < 0){
-        lum *= this.transicion(0.3, 1, -12, 0, sunAngle);
+    if (sunAngle <= -12) {
+      lum *= 0.3;
+    } else if (sunAngle > -12 && sunAngle < 0) {
+      lum *= this.transicion(0.3, 1, -12, 0, sunAngle);
     }
 
     if (t <= 0) hue = 270;
@@ -182,21 +180,21 @@ export class TutilsModule {
   }
 
   dewPoint(temperature: number, humidity: number): number {
-    let n = (Math.log(humidity) + (17.27*temperature/(237.3 + temperature)))/17.27;
+    let n = (Math.log(humidity) + (17.27 * temperature / (237.3 + temperature))) / 17.27;
     let dewPoint = 237.73 * n / (1 - n);
     return dewPoint;
   }
 
-  humidityFromDewP(dewPoint: number, temperature: number){
+  humidityFromDewP(dewPoint: number, temperature: number) {
     const vaporPressure = (t) => 6.112 * Math.exp(17.502 * t / (240.97 + t));
 
     let ed = vaporPressure(temperature);
     let ew = vaporPressure(dewPoint);
-    return Math.min(1, ew/ed);
+    return Math.min(1, ew / ed);
   }
 
-  temperatureFromDewP(dewPoint: number, humidity: number){
-    return (dewPoint - 112 * Math.pow(humidity, 1/8) + 112)/(0.9 * Math.pow(humidity, 1/8) + 0.1);
+  temperatureFromDewP(dewPoint: number, humidity: number) {
+    return (dewPoint - 112 * Math.pow(humidity, 1 / 8) + 112) / (0.9 * Math.pow(humidity, 1 / 8) + 0.1);
   }
 
   heatIndex(temperature: number, humidity: number) {
@@ -206,17 +204,17 @@ export class TutilsModule {
     var hi = 0
 
     if (f > 80) {
-        hi = -42.379 + 2.04901523 * f + 10.14333127 * humidity - 0.22475541 * f * humidity - 0.00683783 * f * f - 0.05481717 * humidity * humidity + 0.00122874 * f * f * humidity + 0.00085282 * f * humidity * humidity - 0.00000199 * humidity * humidity * f * f;
+      hi = -42.379 + 2.04901523 * f + 10.14333127 * humidity - 0.22475541 * f * humidity - 0.00683783 * f * f - 0.05481717 * humidity * humidity + 0.00122874 * f * f * humidity + 0.00085282 * f * humidity * humidity - 0.00000199 * humidity * humidity * f * f;
 
-        if (humidity < 13 && f >= 80 && f <= 112) {
-            hi -= ((13 - humidity) / 4) * Math.sqrt((17 - Math.abs(f - 95.0)) / 17)
-        }
+      if (humidity < 13 && f >= 80 && f <= 112) {
+        hi -= ((13 - humidity) / 4) * Math.sqrt((17 - Math.abs(f - 95.0)) / 17)
+      }
 
-        if (humidity > 85 && f >= 80 && f <= 87) {
-            hi += ((humidity - 85) / 10) * ((87 - humidity) / 5)
-        }
+      if (humidity > 85 && f >= 80 && f <= 87) {
+        hi += ((humidity - 85) / 10) * ((87 - humidity) / 5)
+      }
     } else {
-        hi = 0.5 * (f + 61.0 + ((f - 68.0) * 1.2) + (humidity * 0.094));
+      hi = 0.5 * (f + 61.0 + ((f - 68.0) * 1.2) + (humidity * 0.094));
     }
 
     return this.FtoC(hi);
@@ -224,7 +222,7 @@ export class TutilsModule {
 
 
   windChill(temperature: number, windSpeed: number): number {
-    return 13.12 + 0.6215*temperature - 11.37*Math.pow(windSpeed, 0.16) 
+    return 13.12 + 0.6215 * temperature - 11.37 * Math.pow(windSpeed, 0.16)
       + 0.3965 * temperature * Math.pow(windSpeed, 0.16);
   }
 
@@ -236,5 +234,18 @@ export class TutilsModule {
     let p = Math.min(1, Math.max(1.0788 - 0.5809 * (-5.3721 * humidity * humidity + 15.167 * humidity + temperature - 9.9154), 0));
 
     return p;
+  }
+
+  getPercentile(array: number[], quantile: number) {
+    array.sort((a, b) => a - b);
+
+    const pos = (array.length - 1) * quantile;
+    const base = Math.floor(pos);
+    const rest = pos - base;
+    if (array[base + 1] !== undefined) {
+        return array[base] + rest * (array[base + 1] - array[base]);
+    } else {
+        return array[base];
+    }
   }
 }

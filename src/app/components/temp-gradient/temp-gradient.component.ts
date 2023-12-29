@@ -63,7 +63,6 @@ export class TempGradientComponent {
   setColors(weatherData: WeatherItem[]) {
     let tempGradient = document.getElementById("tempGradient");
     let style = "";
-    console.log(weatherData);
 
     if (weatherData.length == 1) {
       style = this.tUtils.formatHSL(this.tUtils.colorT(weatherData[0]['temperature'], weatherData[0]['clouds'], 0, 10, weatherData[0]['sunAngle']));
