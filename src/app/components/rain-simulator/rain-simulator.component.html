@@ -1,0 +1,21 @@
+<button type="button" [ngClass]="{ 'btn-info': !displayRainControls, 'btn-outline-info': displayRainControls }"
+    class="btn btn-sm ml-1" (click)="toggleRainSimControls()">
+    Simulate Rain
+</button>
+
+<br>
+
+<div *ngIf="displayRainControls" class="btn-group btn-group-toggle mt-2" data-toggle="buttons">
+    <label class="btn btn-sm btn-secondary active">
+        <input type="radio" name="noRainOption" id="noRainOption" checked (click)="onOptionSelected($event)"> No rain
+    </label>
+    <label class="btn btn-sm btn-secondary">
+        <input type="radio" name="drizzleOption" id="drizzleOption" (click)="onOptionSelected($event)"> Drizzle
+    </label>
+    <label class="btn btn-sm btn-secondary">
+        <input type="radio" name="rainOption" id="rainOption" (click)="onOptionSelected($event)"> Rain
+    </label>
+    <label class="btn btn-sm btn-secondary">
+        <input type="radio" name="heavyRainOption" id="heavyRainOption" (click)="onOptionSelected($event)"> Heavy Rain
+    </label>
+</div>
