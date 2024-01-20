@@ -19,6 +19,7 @@ import * as _moment from 'moment';
 import { DatePipe, PercentPipe } from '@angular/common';
 import { MapboxService } from './services/mapbox.service';
 import { TempGradientComponent } from './components/temp-gradient/temp-gradient.component';
+import { WeatherItem } from './models/weatherItem.model';
 
 const moment = _moment;
 
@@ -63,19 +64,7 @@ export class AppComponent implements OnInit {
   UTC: number;
 
   //Data from API
-  temperature: number;
-  min: number;
-  max: number;
-  humidity: number;
-  dewPoint: number;
-  apparentT: number;
-  visibility: number;
-  cloudiness: number;
-  conditions: string;
-  windSpeed: number;
-  rainIntensity: number;
-  sunAngle: number;
-  actualElevation: number;
+  weatherData: WeatherItem = new WeatherItem();
 
   //Computed data
   snowProbability: number;
@@ -206,14 +195,14 @@ export class AppComponent implements OnInit {
   getWeather() {
     this._yawaBackendService.getWeather(this.coords, this.nowIsChecked, this.date, this.UTC.toString()).subscribe(
       response => {
-        this.actualElevation = response.elevation;
+        this.weatherData.actualElevation = response.elevation;
 
-        this.temperature = this.computeTemperature(response.currently.temperature);
+        this.weatherData.temperature = this.computeTemperature(response.currently.temperature);
         if (!this.nowIsChecked) {
-          this.temperature += Math.random() - 0.5;
+          this.weatherData.temperature += Math.random() - 0.5;
         }
-        this.min = this.computeTemperature(response.daily.data[0].temperatureMin);
-        this.max = this.computeTemperature(response.daily.data[0].temperatureMax);
+        this.weatherData.min = this.computeTemperature(response.daily.data[0].temperatureMin);
+        this.weatherData.max = this.computeTemperature(response.daily.data[0].temperatureMax);
 
         if (response.hourly?.data) {
 
@@ -230,39 +219,39 @@ export class AppComponent implements OnInit {
 
           if (todayWeather.length > 0) {
             this.averageTemperature = 0;
-            this.min = Infinity;
-            this.max = -Infinity;
+            this.weatherData.min = Infinity;
+            this.weatherData.max = -Infinity;
           }
           todayWeather.forEach(weatherItem => {
             this.averageTemperature += weatherItem.temperature;
-            this.min = weatherItem.temperature < this.min ? weatherItem.temperature : this.min;
-            this.max = weatherItem.temperature > this.max ? weatherItem.temperature : this.max;
+            this.weatherData.min = weatherItem.temperature < this.weatherData.min ? weatherItem.temperature : this.weatherData.min;
+            this.weatherData.max = weatherItem.temperature > this.weatherData.max ? weatherItem.temperature : this.weatherData.max;
           });
-          this.min = this.computeTemperature(this.min);
-          this.max = this.computeTemperature(this.max);
+          this.weatherData.min = this.computeTemperature(this.weatherData.min);
+          this.weatherData.max = this.computeTemperature(this.weatherData.max);
 
           this.averageTemperature /= todayWeather.length;
 
           this.averageTemperature = this.computeTemperature(this.averageTemperature);
         }
 
-        this.humidity = response.currently.humidity;
+        this.weatherData.humidity = response.currently.humidity;
         this.editHumidity = false;
         //this.editDewPoint = false;
 
-        this.dewPoint = this.computeTemperature(response.currently.dewPoint);
+        this.weatherData.dewPoint = this.computeTemperature(response.currently.dewPoint);
 
-        this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
+        this.snowProbability = this.tUtils.snowProbability(this.weatherData.temperature, this.weatherData.humidity);
 
-        this.cloudiness = response.currently.cloudCover;
-        this.conditions = response.currently.summary;
-        this.windSpeed = response.currently.windSpeed;
-        this.visibility = response.currently.visibility;
-        this.rainIntensity = response.currently.precipIntensity;
+        this.weatherData.cloudiness = response.currently.cloudCover;
+        this.weatherData.conditions = response.currently.summary;
+        this.weatherData.windSpeed = response.currently.windSpeed;
+        this.weatherData.visibility = response.currently.visibility;
+        this.weatherData.rainIntensity = response.currently.precipIntensity;
 
-        this.sunAngle = response.sunAngle;
+        this.weatherData.sunAngle = response.sunAngle;
 
-        this.breathCondensation = this.tUtils.breathCondensation(this.temperature, this.humidity);
+        this.breathCondensation = this.tUtils.breathCondensation(this.weatherData.temperature, this.weatherData.humidity);
 
         this.computeApparentTemperature();
 
@@ -281,8 +270,8 @@ export class AppComponent implements OnInit {
   }
 
   private updateBackgroundColor() {
-    let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.temperature, this.cloudiness, 0, 10, this.sunAngle));
-    let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.apparentT, this.cloudiness, this.rainIntensity, this.visibility, this.sunAngle));
+    let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.weatherData.temperature, this.weatherData.cloudiness, 0, 10, this.weatherData.sunAngle));
+    let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.weatherData.apparentT, this.weatherData.cloudiness, this.weatherData.rainIntensity, this.weatherData.visibility, this.weatherData.sunAngle));
 
     let gradient = "linear-gradient(" + color1 + ", " + color2 + ")";
 
@@ -339,25 +328,26 @@ export class AppComponent implements OnInit {
   }
 
   computeApparentTemperature() {
-    if (this.temperature > 15) {
-      this.apparentT = this.tUtils.heatIndex(this.temperature, this.humidity);
+    if (this.weatherData.temperature > 15) {
+      this.weatherData.apparentT = this.tUtils.heatIndex(this.weatherData.temperature, this.weatherData.humidity);
     } else {
-      this.apparentT = this.tUtils.windChill(this.temperature, this.windSpeed);
+      this.weatherData.apparentT = this.tUtils.windChill(this.weatherData.temperature, this.weatherData.windSpeed);
     }
   }
 
   onHumidityChanged(changeDewPoint: boolean, humidity?: string) {
+    console.log({ changeDewPoint, humidity })
     if (humidity) {
-      this.humidity = parseInt(humidity) / 100.0;
+      this.weatherData.humidity = parseInt(humidity) / 100.0;
     }
 
     if (changeDewPoint) {
-      this.dewPoint = this.tUtils.dewPoint(this.temperature, this.humidity);
+      this.weatherData.dewPoint = this.tUtils.dewPoint(this.weatherData.temperature, this.weatherData.humidity);
     }
 
-    this.breathCondensation = this.tUtils.breathCondensation(this.temperature, this.humidity);
+    this.breathCondensation = this.tUtils.breathCondensation(this.weatherData.temperature, this.weatherData.humidity);
     this.computeApparentTemperature();
-    this.snowProbability = this.tUtils.snowProbability(this.temperature, this.humidity);
+    this.snowProbability = this.tUtils.snowProbability(this.weatherData.temperature, this.weatherData.humidity);
     this.updateBackgroundColor();
   }
 
@@ -383,10 +373,10 @@ export class AppComponent implements OnInit {
     let text = "";
     // text += "\nDate: ";
     text += `Time of day: ${moment(this.date).format('HH:mm')}`;
-    text += `\nTemperature: ${this.temperature.toFixed(0)} °C`;
-    text += `\nCloud cover: ${(this.cloudiness * 100).toFixed(0)}%`;
-    text += `\nRelative Humidity: ${(this.humidity * 100).toFixed(0)}%`;
-    text += `\nWind speed: ${this.windSpeed.toFixed(0)} km/h`;
+    text += `\nTemperature: ${this.weatherData.temperature.toFixed(0)} °C`;
+    text += `\nCloud cover: ${(this.weatherData.cloudiness * 100).toFixed(0)}%`;
+    text += `\nRelative Humidity: ${(this.weatherData.humidity * 100).toFixed(0)}%`;
+    text += `\nWind speed: ${this.weatherData.windSpeed.toFixed(0)} km/h`;
     text += `\nActivity: `;
 
     navigator.clipboard.writeText(text);
@@ -399,23 +389,25 @@ export class AppComponent implements OnInit {
       let meters = this.fakeElevationFt * FT_TO_M;
       let ratio = meters / 2550;
 
-      this.fakeElevation = (ratio - 1) * this.actualElevation;
+      this.fakeElevation = (ratio - 1) * this.weatherData.actualElevation;
     }
 
     return temperature - this.fakeElevation / 180;
   }
 
-  onRainTypeSelected(rainType: string) {
-    
-    // switch(rainType){
-    //   case 'noRainOption':
-    //     break;
-    //   case 'drizzleOption':
-    //     break;
-    //   case 'rainOption':
-    //     break;
-    //   case 'heavyRainOption':
-    //     break;
-    // }
+  applyRain({ rainTemperature, rainIntensity }) {
+
+    const newHumidity = this.tUtils.humidityFromDewP(this.weatherData.dewPoint, rainTemperature);
+
+    this.weatherData = {
+      ...this.weatherData,
+      temperature: this.computeTemperature(rainTemperature),
+      humidity: newHumidity,
+      cloudiness: rainIntensity > 0 ? 1 : this.weatherData.cloudiness,
+      rainIntensity,
+    }
+    this.computeApparentTemperature();
+
+    this.updateBackgroundColor();
   }
 }

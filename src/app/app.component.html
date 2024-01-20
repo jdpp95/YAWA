@@ -118,18 +118,18 @@
       <div class="col-lg-4 col-md-6">
         <ul class="list-group">
           <li class="list-group-item list-group-item-action">
-            Temperature: {{temperature | number:'.0-0'}} °C
-            ({{temperature + 1.5 | number:'.1-1'}})
+            Temperature: {{weatherData.temperature | number:'.0-0'}} °C
+            ({{weatherData.temperature + 1.5 | number:'.1-1'}})
           </li>
           <li *ngIf="displayMinMax" class="list-group-item list-group-item-action">
-            Min: {{min | number:'.0-0'}} °C /
-            Max: {{max | number:'.0-0'}} °C
+            Min: {{weatherData.min | number:'.0-0'}} °C /
+            Max: {{weatherData.max | number:'.0-0'}} °C
           </li>
           <li *ngIf="displayAverageTemp" class="list-group-item list-group-item-action">
             Average temperature {{averageTemperature | number: '.0-1'}} °C
           </li>
           <li class="list-group-item list-group-item-action" *ngIf="!editHumidity">
-            Humidity: {{humidity*100 | number:'.0-0'}}%
+            Humidity: {{weatherData.humidity*100 | number:'.0-0'}}%
             <button type="button" class="btn btn-sm btn-light ml-1" (click)="changeHumidity()">
               <i style="font-size: 18px;" class="material-icons">edit</i>
             </button>
@@ -146,9 +146,9 @@
             </div>
           </li>
           <li class="list-group-item list-group-item-action">
-            Dew point: {{dewPoint | number:'.0-0'}} °C
+            Dew point: {{weatherData.dewPoint | number:'.0-0'}} °C
           </li>
-          <li class="list-group-item list-group-item-action">Cloudiness: {{cloudiness*100 | number:'.0-0'}}%</li>
+          <li class="list-group-item list-group-item-action">Cloudiness: {{weatherData.cloudiness*100 | number:'.0-0'}}%</li>
           <!-- <li class="list-group-item list-group-item-action">
             Conditions: {{conditions}}
           </li> -->
@@ -157,25 +157,25 @@
       </div>
       <div class="col-lg-4 col-md-6">
         <ul class="list-group">
-          <li *ngIf="windSpeed > 5" class="list-group-item list-group-item-action">Wind: {{windSpeed | number: '.0-0'}}
+          <li *ngIf="weatherData.windSpeed > 5" class="list-group-item list-group-item-action">Wind: {{weatherData.windSpeed | number: '.0-0'}}
             km/h</li>
-          <li *ngIf="visibility < 5" class="list-group-item list-group-item-action">Visibility:
-            {{visibility*1000 | number: '.0-0'}} m</li>
+          <li *ngIf="weatherData.visibility < 5" class="list-group-item list-group-item-action">Visibility:
+            {{weatherData.visibility*1000 | number: '.0-0'}} m</li>
           <li *ngIf="breathCondensation > 0" class="list-group-item list-group-item-action">Breath condensation:
             {{breathCondensation | number: '.0-2'}}</li>
-          <li *ngIf="snowProbability > 0 && rainIntensity >=1" class="list-group-item list-group-item-action">Snow
+          <li *ngIf="snowProbability > 0 && weatherData.rainIntensity >=1" class="list-group-item list-group-item-action">Snow
             Probability:
             {{snowProbability | percent}}</li>
-          <li *ngIf="rainIntensity >= 1" class="list-group-item list-group-item-action">
-            Rain intensity: {{rainIntensity | number: '.0-1'}}
+          <li *ngIf="weatherData.rainIntensity >= 1" class="list-group-item list-group-item-action">
+            Rain intensity: {{weatherData.rainIntensity | number: '.0-1'}}
           </li>
-          <li class="list-group-item list-group-item-action">Elevation: {{actualElevation}} m</li>
+          <li class="list-group-item list-group-item-action">Elevation: {{weatherData.actualElevation}} m</li>
           <li class="list-group-item list-group-item-action">
             <rain-simulator 
               [date]="date"
               [coords]="coords"
               [UTC]="UTC"
-              (onRainTypeSelected)="onRainTypeSelected($event)" 
+              (onRainTypeSelected)="applyRain($event)" 
             ></rain-simulator>
           </li>
         </ul>
