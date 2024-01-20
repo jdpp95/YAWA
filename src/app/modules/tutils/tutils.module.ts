@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import percentRank from 'percentile-rank';
+
 
 @NgModule({
   declarations: [],
@@ -104,7 +106,7 @@ export class TutilsModule {
     if (sunAngle <= -12) {
       lum *= 0.3;
     } else if (sunAngle > -12 && sunAngle < 0) {
-      lum *= this.transicion(0.3, 1, -12, 0, sunAngle);
+      lum *= this.transition(0.3, 1, -12, 0, sunAngle);
     }
 
     if (t <= 0) hue = 270;
@@ -115,15 +117,15 @@ export class TutilsModule {
         if (t >= colors[index][0] && t < colors[index + 1][0])
           break;
 
-      hue = this.transicion(colors[index][1], colors[index + 1][1], colors[index][0], colors[index + 1][0], t);
+      hue = this.transition(colors[index][1], colors[index + 1][1], colors[index][0], colors[index + 1][0], t);
     }
 
     return [hue, sat, lum];
   }
 
-  private transicion(start1: number, end1: number, start2: number, end2: number, value2: number) {
-    var proporcion = (value2 - start2) / (end2 - start2);
-    return start1 + (end1 - start1) * proporcion;
+  transition(targetStart: number, targetEnd: number, originStart: number, originEnd: number, value: number) {
+    var proporcion = (value - originStart) / (originEnd - originStart);
+    return targetStart + (targetEnd - targetStart) * proporcion;
   }
 
   formatHSL(hsl: number[]) {
@@ -247,5 +249,10 @@ export class TutilsModule {
     } else {
         return array[base];
     }
+  }
+
+  getPercentileRank(array: number[], value: number) {
+    array.sort();
+    return percentRank(array, value);
   }
 }

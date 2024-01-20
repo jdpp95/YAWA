@@ -11,7 +11,7 @@ import { YawaBackendService } from 'src/app/services/dark-sky.service';
 export class RainSimulatorComponent implements OnInit {
 
   displayRainControls: boolean;
-  @Output() onRainTypeSelected: EventEmitter<string> = new EventEmitter();
+  @Output() onRainTypeSelected: EventEmitter<any> = new EventEmitter();
   @Input() date: Date;
   @Input() coords: string;
   @Input() UTC: number;
@@ -37,23 +37,38 @@ export class RainSimulatorComponent implements OnInit {
       map(data => data.hourly.data)
     ).subscribe((weatherItems: any[]) => {
       const temperatures = weatherItems.map(item => item.temperature);
-      const percentile30 = this.tUtils.getPercentile(temperatures, 0.30);
-      const percentile50 = this.tUtils.getPercentile(temperatures, 0.50);
+      const currentTemperature = temperatures[temperatures.length - 1];
 
-      console.log({percentile30, percentile50});
+      const rainType = event.srcElement.id;
+      let rainIntensity = 0;
+      let rainTemperature;
+      switch (rainType) {
+        case 'noRainOption':
+          rainTemperature = currentTemperature;
+          break;
+        case 'drizzleOption':
+          rainTemperature = this.scale(temperatures, currentTemperature, 20, 65);
+          rainIntensity = 1;
+          break;
+        case 'rainOption':
+          rainTemperature = this.scale(temperatures, currentTemperature, 30, 50);
+          rainIntensity = 4;
+          break;
+        case 'heavyRainOption':
+          rainTemperature = this.scale(temperatures, currentTemperature, 30, 30);
+          rainIntensity = 9;
+          break;
+      }
+      this.onRainTypeSelected.emit({rainTemperature, rainIntensity});
     });
+  }
 
-    // const rainType = event.srcElement.id;
-    // console.log(rainType);
-    // switch(rainType){
-    //   case 'noRainOption':
-    //     break;
-    //   case 'drizzleOption':
-    //     break;
-    //   case 'rainOption':
-    //     break;
-    //   case 'heavyRainOption':
-    //     break;
-    // }
+  private scale(arr: number[], value: number, lowerQuantile: number, higherQuantile: number) {
+    const lowerPercentile = this.tUtils.getPercentile(arr, lowerQuantile / 100);
+    const higherPercentile = this.tUtils.getPercentile(arr, higherQuantile / 100);
+    const currentPercentRank = this.tUtils.getPercentileRank(arr, value);
+
+    const scaledValue = this.tUtils.transition(lowerPercentile, higherPercentile, 0, 1, currentPercentRank);
+    return scaledValue;
   }
 }

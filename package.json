@@ -28,6 +28,7 @@
     "express": "^4.17.1",
     "moment": "^2.29.0",
     "path": "^0.12.7",
+    "percentile-rank": "^1.0.6",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "typescript": "~3.7.5",
