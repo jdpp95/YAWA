@@ -401,7 +401,7 @@ export class AppComponent implements OnInit {
 
     this.weatherData = {
       ...this.weatherData,
-      temperature: rainTemperature,
+      temperature: this.computeTemperature(rainTemperature),
       humidity: newHumidity,
       cloudiness: rainIntensity > 0 ? 1 : this.weatherData.cloudiness,
       rainIntensity,
