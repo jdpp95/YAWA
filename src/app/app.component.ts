@@ -396,12 +396,12 @@ export class AppComponent implements OnInit {
   }
 
   applyRain({ rainTemperature, rainIntensity }) {
-
-    const newHumidity = this.tUtils.humidityFromDewP(this.weatherData.dewPoint, rainTemperature);
+    const newTemperature = this.computeTemperature(rainTemperature);
+    const newHumidity = this.tUtils.humidityFromDewP(this.weatherData.dewPoint, newTemperature);
 
     this.weatherData = {
       ...this.weatherData,
-      temperature: this.computeTemperature(rainTemperature),
+      temperature: newTemperature,
       humidity: newHumidity,
       cloudiness: rainIntensity > 0 ? 1 : this.weatherData.cloudiness,
       rainIntensity,
