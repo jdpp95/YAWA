@@ -49,7 +49,8 @@ export const MY_FORMATS = {
     },
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
     { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
-  ]
+  ],
+  standalone: false 
 })
 
 export class AppComponent implements OnInit {

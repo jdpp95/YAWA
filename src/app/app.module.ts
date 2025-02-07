@@ -7,18 +7,20 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-//Angular Material Modules
-import { MatDatepickerModule, MatNativeDateModule, MatIconModule, MatFormFieldModule } from '@angular/material';
-
 //Custom modules
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
-import { DatePipe, PercentPipe } from '@angular/common';
+import { CommonModule, DatePipe, PercentPipe } from '@angular/common';
 import { CommaDecimalPipe } from './pipes/comma-decimal.pipe';
 import { BulkDataModalComponent } from './components/bulk-data-modal/bulk-data-modal.component';
 import { TempGradientComponent } from './components/temp-gradient/temp-gradient.component';
 import { RainSimulatorComponent } from './components/rain-simulator/rain-simulator.component';
 import { UtilsService } from './services/tutils.service';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+
 
 @NgModule({
   declarations: [
@@ -39,6 +41,7 @@ import { UtilsService } from './services/tutils.service';
     MatIconModule,
     AppRoutingModule,
     MatFormFieldModule,
+    CommonModule
   ],
   providers: [
     MatDatepickerModule,

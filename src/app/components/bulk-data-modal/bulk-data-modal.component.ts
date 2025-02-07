@@ -9,7 +9,8 @@ import { YawaBackendService } from 'src/app/services/dark-sky.service';
 @Component({
   selector: 'app-bulk-data-modal',
   templateUrl: './bulk-data-modal.component.html',
-  styleUrls: ['./bulk-data-modal.component.css']
+  styleUrls: ['./bulk-data-modal.component.css'],
+  standalone: false 
 })
 export class BulkDataModalComponent implements OnInit, OnChanges {
 

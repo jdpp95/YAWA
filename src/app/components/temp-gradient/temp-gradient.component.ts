@@ -5,7 +5,8 @@ import { environment as env } from './../../../environments/environment';
 @Component({
   selector: 'temp-gradient',
   templateUrl: './temp-gradient.component.html',
-  styleUrls: ['./temp-gradient.component.css']
+  styleUrls: ['./temp-gradient.component.css'],
+  standalone: false 
 })
 export class TempGradientComponent {
 

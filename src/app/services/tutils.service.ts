@@ -2,6 +2,19 @@ import percentRank from 'percentile-rank';
 
 
 export class UtilsService {
+
+  range24: number[] = [];
+  range60: number[] = [];
+
+  constructor() {
+    for (let i = 0; i < 60; i++) {
+      if (i < 24) {
+        this.range24.push(i);
+      }
+      this.range60.push(i);
+    }
+  }
+  
   private static gx(t, h) {
     return 3.793068 * h * Math.exp(17.2694 * t / (t + 238.3));
   }

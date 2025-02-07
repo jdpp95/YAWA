@@ -7,6 +7,7 @@ import { YawaBackendService } from 'src/app/services/dark-sky.service';
 @Component({
   selector: 'rain-simulator',
   templateUrl: './rain-simulator.component.html',
+  standalone: false 
 })
 export class RainSimulatorComponent implements OnInit {
 
