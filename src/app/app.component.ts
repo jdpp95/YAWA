@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { YawaBackendService } from 'src/app/services/dark-sky.service';
 
 //Internal modules
-import { TutilsModule } from './modules/tutils/tutils.module';
+import { UtilsService } from './services/tutils.service';
 
 //Angular material
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
@@ -90,7 +90,7 @@ export class AppComponent implements OnInit {
     private _yawaBackendService: YawaBackendService,
     private _mapbox: MapboxService,
     private activeRoute: ActivatedRoute,
-    public tUtils: TutilsModule,
+    public tUtils: UtilsService,
     public datePipe: DatePipe,
     public percentPipe: PercentPipe
   ) {
@@ -241,7 +241,7 @@ export class AppComponent implements OnInit {
 
         this.weatherData.dewPoint = this.computeTemperature(response.currently.dewPoint);
 
-        this.snowProbability = this.tUtils.snowProbability(this.weatherData.temperature, this.weatherData.humidity);
+        this.snowProbability = UtilsService.snowProbability(this.weatherData.temperature, this.weatherData.humidity);
 
         this.weatherData.cloudiness = response.currently.cloudCover;
         this.weatherData.conditions = response.currently.summary;
@@ -251,7 +251,7 @@ export class AppComponent implements OnInit {
 
         this.weatherData.sunAngle = response.sunAngle;
 
-        this.breathCondensation = this.tUtils.breathCondensation(this.weatherData.temperature, this.weatherData.humidity);
+        this.breathCondensation = UtilsService.breathCondensation(this.weatherData.temperature, this.weatherData.humidity);
 
         this.computeApparentTemperature();
 
@@ -270,8 +270,8 @@ export class AppComponent implements OnInit {
   }
 
   private updateBackgroundColor() {
-    let color1 = this.tUtils.formatHSL(this.tUtils.colorT(this.weatherData.temperature, this.weatherData.cloudiness, 0, 10, this.weatherData.sunAngle));
-    let color2 = this.tUtils.formatHSL(this.tUtils.colorT(this.weatherData.apparentT, this.weatherData.cloudiness, this.weatherData.rainIntensity, this.weatherData.visibility, this.weatherData.sunAngle));
+    let color1 = UtilsService.formatHSL(UtilsService.colorT(this.weatherData.temperature, this.weatherData.cloudiness, 0, 10, this.weatherData.sunAngle));
+    let color2 = UtilsService.formatHSL(UtilsService.colorT(this.weatherData.apparentT, this.weatherData.cloudiness, this.weatherData.rainIntensity, this.weatherData.visibility, this.weatherData.sunAngle));
 
     let gradient = "linear-gradient(" + color1 + ", " + color2 + ")";
 
@@ -329,9 +329,9 @@ export class AppComponent implements OnInit {
 
   computeApparentTemperature() {
     if (this.weatherData.temperature > 15) {
-      this.weatherData.apparentT = this.tUtils.heatIndex(this.weatherData.temperature, this.weatherData.humidity);
+      this.weatherData.apparentT = UtilsService.heatIndex(this.weatherData.temperature, this.weatherData.humidity);
     } else {
-      this.weatherData.apparentT = this.tUtils.windChill(this.weatherData.temperature, this.weatherData.windSpeed);
+      this.weatherData.apparentT = UtilsService.windChill(this.weatherData.temperature, this.weatherData.windSpeed);
     }
   }
 
@@ -342,12 +342,12 @@ export class AppComponent implements OnInit {
     }
 
     if (changeDewPoint) {
-      this.weatherData.dewPoint = this.tUtils.dewPoint(this.weatherData.temperature, this.weatherData.humidity);
+      this.weatherData.dewPoint = UtilsService.dewPoint(this.weatherData.temperature, this.weatherData.humidity);
     }
 
-    this.breathCondensation = this.tUtils.breathCondensation(this.weatherData.temperature, this.weatherData.humidity);
+    this.breathCondensation = UtilsService.breathCondensation(this.weatherData.temperature, this.weatherData.humidity);
     this.computeApparentTemperature();
-    this.snowProbability = this.tUtils.snowProbability(this.weatherData.temperature, this.weatherData.humidity);
+    this.snowProbability = UtilsService.snowProbability(this.weatherData.temperature, this.weatherData.humidity);
     this.updateBackgroundColor();
   }
 
@@ -397,7 +397,7 @@ export class AppComponent implements OnInit {
 
   applyRain({ rainTemperature, rainIntensity }) {
     const newTemperature = this.computeTemperature(rainTemperature);
-    const newHumidity = this.tUtils.humidityFromDewP(this.weatherData.dewPoint, newTemperature);
+    const newHumidity = UtilsService.humidityFromDewP(this.weatherData.dewPoint, newTemperature);
 
     this.weatherData = {
       ...this.weatherData,

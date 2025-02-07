@@ -11,7 +11,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule, MatNativeDateModule, MatIconModule, MatFormFieldModule } from '@angular/material';
 
 //Custom modules
-import { TutilsModule } from './modules/tutils/tutils.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { DatePipe, PercentPipe } from '@angular/common';
@@ -19,6 +18,7 @@ import { CommaDecimalPipe } from './pipes/comma-decimal.pipe';
 import { BulkDataModalComponent } from './components/bulk-data-modal/bulk-data-modal.component';
 import { TempGradientComponent } from './components/temp-gradient/temp-gradient.component';
 import { RainSimulatorComponent } from './components/rain-simulator/rain-simulator.component';
+import { UtilsService } from './services/tutils.service';
 
 @NgModule({
   declarations: [
@@ -33,15 +33,19 @@ import { RainSimulatorComponent } from './components/rain-simulator/rain-simulat
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    TutilsModule,
     NoopAnimationsModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatIconModule,
     AppRoutingModule,
-    MatFormFieldModule
+    MatFormFieldModule,
   ],
-  providers: [MatDatepickerModule, DatePipe, PercentPipe],
+  providers: [
+    MatDatepickerModule,
+    DatePipe,
+    PercentPipe, 
+    UtilsService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

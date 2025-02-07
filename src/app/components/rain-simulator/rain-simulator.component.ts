@@ -1,7 +1,7 @@
 import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import * as moment from 'moment';
 import { map } from 'rxjs/operators';
-import { TutilsModule } from 'src/app/modules/tutils/tutils.module';
+import { UtilsService } from 'src/app/services/tutils.service';
 import { YawaBackendService } from 'src/app/services/dark-sky.service';
 
 @Component({
@@ -18,7 +18,7 @@ export class RainSimulatorComponent implements OnInit {
 
   constructor(
     private yawaBackendService: YawaBackendService,
-    public tUtils: TutilsModule,
+    public tUtils: UtilsService,
   ) { }
 
   ngOnInit(): void {
@@ -64,11 +64,11 @@ export class RainSimulatorComponent implements OnInit {
   }
 
   private scale(arr: number[], value: number, lowerQuantile: number, higherQuantile: number) {
-    const lowerPercentile = this.tUtils.getPercentile(arr, lowerQuantile / 100);
-    const higherPercentile = this.tUtils.getPercentile(arr, higherQuantile / 100);
-    const currentPercentRank = this.tUtils.getPercentileRank(arr, value);
+    const lowerPercentile = UtilsService.getPercentile(arr, lowerQuantile / 100);
+    const higherPercentile = UtilsService.getPercentile(arr, higherQuantile / 100);
+    const currentPercentRank = UtilsService.getPercentileRank(arr, value);
 
-    const scaledValue = this.tUtils.transition(lowerPercentile, higherPercentile, 0, 1, currentPercentRank);
+    const scaledValue = UtilsService.transition(lowerPercentile, higherPercentile, 0, 1, currentPercentRank);
     return scaledValue;
   }
 }

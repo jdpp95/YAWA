@@ -1,69 +1,24 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import percentRank from 'percentile-rank';
 
 
-@NgModule({
-  declarations: [],
-  imports: [
-    CommonModule
-  ]
-})
-export class TutilsModule {
-
-  range24: number[] = []
-  range60: number[] = []
-
-  constructor() {
-    /*
-    let range24$ = range(24);
-    let range60$ = range(60);
-
-    range24$.pipe(
-      map(
-        (item) => {
-          this.range24.push(item);
-          //return arr;
-        }
-      ),
-      takeLast(1)
-    )
-
-    range60$.pipe(
-      map(
-        (item) => {
-          this.range60.push(item);
-          //return arr;
-        }
-      ),
-      takeLast(1)
-    )*/
-    for (let i = 0; i < 60; i++) {
-      if (i < 24) {
-        this.range24.push(i);
-      }
-
-      this.range60.push(i);
-    }
-  }
-
-  private gx(t, h) {
+export class UtilsService {
+  private static gx(t, h) {
     return 3.793068 * h * Math.exp(17.2694 * t / (t + 238.3));
   }
 
-  private hx(t, g) {
+  private static hx(t, g) {
     return 1.007 * t - 0.026 + g * (2.501 + 0.00184 * t) + 0.00419 * t;
   }
 
-  CtoF(c: number) {
+  static CtoF(c: number) {
     return 1.8 * c + 32;
   }
 
-  FtoC(f: number) {
+  static FtoC(f: number) {
     return (f - 32) * (5 / 9);
   }
 
-  colorT(t: number, cloudiness: number, rainIntensity: number, visibility: number, sunAngle: number) {
+  static colorT(t: number, cloudiness: number, rainIntensity: number, visibility: number, sunAngle: number) {
     if (!cloudiness) {
       cloudiness = 0;
     }
@@ -123,12 +78,12 @@ export class TutilsModule {
     return [hue, sat, lum];
   }
 
-  transition(targetStart: number, targetEnd: number, originStart: number, originEnd: number, value: number) {
+  static transition(targetStart: number, targetEnd: number, originStart: number, originEnd: number, value: number) {
     var proporcion = (value - originStart) / (originEnd - originStart);
     return targetStart + (targetEnd - targetStart) * proporcion;
   }
 
-  formatHSL(hsl: number[]) {
+  static formatHSL(hsl: number[]) {
     let h = hsl[0]
     let s = hsl[1]
     let l = hsl[2]
@@ -136,7 +91,7 @@ export class TutilsModule {
     return "hsl(" + h + ", " + s + "%, " + l + "%)";
   }
 
-  breathCondensation(t1: number, h1: number) {
+  static breathCondensation(t1: number, h1: number) {
     //http://www.sciencebits.com/exhalecondense
     t1 *= 1.0;
     h1 *= 1.0;
@@ -181,13 +136,13 @@ export class TutilsModule {
     return maxH > 1 ? endRatio - startRatio : 0;
   }
 
-  dewPoint(temperature: number, humidity: number): number {
+  static dewPoint(temperature: number, humidity: number): number {
     let n = (Math.log(humidity) + (17.27 * temperature / (237.3 + temperature))) / 17.27;
     let dewPoint = 237.73 * n / (1 - n);
     return dewPoint;
   }
 
-  humidityFromDewP(dewPoint: number, temperature: number) {
+  static humidityFromDewP(dewPoint: number, temperature: number) {
     const vaporPressure = (t) => 6.112 * Math.exp(17.502 * t / (240.97 + t));
 
     let ed = vaporPressure(temperature);
@@ -195,11 +150,11 @@ export class TutilsModule {
     return Math.min(1, ew / ed);
   }
 
-  temperatureFromDewP(dewPoint: number, humidity: number) {
+  static temperatureFromDewP(dewPoint: number, humidity: number) {
     return (dewPoint - 112 * Math.pow(humidity, 1 / 8) + 112) / (0.9 * Math.pow(humidity, 1 / 8) + 0.1);
   }
 
-  heatIndex(temperature: number, humidity: number) {
+  static heatIndex(temperature: number, humidity: number) {
     //https://www.wpc.ncep.noaa.gov/html/heatindex_equation.shtml
     var f = this.CtoF(temperature);
     humidity = humidity * 100.0;
@@ -223,12 +178,12 @@ export class TutilsModule {
   }
 
 
-  windChill(temperature: number, windSpeed: number): number {
+  static windChill(temperature: number, windSpeed: number): number {
     return 13.12 + 0.6215 * temperature - 11.37 * Math.pow(windSpeed, 0.16)
       + 0.3965 * temperature * Math.pow(windSpeed, 0.16);
   }
 
-  snowProbability(temperature: number, humidity: number) {
+  static snowProbability(temperature: number, humidity: number) {
     //http://www.sciencebits.com/SnowAboveFreezing
     temperature *= 1.0;
     humidity *= 1.0;
@@ -238,7 +193,7 @@ export class TutilsModule {
     return p;
   }
 
-  getPercentile(array: number[], quantile: number) {
+  static getPercentile(array: number[], quantile: number) {
     array.sort((a, b) => a - b);
 
     const pos = (array.length - 1) * quantile;
@@ -251,8 +206,8 @@ export class TutilsModule {
     }
   }
 
-  getPercentileRank(array: number[], value: number) {
-    array.sort();
+  static getPercentileRank(array: number[], value: number) {
+    array.sort((a, b) => a - b);
     return percentRank(array, value);
   }
 }

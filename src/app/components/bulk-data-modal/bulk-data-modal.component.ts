@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import * as moment from 'moment';
 import { forkJoin } from 'rxjs';
 import { Observation } from 'src/app/models/observation.model';
-import { TutilsModule } from 'src/app/modules/tutils/tutils.module';
+import { UtilsService } from 'src/app/services/tutils.service';
 import { YawaBackendService } from 'src/app/services/dark-sky.service';
 
 @Component({
@@ -36,7 +36,7 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
 
   constructor(
     private _yawaBackend: YawaBackendService,
-    public tUtils: TutilsModule
+    public tUtils: UtilsService
   ) {
     this.dataForm = new FormGroup({
       'initDate': new FormControl(moment()),
