@@ -56,8 +56,8 @@ export const MY_FORMATS = {
 
 export class AppComponent implements OnInit {
   @ViewChild('background') background: ElementRef;
-  // @ViewChild('weatherDataLeftPanel') weatherDataLeftPanel: ElementRef;
-  // @ViewChild('weatherDataRightPanel') weatherDataRightPanel: ElementRef;
+  @ViewChild('weatherDataLeftPanel') weatherDataLeftPanel: ElementRef;
+  @ViewChild('weatherDataRightPanel') weatherDataRightPanel: ElementRef;
 
   title = 'YAWA';
 
@@ -223,7 +223,8 @@ export class AppComponent implements OnInit {
     this.updateApparentTemperature();
     this.gradientComponent.update(response?.hourly?.data);
     this.updateBackgroundColor();
-    this.updateWeatherPanelBackground();
+    this.updateWeatherPanelBackground(20, 'left');
+    this.updateWeatherPanelBackground(18, 'right');
     this.loading = false;
     this.loadingFailed = false;
   }
@@ -237,13 +238,20 @@ export class AppComponent implements OnInit {
       UtilsService.colorT(apparentT, cloudiness, rainIntensity, visibility, sunAngle)
     );
 
-    let gradient = "linear-gradient(" + color1 + ", " + color2 + ")";
+    const gradient = `linear-gradient(${color1}, ${color2})`;
 
     this.background.nativeElement.style.backgroundImage = gradient;
   }
 
-  private updateWeatherPanelBackground() {
-    
+  private updateWeatherPanelBackground(temperature: number, panel: 'left' | 'right') {
+    let colorHsl = UtilsService.formatHSL(
+      UtilsService.colorT(temperature, 0.15, 0, 10, 0)
+    );
+    const panelElement = panel === 'left' ? this.weatherDataLeftPanel : this.weatherDataRightPanel;
+    const panelItems = panelElement.nativeElement.querySelectorAll('li');
+    panelItems.forEach((li: HTMLElement) => {
+      li.style.backgroundColor = colorHsl;
+    });
   }
 
   onNowClicked() {
