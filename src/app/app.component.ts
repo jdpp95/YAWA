@@ -223,8 +223,8 @@ export class AppComponent implements OnInit {
     this.updateApparentTemperature();
     this.gradientComponent.update(response?.hourly?.data);
     this.updateBackgroundColor();
-    this.updateWeatherPanelBackground(20, 'left');
-    this.updateWeatherPanelBackground(18, 'right');
+    this.updateWeatherPanelBackground(response.currently.indoorTemp, 'left');
+    this.updateWeatherPanelBackground(response.currently.indoorTemp, 'right');
     this.loading = false;
     this.loadingFailed = false;
   }

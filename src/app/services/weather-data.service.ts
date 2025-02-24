@@ -107,19 +107,6 @@ export class WeatherDataService {
     this.updateApparentTemperature(weatherData);
   }
 
-  updateBackgroundColor(weatherData: WeatherItem): void {
-    const { temperature, cloudiness, rainIntensity, visibility, sunAngle, apparentT } = weatherData;
-    let color1 = UtilsService.formatHSL(
-      UtilsService.colorT(temperature, cloudiness, 0, 10, sunAngle)
-    );
-    let color2 = UtilsService.formatHSL(
-      UtilsService.colorT(apparentT, cloudiness, rainIntensity, visibility, sunAngle)
-    );
-
-    let gradient = "linear-gradient(" + color1 + ", " + color2 + ")";
-    document.body.style.backgroundImage = gradient;
-  }
-
   copyPrompt(weatherData: WeatherItem, date: Date): void {
     let text = "";
     text += `Time of day: ${moment(date).format('HH:mm')}`;
