@@ -20,6 +20,7 @@ import { DatePipe, PercentPipe } from '@angular/common';
 import { MapboxService } from './services/mapbox.service';
 import { TempGradientComponent } from './components/temp-gradient/temp-gradient.component';
 import { WeatherItem } from './models/weatherItem.model';
+import { Elevation, ElevationUnit, WeatherDataService } from './services/weather-data.service';
 
 const moment = _moment;
 
@@ -50,7 +51,7 @@ export const MY_FORMATS = {
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
     { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
   ],
-  standalone: false 
+  standalone: false
 })
 
 export class AppComponent implements OnInit {
@@ -65,15 +66,17 @@ export class AppComponent implements OnInit {
   UTC: number;
 
   //Data from API
-  weatherData: WeatherItem = new WeatherItem();
+  weatherData: WeatherItem = {} as WeatherItem;
 
   //Computed data
   snowProbability: number;
   breathCondensation: number;
   averageTemperature: number = 0;
 
-  fakeElevation: number;
-  fakeElevationFt: number;
+  fakeElevation: Elevation = {
+    value: 0,
+    unit: ElevationUnit.METERS
+  };
 
   //UI metadata
   loading: boolean = false;
@@ -93,15 +96,25 @@ export class AppComponent implements OnInit {
     private activeRoute: ActivatedRoute,
     public tUtils: UtilsService,
     public datePipe: DatePipe,
-    public percentPipe: PercentPipe
+    public percentPipe: PercentPipe,
+    private weatherDataService: WeatherDataService
   ) {
   }
 
   ngOnInit(): void {
     this.activeRoute.queryParams.subscribe(
       response => {
-        this.fakeElevation = response["elevation"] || 0;
-        this.fakeElevationFt = response["ft"];
+        if (response["elevation"]) {
+          this.fakeElevation = {
+            value: response["elevation"],
+            unit: ElevationUnit.METERS
+          }
+        } else if (response["ft"]) {
+          this.fakeElevation = {
+            value: response["ft"],
+            unit: ElevationUnit.FEET
+          }
+        }
       }
     )
     this.nowIsChecked = true;
@@ -112,19 +125,12 @@ export class AppComponent implements OnInit {
     this.onDateChange(initDate.format())
 
     this.locationForm = new FormGroup({
-      'coords': new FormControl('', [
-        Validators.required
-      ]),
-
-      'now': new FormControl(true, []),
-
-      'myDatepicker': new FormControl(initDate),
-
-      'hour': new FormControl('0', []),
-
-      'minute': new FormControl('0', []),
-
-      'UTC': new FormControl(this.UTC, [])
+      coords: new FormControl('', [Validators.required]),
+      now: new FormControl(true, []),
+      myDatepicker: new FormControl(initDate),
+      hour: new FormControl('0', []),
+      minute: new FormControl('0', []),
+      UTC: new FormControl(this.UTC, [])
     });
   }
 
@@ -196,72 +202,7 @@ export class AppComponent implements OnInit {
   getWeather() {
     this._yawaBackendService.getWeather(this.coords, this.nowIsChecked, this.date, this.UTC.toString()).subscribe(
       response => {
-        this.weatherData.actualElevation = response.elevation;
-
-        this.weatherData.temperature = this.computeTemperature(response.currently.temperature);
-        if (!this.nowIsChecked) {
-          this.weatherData.temperature += Math.random() - 0.5;
-        }
-        this.weatherData.min = this.computeTemperature(response.daily.data[0].temperatureMin);
-        this.weatherData.max = this.computeTemperature(response.daily.data[0].temperatureMax);
-
-        if (response.hourly?.data) {
-
-          let todayWeather = [];
-
-          response.hourly.data.forEach((weatherItem) => {
-            let weatherItemDate = new Date(weatherItem.time * 1000);
-            let weatherItemDayOfMonth = weatherItemDate.getDate();
-
-            if (weatherItemDayOfMonth === this.date.getDate()) {
-              todayWeather.push(weatherItem);
-            }
-          });
-
-          if (todayWeather.length > 0) {
-            this.averageTemperature = 0;
-            this.weatherData.min = Infinity;
-            this.weatherData.max = -Infinity;
-          }
-          todayWeather.forEach(weatherItem => {
-            this.averageTemperature += weatherItem.temperature;
-            this.weatherData.min = weatherItem.temperature < this.weatherData.min ? weatherItem.temperature : this.weatherData.min;
-            this.weatherData.max = weatherItem.temperature > this.weatherData.max ? weatherItem.temperature : this.weatherData.max;
-          });
-          this.weatherData.min = this.computeTemperature(this.weatherData.min);
-          this.weatherData.max = this.computeTemperature(this.weatherData.max);
-
-          this.averageTemperature /= todayWeather.length;
-
-          this.averageTemperature = this.computeTemperature(this.averageTemperature);
-        }
-
-        this.weatherData.humidity = response.currently.humidity;
-        this.editHumidity = false;
-        //this.editDewPoint = false;
-
-        this.weatherData.dewPoint = this.computeTemperature(response.currently.dewPoint);
-
-        this.snowProbability = UtilsService.snowProbability(this.weatherData.temperature, this.weatherData.humidity);
-
-        this.weatherData.cloudiness = response.currently.cloudCover;
-        this.weatherData.conditions = response.currently.summary;
-        this.weatherData.windSpeed = response.currently.windSpeed;
-        this.weatherData.visibility = response.currently.visibility;
-        this.weatherData.rainIntensity = response.currently.precipIntensity;
-
-        this.weatherData.sunAngle = response.sunAngle;
-
-        this.breathCondensation = UtilsService.breathCondensation(this.weatherData.temperature, this.weatherData.humidity);
-
-        this.computeApparentTemperature();
-
-        this.displayRainData(response.daily.data[0]);
-
-        this.gradientComponent.update(response?.hourly?.data);
-        this.updateBackgroundColor();
-        this.loading = false;
-        this.loadingFailed = false;
+        this.updateWeatherData(response);
       },
       error => {
         this.loading = false;
@@ -270,13 +211,35 @@ export class AppComponent implements OnInit {
     );
   }
 
+  updateWeatherData(response) {
+    this.weatherData.actualElevation = response.elevation;
+    this.weatherDataService.computeTemperatureData(this.weatherData, response, this.nowIsChecked, this.fakeElevation);
+    this.weatherDataService.processHourlyData(this.weatherData, response, this.date, this.fakeElevation);
+    this.weatherDataService.assignWeatherData(this.weatherData, response, this.fakeElevation);
+    this.updateApparentTemperature();
+    this.gradientComponent.update(response?.hourly?.data);
+    this.updateBackgroundColor();
+    this.updateWeatherPanelBackground();
+    this.loading = false;
+    this.loadingFailed = false;
+  }
+
   private updateBackgroundColor() {
-    let color1 = UtilsService.formatHSL(UtilsService.colorT(this.weatherData.temperature, this.weatherData.cloudiness, 0, 10, this.weatherData.sunAngle));
-    let color2 = UtilsService.formatHSL(UtilsService.colorT(this.weatherData.apparentT, this.weatherData.cloudiness, this.weatherData.rainIntensity, this.weatherData.visibility, this.weatherData.sunAngle));
+    const { temperature, cloudiness, rainIntensity, visibility, sunAngle, apparentT } = this.weatherData;
+    let color1 = UtilsService.formatHSL(
+      UtilsService.colorT(temperature, cloudiness, 0, 10, sunAngle)
+    );
+    let color2 = UtilsService.formatHSL(
+      UtilsService.colorT(apparentT, cloudiness, rainIntensity, visibility, sunAngle)
+    );
 
     let gradient = "linear-gradient(" + color1 + ", " + color2 + ")";
 
     document.body.style.backgroundImage = gradient;
+  }
+
+  private updateWeatherPanelBackground() {
+    // TODO: Determine who is going to call this function and what data it needs
   }
 
   onNowClicked() {
@@ -328,7 +291,7 @@ export class AppComponent implements OnInit {
     this.editHumidity = true;
   }
 
-  computeApparentTemperature() {
+  updateApparentTemperature() {
     if (this.weatherData.temperature > 15) {
       this.weatherData.apparentT = UtilsService.heatIndex(this.weatherData.temperature, this.weatherData.humidity);
     } else {
@@ -347,13 +310,8 @@ export class AppComponent implements OnInit {
     }
 
     this.breathCondensation = UtilsService.breathCondensation(this.weatherData.temperature, this.weatherData.humidity);
-    this.computeApparentTemperature();
+    this.updateApparentTemperature();
     this.snowProbability = UtilsService.snowProbability(this.weatherData.temperature, this.weatherData.humidity);
-    this.updateBackgroundColor();
-  }
-
-  onTemperatureChanged() {
-    this.computeApparentTemperature();
     this.updateBackgroundColor();
   }
 
@@ -363,11 +321,6 @@ export class AppComponent implements OnInit {
 
   displayAverageTempClicked() {
     this.displayAverageTemp = !this.displayAverageTemp;
-  }
-
-  displayRainData(dailyData) {
-    const maxPrecipitation = parseFloat(dailyData.precipIntensityMax).toFixed(1);
-    const maxPrecipTime = moment.unix(dailyData.precipIntensityMaxTime).format("YYYY-MM-DD HH:mm")
   }
 
   copyPromptClicked() {
@@ -383,21 +336,8 @@ export class AppComponent implements OnInit {
     navigator.clipboard.writeText(text);
   }
 
-  computeTemperature(temperature: number) {
-    const FT_TO_M = 0.3048;
-
-    if (this.fakeElevationFt) {
-      let meters = this.fakeElevationFt * FT_TO_M;
-      let ratio = meters / 2550;
-
-      this.fakeElevation = (ratio - 1) * this.weatherData.actualElevation;
-    }
-
-    return temperature - this.fakeElevation / 180;
-  }
-
   applyRain({ rainTemperature, rainIntensity }) {
-    const newTemperature = this.computeTemperature(rainTemperature);
+    const newTemperature = this.weatherDataService.computeTempFromFakeElevation(this.weatherData, rainTemperature, this.fakeElevation);
     const newHumidity = UtilsService.humidityFromDewP(this.weatherData.dewPoint, newTemperature);
 
     this.weatherData = {
@@ -407,8 +347,7 @@ export class AppComponent implements OnInit {
       cloudiness: rainIntensity > 0 ? 1 : this.weatherData.cloudiness,
       rainIntensity,
     }
-    this.computeApparentTemperature();
-
+    this.updateApparentTemperature();
     this.updateBackgroundColor();
   }
 }

@@ -57,6 +57,16 @@
                   "maximumError": "10kb"
                 }
               ]
+            },
+            "development": {
+              "sourceMap": true,
+              "optimization": false,
+              "outputHashing": "none",
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "buildOptimizer": false
             }
           }
         },
@@ -68,6 +78,9 @@
           "configurations": {
             "production": {
               "buildTarget": "YAWA:build:production"
+            },
+            "development": {
+              "buildTarget": "YAWA:build:development"
             }
           }
         },

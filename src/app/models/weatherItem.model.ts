@@ -1,4 +1,4 @@
-export class WeatherItem {
+export type WeatherItem = {
     temperature: number;
     min: number;
     max: number;
@@ -12,6 +12,5 @@ export class WeatherItem {
     rainIntensity: number;
     sunAngle: number;
     actualElevation: number;
-
-    constructor() { }
+    indoorTemperature: number[];
 }
