@@ -20,7 +20,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
-
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
   declarations: [
@@ -41,7 +41,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatIconModule,
     AppRoutingModule,
     MatFormFieldModule,
-    CommonModule
+    CommonModule,
+    MatTooltipModule
   ],
   providers: [
     MatDatepickerModule,

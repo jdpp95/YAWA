@@ -21,6 +21,7 @@ import { MapboxService } from './services/mapbox.service';
 import { TempGradientComponent } from './components/temp-gradient/temp-gradient.component';
 import { WeatherItem } from './models/weatherItem.model';
 import { Elevation, ElevationUnit, WeatherDataService } from './services/weather-data.service';
+import { MatTooltip } from '@angular/material/tooltip';
 
 const moment = _moment;
 
@@ -58,6 +59,8 @@ export class AppComponent implements OnInit {
   @ViewChild('background') background: ElementRef;
   @ViewChild('weatherDataLeftPanel') weatherDataLeftPanel: ElementRef;
   @ViewChild('weatherDataRightPanel') weatherDataRightPanel: ElementRef;
+  @ViewChild(TempGradientComponent)
+  gradientComponent: TempGradientComponent;
 
   title = 'YAWA';
 
@@ -76,6 +79,7 @@ export class AppComponent implements OnInit {
   snowProbability: number;
   breathCondensation: number;
   averageTemperature: number = 0;
+  indoorTemp: number;
 
   fakeElevation: Elevation = {
     value: 0,
@@ -89,10 +93,6 @@ export class AppComponent implements OnInit {
   locationEnabled: boolean = false;
   displayMinMax: boolean = false;
   displayAverageTemp: boolean = false;
-
-  //Children components
-  @ViewChild(TempGradientComponent)
-  gradientComponent: TempGradientComponent;
 
   constructor(
     private _yawaBackendService: YawaBackendService,
@@ -251,8 +251,9 @@ export class AppComponent implements OnInit {
     this.updateApparentTemperature();
     this.gradientComponent.update(response?.hourly?.data);
     this.updateBackgroundColor();
-    this.updateWeatherPanelBackground(response.currently.indoorTemp, 'left');
-    this.updateWeatherPanelBackground(response.currently.indoorTemp, 'right');
+    this.indoorTemp = response.currently.indoorTemp;
+    this.updateWeatherPanelBackground(this.indoorTemp, 'left');
+    this.updateWeatherPanelBackground(this.indoorTemp, 'right');
     this.loading = false;
     this.loadingFailed = false;
   }

@@ -116,7 +116,7 @@
         </form>
       </div>
       <div class="col-lg-4 col-md-6">
-        <ul #weatherDataLeftPanel class="list-group">
+        <ul #weatherDataLeftPanel class="list-group" matTooltip="{{indoorTemp | number: '.0-0'}} °C">
           <li class="list-group-item list-group-item-action">
             Temperature: {{weatherData.temperature | number:'.0-0'}} °C
             ({{weatherData.temperature + 1.5 | number:'.1-1'}})
@@ -155,7 +155,7 @@
 
         </ul>
       </div>
-      <div #weatherDataRightPanel class="col-lg-4 col-md-6">
+      <div #weatherDataRightPanel class="col-lg-4 col-md-6" matTooltip="{{indoorTemp | number: '.0-0'}} °C">
         <ul class="list-group">
           <li *ngIf="weatherData.windSpeed > 5" class="list-group-item list-group-item-action">Wind: {{weatherData.windSpeed | number: '.0-0'}}
             km/h</li>
