@@ -244,9 +244,13 @@ export class AppComponent implements OnInit {
   }
 
   private updateWeatherPanelBackground(temperature: number, panel: 'left' | 'right') {
-    let colorHsl = UtilsService.formatHSL(
-      UtilsService.colorT(temperature, 0.15, 0, 10, 0)
-    );
+    let colorHsl = 'hsl(0, 0%, 100%)';
+    if (temperature !== undefined) {
+      temperature = this.weatherDataService.computeTempFromFakeElevation(this.weatherData, temperature, this.fakeElevation);
+      colorHsl = UtilsService.formatHSL(
+        UtilsService.colorT(temperature, 0.15, 0, 10, 0)
+      );
+    }
     const panelElement = panel === 'left' ? this.weatherDataLeftPanel : this.weatherDataRightPanel;
     const panelItems = panelElement.nativeElement.querySelectorAll('li');
     panelItems.forEach((li: HTMLElement) => {
