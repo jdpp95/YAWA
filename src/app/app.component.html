@@ -1,4 +1,4 @@
-<div id="background">
+<div id="background" #background>
   <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
     <a class="navbar-brand" href="#">YAWA - <small>Yet Another Weather App</small></a>
 
@@ -115,7 +115,7 @@
 
         </form>
       </div>
-      <div class="col-lg-4 col-md-6">
+      <div #weatherDataLeftPanel class="col-lg-4 col-md-6">
         <ul class="list-group">
           <li class="list-group-item list-group-item-action">
             Temperature: {{weatherData.temperature | number:'.0-0'}} °C
@@ -155,7 +155,7 @@
 
         </ul>
       </div>
-      <div class="col-lg-4 col-md-6">
+      <div #weatherDataRightPanel class="col-lg-4 col-md-6">
         <ul class="list-group">
           <li *ngIf="weatherData.windSpeed > 5" class="list-group-item list-group-item-action">Wind: {{weatherData.windSpeed | number: '.0-0'}}
             km/h</li>

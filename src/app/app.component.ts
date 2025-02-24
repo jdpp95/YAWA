@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
@@ -55,6 +55,10 @@ export const MY_FORMATS = {
 })
 
 export class AppComponent implements OnInit {
+  @ViewChild('background') background: ElementRef;
+  // @ViewChild('weatherDataLeftPanel') weatherDataLeftPanel: ElementRef;
+  // @ViewChild('weatherDataRightPanel') weatherDataRightPanel: ElementRef;
+
   title = 'YAWA';
 
   //Forms and fields
@@ -235,11 +239,11 @@ export class AppComponent implements OnInit {
 
     let gradient = "linear-gradient(" + color1 + ", " + color2 + ")";
 
-    document.body.style.backgroundImage = gradient;
+    this.background.nativeElement.style.backgroundImage = gradient;
   }
 
   private updateWeatherPanelBackground() {
-    // TODO: Determine who is going to call this function and what data it needs
+    
   }
 
   onNowClicked() {
