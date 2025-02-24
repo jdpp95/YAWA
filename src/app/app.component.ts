@@ -121,21 +121,35 @@ export class AppComponent implements OnInit {
         }
       }
     )
-    this.nowIsChecked = true;
     this.UTC = -5;
 
     const initDate = moment().utc();
     initDate.startOf('day');
     this.onDateChange(initDate.format())
 
-    this.locationForm = new FormGroup({
-      coords: new FormControl('', [Validators.required]),
-      now: new FormControl(true, []),
-      myDatepicker: new FormControl(initDate),
-      hour: new FormControl('0', []),
-      minute: new FormControl('0', []),
-      UTC: new FormControl(this.UTC, [])
-    });
+    const savedFormData = localStorage.getItem('locationFormData');
+    if (savedFormData) {
+      const formData = JSON.parse(savedFormData);
+      this.locationForm = new FormGroup({
+        coords: new FormControl(formData.coords, [Validators.required]),
+        now: new FormControl(formData.now, []),
+        myDatepicker: new FormControl(formData.myDatepicker),
+        hour: new FormControl(formData.hour, []),
+        minute: new FormControl(formData.minute, []),
+        UTC: new FormControl(formData.UTC, [])
+      });
+      this.nowIsChecked = this.locationForm.value.now;
+    } else {
+      this.locationForm = new FormGroup({
+        coords: new FormControl('', [Validators.required]),
+        now: new FormControl(true, []),
+        myDatepicker: new FormControl(initDate),
+        hour: new FormControl(0, []),
+        minute: new FormControl(0, []),
+        UTC: new FormControl(this.UTC, [])
+      });
+      this.nowIsChecked = true;
+    }
   }
 
   syncDateWithUTC() {
@@ -170,6 +184,7 @@ export class AppComponent implements OnInit {
             coordsControl.setValue(coords);
             this.coords = coords;
 
+            this.saveFormDataToLocalStorage();
             this.getWeather();
           }
         )
@@ -194,6 +209,7 @@ export class AppComponent implements OnInit {
         );
       } else {
         this.coords = this.locationForm.value.coords;
+        this.saveFormDataToLocalStorage();
         this.getWeather();
       }
     }
@@ -201,6 +217,18 @@ export class AppComponent implements OnInit {
     if (this.nowIsChecked) {
       this.date = new Date();
     }
+  }
+
+  saveFormDataToLocalStorage() {
+    const formData = {
+      coords: this.locationForm.value.coords,
+      now: this.locationForm.value.now,
+      myDatepicker: this.locationForm.value.myDatepicker,
+      hour: this.locationForm.value.hour,
+      minute: this.locationForm.value.minute,
+      UTC: this.locationForm.value.UTC
+    };
+    localStorage.setItem('locationFormData', JSON.stringify(formData));
   }
 
   getWeather() {

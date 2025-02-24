@@ -91,14 +91,14 @@
                 <div class="col-6">
                   <label>Hour</label>
                   <select class="form-control" formControlName="hour">
-                    <option *ngFor="let i of tUtils.range24">{{i}}</option>
+                    <option *ngFor="let h of tUtils.range24" [ngValue]="h">{{h}}</option>
                   </select>
                 </div>
 
                 <div class="col-6">
                   <label>Minute</label>
                   <select class="form-control" formControlName="minute">
-                    <option *ngFor="let i of tUtils.range60">{{i}}</option>
+                    <option *ngFor="let m of tUtils.range60" [ngValue]="m">{{m}}</option>
                   </select>
                 </div>
               </div>
