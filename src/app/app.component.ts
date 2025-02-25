@@ -251,7 +251,7 @@ export class AppComponent implements OnInit {
     this.updateApparentTemperature();
     this.gradientComponent.update(response?.hourly?.data);
     this.updateBackgroundColor();
-    this.indoorTemp = response.currently.indoorTemp;
+    this.indoorTemp = this.weatherDataService.computeTempFromFakeElevation(this.weatherData, response.currently.indoorTemp, this.fakeElevation);
     this.updateWeatherPanelBackground(this.indoorTemp, 'left');
     this.updateWeatherPanelBackground(this.indoorTemp, 'right');
     this.loading = false;
@@ -275,7 +275,6 @@ export class AppComponent implements OnInit {
   private updateWeatherPanelBackground(temperature: number, panel: 'left' | 'right') {
     let colorHsl = 'hsl(0, 0%, 100%)';
     if (temperature !== undefined) {
-      temperature = this.weatherDataService.computeTempFromFakeElevation(this.weatherData, temperature, this.fakeElevation);
       colorHsl = UtilsService.formatHSL(
         UtilsService.colorT(temperature, 0.15, 0, 10, 0)
       );
