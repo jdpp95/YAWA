@@ -116,7 +116,12 @@
         </form>
       </div>
       <div class="col-lg-4 col-md-6">
-        <ul #weatherDataLeftPanel class="list-group" matTooltip="{{indoorTemp | number: '.0-0'}} °C">
+        <ul 
+          #weatherDataLeftPanel 
+          class="list-group" 
+          matTooltip="{{indoorTemp?.left | number: '.0-0'}} °C" 
+          [matTooltipDisabled]="indoorTemp?.left === null"
+        >
           <li class="list-group-item list-group-item-action">
             Temperature: {{weatherData.temperature | number:'.0-0'}} °C
             ({{weatherData.temperature + 1.5 | number:'.1-1'}})
@@ -149,13 +154,14 @@
             Dew point: {{weatherData.dewPoint | number:'.0-0'}} °C
           </li>
           <li class="list-group-item list-group-item-action">Cloudiness: {{weatherData.cloudiness*100 | number:'.0-0'}}%</li>
-          <!-- <li class="list-group-item list-group-item-action">
-            Conditions: {{conditions}}
-          </li> -->
-
         </ul>
       </div>
-      <div #weatherDataRightPanel class="col-lg-4 col-md-6" matTooltip="{{indoorTemp | number: '.0-0'}} °C">
+      <div 
+        #weatherDataRightPanel 
+        class="col-lg-4 col-md-6" 
+        matTooltip="{{indoorTemp?.right | number: '.0-0'}} °C" 
+        [matTooltipDisabled]="indoorTemp?.right === null"
+      >
         <ul class="list-group">
           <li *ngIf="weatherData.windSpeed > 5" class="list-group-item list-group-item-action">Wind: {{weatherData.windSpeed | number: '.0-0'}}
             km/h</li>
