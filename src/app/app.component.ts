@@ -79,7 +79,7 @@ export class AppComponent implements OnInit {
   snowProbability: number;
   breathCondensation: number;
   averageTemperature: number = 0;
-  indoorTemp = {left: null, right: null};
+  indoorTemp = { left: null, right: null };
 
   fakeElevation: Elevation = {
     value: 0,
@@ -251,18 +251,20 @@ export class AppComponent implements OnInit {
     this.updateApparentTemperature();
     this.gradientComponent.update(response?.hourly?.data);
     this.updateBackgroundColor();
-    this.indoorTemp.left = this.weatherDataService.computeTempFromFakeElevation(
-      this.weatherData, 
-      response.currently.indoorTemp.left, 
-      this.fakeElevation
-    );
-    this.indoorTemp.right = this.weatherDataService.computeTempFromFakeElevation(
-      this.weatherData, 
-      response.currently.indoorTemp.right, 
-      this.fakeElevation
-    );
-    this.updateWeatherPanelBackground(this.indoorTemp.left, 'left');
-    this.updateWeatherPanelBackground(this.indoorTemp.right, 'right');
+    if (response.currently.indoorTemp) {
+      this.indoorTemp.left = this.weatherDataService.computeTempFromFakeElevation(
+        this.weatherData,
+        response.currently.indoorTemp.left,
+        this.fakeElevation
+      );
+      this.indoorTemp.right = this.weatherDataService.computeTempFromFakeElevation(
+        this.weatherData,
+        response.currently.indoorTemp.right,
+        this.fakeElevation
+      );
+      this.updateWeatherPanelBackground(this.indoorTemp.left, 'left');
+      this.updateWeatherPanelBackground(this.indoorTemp.right, 'right');
+    }
     this.loading = false;
     this.loadingFailed = false;
   }
