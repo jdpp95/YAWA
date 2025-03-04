@@ -28,7 +28,7 @@ export class WeatherDataService {
     weatherData.max = this.computeTempFromFakeElevation(weatherData, response.daily.data[0].temperatureMax, fakeElevation);
   }
 
-  processHourlyData(weatherData: WeatherItem, response: any, date: Date, fakeElevation: Elevation): number {
+  computeAverageTemperature(weatherData: WeatherItem, response: any, date: Date, fakeElevation: Elevation): number {
     let averageTemperature = 0;
     if (response.hourly?.data) {
       let todayWeather = [];

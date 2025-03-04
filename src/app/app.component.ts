@@ -246,7 +246,7 @@ export class AppComponent implements OnInit {
   updateWeatherData(response) {
     this.weatherData.actualElevation = response.elevation;
     this.weatherDataService.computeTemperatureData(this.weatherData, response, this.nowIsChecked, this.fakeElevation);
-    this.weatherDataService.processHourlyData(this.weatherData, response, this.date, this.fakeElevation);
+    this.averageTemperature = this.weatherDataService.computeAverageTemperature(this.weatherData, response, this.date, this.fakeElevation);
     this.weatherDataService.assignWeatherData(this.weatherData, response, this.fakeElevation);
     this.updateApparentTemperature();
     this.gradientComponent.update(response?.hourly?.data);
