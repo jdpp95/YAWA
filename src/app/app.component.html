@@ -1,4 +1,4 @@
-<div id="background" #background matTooltip="{{weatherData.sunAngle | number: '.0-0'}}°" matTooltipPosition="below">
+<div id="background" #background>
   <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
     <a class="navbar-brand" href="#">YAWA - <small>Yet Another Weather App</small></a>
 
@@ -104,14 +104,27 @@
               </div>
             </div>
           </div>
-          <button type="submit" class="btn" [ngClass]="{
-                        'btn-outline-danger' : loadingFailed,
-                        'btn-dark' : !loadingFailed
-                       }" [disabled]="!locationForm.valid">
-            Update
-            <div *ngIf="loading" class="spinner-border spinner-border-sm text-light ml-2" role="status">
-            </div>
-          </button>
+          <div class="row">
+            <div class="col-9">
+              <button type="submit" class="btn w-100" [ngClass]="{
+                'btn-outline-danger' : loadingFailed,
+                'btn-dark' : !loadingFailed
+              }" [disabled]="!locationForm.valid">
+              Update
+              <div *ngIf="loading" class="spinner-border spinner-border-sm text-light ml-2" role="status">
+              </div>
+            </button>
+          </div>
+          <div class="col-3">
+            <button 
+              type="button" 
+              class="btn btn-sm btn-dark w-100" 
+              matTooltip="{{weatherData.sunAngle | number: '.0-0'}}°"
+            >
+              <em class="material-icons">sunny</em>
+            </button>
+          </div>
+        </div>
 
         </form>
       </div>
