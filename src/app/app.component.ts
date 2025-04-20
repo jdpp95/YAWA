@@ -21,7 +21,6 @@ import { MapboxService } from './services/mapbox.service';
 import { TempGradientComponent } from './components/temp-gradient/temp-gradient.component';
 import { WeatherItem } from './models/weatherItem.model';
 import { Elevation, ElevationUnit, WeatherDataService } from './services/weather-data.service';
-import { MatTooltip } from '@angular/material/tooltip';
 
 const moment = _moment;
 
