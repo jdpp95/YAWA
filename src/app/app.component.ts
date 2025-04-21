@@ -38,6 +38,8 @@ export const MY_FORMATS = {
   }
 };
 
+type Panel = 'left' | 'right';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -63,7 +65,7 @@ export class AppComponent implements OnInit {
 
   title = 'YAWA';
 
-  //Forms and fields
+  // Forms and fields
   coords: string;
   nowIsChecked: boolean;
   locationForm: FormGroup;
@@ -71,27 +73,30 @@ export class AppComponent implements OnInit {
   date: Date;
   UTC: number;
 
-  //Data from API
+  // Data from API
   weatherData: WeatherItem = {} as WeatherItem;
 
-  //Computed data
+  // Computed data
   snowProbability: number;
   breathCondensation: number;
   averageTemperature: number = 0;
-  indoorTemp = { left: null, right: null };
+  indoorTemp: {left: number | null, right: number | null} = { left: null, right: null };
 
   fakeElevation: Elevation = {
     value: 0,
     unit: ElevationUnit.METERS
   };
 
-  //UI metadata
+  // UI metadata
   loading: boolean = false;
   loadingFailed: boolean = false;
   editHumidity: boolean = false;
   locationEnabled: boolean = false;
   displayMinMax: boolean = false;
   displayAverageTemp: boolean = false;
+
+  // Constants
+  HEATING_MAX_TEMP = 22.5;
 
   constructor(
     private _yawaBackendService: YawaBackendService,
@@ -282,7 +287,7 @@ export class AppComponent implements OnInit {
     this.background.nativeElement.style.backgroundImage = gradient;
   }
 
-  private updateWeatherPanelBackground(temperature: number, panel: 'left' | 'right') {
+  private updateWeatherPanelBackground(temperature: number, panel: Panel) {
     let colorHsl = 'hsl(0, 0%, 100%)';
     if (temperature !== null) {
       colorHsl = UtilsService.formatHSL(
@@ -403,5 +408,11 @@ export class AppComponent implements OnInit {
     }
     this.updateApparentTemperature();
     this.updateBackgroundColor();
+  }
+
+  heatPanel(panel: Panel){
+    const heatedTemperature = this.indoorTemp[panel] + (this.HEATING_MAX_TEMP - this.indoorTemp[panel]) * 0.5;
+    this.indoorTemp[panel] = heatedTemperature;
+    this.updateWeatherPanelBackground(heatedTemperature, panel);
   }
 }
