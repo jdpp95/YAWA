@@ -97,6 +97,8 @@ export class AppComponent implements OnInit {
 
   // Constants
   HEATING_MAX_TEMP = 22.5;
+  AC_MIN_TEMP = 18.0;
+  THERMOSTAT_STEP = 0.5;
 
   constructor(
     private _yawaBackendService: YawaBackendService,
@@ -411,9 +413,16 @@ export class AppComponent implements OnInit {
     this.updateBackgroundColor();
   }
 
-  heatPanel(panel: Panel){
-    const heatedTemperature = this.indoorTemp[panel] + (this.HEATING_MAX_TEMP - this.indoorTemp[panel]) * 0.5;
-    this.indoorTemp[panel] = heatedTemperature;
-    this.updateWeatherPanelBackground(heatedTemperature, panel);
+  thermostat(panel: Panel){
+    const indoorTemp = this.indoorTemp[panel];
+    if(indoorTemp < this.HEATING_MAX_TEMP) {
+      const heatedTemperature = indoorTemp + (this.HEATING_MAX_TEMP - indoorTemp) * this.THERMOSTAT_STEP;
+      this.indoorTemp[panel] = heatedTemperature;
+      this.updateWeatherPanelBackground(heatedTemperature, panel);
+    } else if (indoorTemp > this.AC_MIN_TEMP) {
+      const cooledTemperature = indoorTemp - (indoorTemp - this.AC_MIN_TEMP) * this.THERMOSTAT_STEP;
+      this.indoorTemp[panel] = cooledTemperature;
+      this.updateWeatherPanelBackground(cooledTemperature, panel);
+    }
   }
 }

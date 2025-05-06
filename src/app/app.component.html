@@ -128,7 +128,7 @@
 
         </form>
       </div>
-      <div class="col-lg-4 col-md-6" (dblclick)="heatPanel('left')">
+      <div class="col-lg-4 col-md-6" (dblclick)="thermostat('left')">
         <ul 
           #weatherDataLeftPanel 
           class="list-group" 
@@ -174,7 +174,7 @@
         class="col-lg-4 col-md-6" 
         matTooltip="{{indoorTemp?.right | number: '.0-0'}} °C" 
         [matTooltipDisabled]="indoorTemp?.right === null"
-        (dblclick)="heatPanel('right')"
+        (dblclick)="thermostat('right')"
       >
         <ul class="list-group">
           <li *ngIf="weatherData.windSpeed > 5" class="list-group-item list-group-item-action">Wind: {{weatherData.windSpeed | number: '.0-0'}}
