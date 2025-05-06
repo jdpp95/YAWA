@@ -271,6 +271,7 @@ export class AppComponent implements OnInit {
     }
     this.loading = false;
     this.loadingFailed = false;
+    this.editHumidity = false;
   }
 
   private updateBackgroundColor() {
