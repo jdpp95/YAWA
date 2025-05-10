@@ -386,14 +386,14 @@ export class AppComponent implements OnInit {
   }
 
   copyPromptClicked() {
+    const date = moment(this.date).utcOffset(this.UTC);;
     let text = "";
-    // text += "\nDate: ";
-    text += `Time of day: ${moment(this.date).format('HH:mm')}`;
+    text += `Date: ${date.format('MMM Do')}`;
+    text += `\nTime of day: ${date.format('HH:mm')}`;
     text += `\nTemperature: ${this.weatherData.temperature.toFixed(0)} °C`;
     text += `\nCloud cover: ${(this.weatherData.cloudiness * 100).toFixed(0)}%`;
     text += `\nRelative Humidity: ${(this.weatherData.humidity * 100).toFixed(0)}%`;
     text += `\nWind speed: ${this.weatherData.windSpeed.toFixed(0)} km/h`;
-    text += `\nActivity: `;
 
     navigator.clipboard.writeText(text);
   }
