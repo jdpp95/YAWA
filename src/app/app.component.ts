@@ -98,7 +98,7 @@ export class AppComponent implements OnInit {
   // Constants
   HEATING_MAX_TEMP = 22.5;
   AC_MIN_TEMP = 18.0;
-  THERMOSTAT_STEP = 0.5;
+  THERMOSTAT_STEP = 1 / 3;
 
   constructor(
     private _yawaBackendService: YawaBackendService,
