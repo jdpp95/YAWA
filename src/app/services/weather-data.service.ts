@@ -12,6 +12,7 @@ export enum ElevationUnit {
 
 export type Elevation = {
   value: number;
+  seasonFactor?: number;
   unit: ElevationUnit;
 }
 
@@ -82,6 +83,11 @@ export class WeatherDataService {
 
   computeTempFromFakeElevation(weatherData: WeatherItem, temperature: number, fakeElevation: Elevation): number {
     const FT_TO_M = 0.3048;
+    const AMPLITUDE_FACTOR = 1;
+    const METERS_PER_DEGREE = 180;
+    const TROPICAL_AVERAGE_TEMPERATURE = 28.235;
+
+    let fakeTemperature = temperature;
 
     if (fakeElevation.unit === ElevationUnit.FEET) {
       const meters = fakeElevation.value * FT_TO_M;
@@ -89,11 +95,22 @@ export class WeatherDataService {
 
       // This function's only responsibility is to compute the temperature. Assignation to component.fakeElevation should be done outside.
       const fakeElevationInMeters = (ratio - 1) * weatherData.actualElevation;
-      return temperature - fakeElevationInMeters / 180;
+      fakeTemperature = temperature - fakeElevationInMeters / METERS_PER_DEGREE;
     } else if (fakeElevation.unit === ElevationUnit.METERS) {
-      return temperature - fakeElevation.value / 180;
+      fakeTemperature = temperature - fakeElevation.value / METERS_PER_DEGREE;
     }
 
+    if(fakeElevation.seasonFactor !== undefined) {
+      const averageYearlyTemperature = 26.15 - 0.006 * weatherData.actualElevation;
+      const amplitude = (0.00398 * weatherData.actualElevation + 9.5) * AMPLITUDE_FACTOR;
+      const winterTemperature = averageYearlyTemperature - amplitude/2;
+      const averageFakeTemperature = winterTemperature + amplitude * fakeElevation.seasonFactor;
+      const averageTemperatureFromElevation = TROPICAL_AVERAGE_TEMPERATURE - weatherData.actualElevation / METERS_PER_DEGREE;
+      const diff = averageFakeTemperature - averageTemperatureFromElevation;
+      fakeTemperature += diff;
+    }
+
+    return fakeTemperature;
   }
 
   applyRain(weatherData: WeatherItem, rainTemperature: number, rainIntensity: number, fakeElevation: Elevation): void {

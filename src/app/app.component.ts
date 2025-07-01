@@ -125,6 +125,10 @@ export class AppComponent implements OnInit {
             unit: ElevationUnit.FEET
           }
         }
+        this.fakeElevation = {
+          ...this.fakeElevation,
+          seasonFactor: response["seasonFactor"] ? parseFloat(response["seasonFactor"])/100 : undefined
+        }
       }
     )
     this.UTC = -5;
