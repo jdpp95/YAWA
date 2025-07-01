@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "node server.js",
+    "startBackend": "npm start --prefix ../YAWA-backend/",
     "startForDev": "ng serve --configuration=development",
     "build": "ng build",
     "test": "ng test",
