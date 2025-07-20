@@ -131,7 +131,7 @@ export class AppComponent implements OnInit {
         }
       }
     )
-    this.UTC = -5;
+    this.UTC = -5; // Default UTC offset
 
     const initDate = moment().utc();
     initDate.startOf('day');
@@ -261,6 +261,8 @@ export class AppComponent implements OnInit {
     this.updateApparentTemperature();
     this.gradientComponent.update(response?.hourly?.data);
     this.updateBackgroundColor();
+    this.UTC = response.offset || this.UTC;
+    this.locationForm.controls['UTC'].setValue(this.UTC);
     if (response.currently.indoorTemp) {
       this.indoorTemp.left = this.weatherDataService.computeTempFromFakeElevation(
         this.weatherData,
@@ -390,7 +392,7 @@ export class AppComponent implements OnInit {
   }
 
   copyPromptClicked() {
-    const date = moment(this.date).utcOffset(this.UTC);;
+    const date = moment(this.date).utcOffset(this.UTC);
     let text = "";
     text += `Date: ${date.format('MMM Do')}`;
     text += `\nTime of day: ${date.format('HH:mm')}`;
