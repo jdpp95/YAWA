@@ -137,7 +137,7 @@ export class AppComponent implements OnInit {
     initDate.startOf('day');
     this.onDateChange(initDate.format())
 
-    const savedFormData = localStorage.getItem('locationFormData');
+    const savedFormData = sessionStorage.getItem('locationFormData');
     if (savedFormData) {
       const formData = JSON.parse(savedFormData);
       this.locationForm = new FormGroup({
@@ -194,7 +194,7 @@ export class AppComponent implements OnInit {
             coordsControl.setValue(coords);
             this.coords = coords;
 
-            this.saveFormDataToLocalStorage();
+            this.saveFormDataToSessionStorage();
             this.getWeather();
           }
         )
@@ -219,7 +219,7 @@ export class AppComponent implements OnInit {
         );
       } else {
         this.coords = this.locationForm.value.coords;
-        this.saveFormDataToLocalStorage();
+        this.saveFormDataToSessionStorage();
         this.getWeather();
       }
     }
@@ -229,7 +229,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  saveFormDataToLocalStorage() {
+  saveFormDataToSessionStorage() {
     const formData = {
       coords: this.locationForm.value.coords,
       now: this.locationForm.value.now,
@@ -238,7 +238,7 @@ export class AppComponent implements OnInit {
       minute: this.locationForm.value.minute,
       UTC: this.locationForm.value.UTC
     };
-    localStorage.setItem('locationFormData', JSON.stringify(formData));
+    sessionStorage.setItem('locationFormData', JSON.stringify(formData));
   }
 
   getWeather() {
