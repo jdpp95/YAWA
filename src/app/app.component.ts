@@ -131,7 +131,7 @@ export class AppComponent implements OnInit {
         }
       }
     )
-    this.UTC = -5; // Default UTC offset
+    this.UTC = (new Date().getTimezoneOffset()) * -1 / 60;
 
     const initDate = moment().utc();
     initDate.startOf('day');
@@ -253,6 +253,11 @@ export class AppComponent implements OnInit {
     );
   }
 
+  setUtc(value: number): void {
+    this.UTC = value;
+    this.locationForm.controls['UTC'].setValue(this.UTC);
+  }
+
   updateWeatherData(response) {
     this.weatherData.actualElevation = response.elevation;
     this.weatherDataService.computeTemperatureData(this.weatherData, response, this.nowIsChecked, this.fakeElevation);
@@ -261,8 +266,7 @@ export class AppComponent implements OnInit {
     this.updateApparentTemperature();
     this.gradientComponent.update(response?.hourly?.data);
     this.updateBackgroundColor();
-    this.UTC = response.offset || this.UTC;
-    this.locationForm.controls['UTC'].setValue(this.UTC);
+    this.setUtc(response.offset || this.UTC);
     if (response.currently.indoorTemp) {
       this.indoorTemp.left = this.weatherDataService.computeTempFromFakeElevation(
         this.weatherData,
