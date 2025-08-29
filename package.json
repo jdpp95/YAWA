@@ -29,6 +29,7 @@
     "@angular/router": "~19.1.5",
     "express": "^4.21.2",
     "moment": "^2.30.1",
+    "ng-swipe": "^2.0.1",
     "path": "^0.12.7",
     "percentile-rank": "^1.0.6",
     "rxjs": "~7.8.1",

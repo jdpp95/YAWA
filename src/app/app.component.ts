@@ -21,6 +21,8 @@ import { MapboxService } from './services/mapbox.service';
 import { TempGradientComponent } from './components/temp-gradient/temp-gradient.component';
 import { WeatherItem } from './models/weatherItem.model';
 import { Elevation, ElevationUnit, WeatherDataService } from './services/weather-data.service';
+import * as e from 'express';
+import { SwipeEvent } from 'ng-swipe';
 
 const moment = _moment;
 
@@ -39,6 +41,8 @@ export const MY_FORMATS = {
 };
 
 type Panel = 'left' | 'right';
+
+type ThermostatAction = 'heat' | 'cool' | 'auto';
 
 @Component({
   selector: 'app-root',
@@ -80,7 +84,7 @@ export class AppComponent implements OnInit {
   snowProbability: number;
   breathCondensation: number;
   averageTemperature: number = 0;
-  indoorTemp: {left: number | null, right: number | null} = { left: null, right: null };
+  indoorTemp: { left: number | null, right: number | null } = { left: null, right: null };
 
   fakeElevation: Elevation = {
     value: 0,
@@ -97,7 +101,7 @@ export class AppComponent implements OnInit {
 
   // Constants
   HEATING_MAX_TEMP = 22.5;
-  AC_MIN_TEMP = 18.0;
+  AC_MIN_TEMP = 17.5;
   THERMOSTAT_STEP = 1 / 3;
 
   constructor(
@@ -127,7 +131,7 @@ export class AppComponent implements OnInit {
         }
         this.fakeElevation = {
           ...this.fakeElevation,
-          seasonFactor: response["seasonFactor"] ? parseFloat(response["seasonFactor"])/100 : undefined
+          seasonFactor: response["seasonFactor"] ? parseFloat(response["seasonFactor"]) / 100 : undefined
         }
       }
     )
@@ -423,16 +427,41 @@ export class AppComponent implements OnInit {
     this.updateBackgroundColor();
   }
 
-  thermostat(panel: Panel){
+  thermostat(panel: Panel, action: ThermostatAction) {
+    console.log(`Thermostat action: ${action}`);
     const indoorTemp = this.indoorTemp[panel];
-    if(indoorTemp < this.HEATING_MAX_TEMP) {
-      const heatedTemperature = indoorTemp + (this.HEATING_MAX_TEMP - indoorTemp) * this.THERMOSTAT_STEP;
-      this.indoorTemp[panel] = heatedTemperature;
-      this.updateWeatherPanelBackground(heatedTemperature, panel);
-    } else if (indoorTemp > this.AC_MIN_TEMP) {
-      const cooledTemperature = indoorTemp - (indoorTemp - this.AC_MIN_TEMP) * this.THERMOSTAT_STEP;
-      this.indoorTemp[panel] = cooledTemperature;
-      this.updateWeatherPanelBackground(cooledTemperature, panel);
+
+    switch (action) {
+      case 'heat':
+        this.heat(panel);
+        break;
+      case 'cool':
+        this.cool(panel);
+        break;
+      case 'auto':
+        if(indoorTemp < this.HEATING_MAX_TEMP) {
+          this.heat(panel);
+        } else if(indoorTemp > this.AC_MIN_TEMP) {
+          this.cool(panel);
+        }
     }
+  }
+
+  onSwipeEnd(event: SwipeEvent, panel: Panel): void {
+    this.thermostat(panel, event.distance < 0 ? 'cool' : 'heat');
+  }
+
+  private heat(panel: Panel): void {
+    const indoorTemp = this.indoorTemp[panel];
+    const heatedTemperature = indoorTemp + (this.HEATING_MAX_TEMP - indoorTemp) * this.THERMOSTAT_STEP;
+    this.indoorTemp[panel] = heatedTemperature;
+    this.updateWeatherPanelBackground(heatedTemperature, panel);
+  }
+
+  private cool(panel: Panel): void {
+    const indoorTemp = this.indoorTemp[panel];
+    const cooledTemperature = indoorTemp - (indoorTemp - this.AC_MIN_TEMP) * this.THERMOSTAT_STEP;
+    this.indoorTemp[panel] = cooledTemperature;
+    this.updateWeatherPanelBackground(cooledTemperature, panel);
   }
 }

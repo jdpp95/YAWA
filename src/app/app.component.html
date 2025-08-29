@@ -128,11 +128,11 @@
 
         </form>
       </div>
-      <div class="col-lg-4 col-md-6" (dblclick)="thermostat('left')">
-        <ul 
-          #weatherDataLeftPanel 
-          class="list-group" 
-          matTooltip="{{indoorTemp?.left | number: '.0-0'}} °C" 
+      <div class="col-lg-4 col-md-6" ngSwipe (dblclick)="thermostat('left', 'auto')" (swipeEnd)="onSwipeEnd($event, 'left')">
+        <ul
+          #weatherDataLeftPanel
+          class="list-group"
+          matTooltip="{{indoorTemp?.left | number: '.0-0'}} °C"
           [matTooltipDisabled]="indoorTemp?.left === null"
         >
           <li class="list-group-item list-group-item-action">
@@ -174,7 +174,9 @@
         class="col-lg-4 col-md-6" 
         matTooltip="{{indoorTemp?.right | number: '.0-0'}} °C" 
         [matTooltipDisabled]="indoorTemp?.right === null"
-        (dblclick)="thermostat('right')"
+        (dblclick)="thermostat('right', 'auto')"
+        ngSwipe
+        (swipeEnd)="onSwipeEnd($event, 'right')"
       >
         <ul class="list-group">
           <li *ngIf="weatherData.windSpeed > 5" class="list-group-item list-group-item-action">Wind: {{weatherData.windSpeed | number: '.0-0'}}

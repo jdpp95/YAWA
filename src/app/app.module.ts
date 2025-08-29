@@ -21,6 +21,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip'
+import { SwipeModule } from 'ng-swipe';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { MatTooltipModule } from '@angular/material/tooltip'
     AppRoutingModule,
     MatFormFieldModule,
     CommonModule,
-    MatTooltipModule
+    MatTooltipModule,
+    SwipeModule
   ],
   providers: [
     MatDatepickerModule,
