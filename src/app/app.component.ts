@@ -290,7 +290,17 @@ export class AppComponent implements OnInit {
     this.editHumidity = false;
   }
 
+  updateVisibility() {
+    if (this.weatherData.visibility === null || this.weatherData.visibility === undefined) {
+      const { humidity, cloudiness } = this.weatherData;
+      const visibility = 10 * Math.exp(-3.2 * humidity) * Math.exp(-0.5 * cloudiness);
+      console.log(`Visibility proposed by Github Copilot: ${(visibility * 1000).toFixed(0)} m`);
+      this.weatherData.visibility = visibility;
+    }
+  }
+
   private updateBackgroundColor() {
+    this.updateVisibility()
     const { temperature, cloudiness, rainIntensity, visibility, sunAngle, apparentT } = this.weatherData;
     let color1 = UtilsService.formatHSL(
       UtilsService.colorT(temperature, cloudiness, 0, 10, sunAngle)
@@ -439,9 +449,9 @@ export class AppComponent implements OnInit {
         this.cool(panel);
         break;
       case 'auto':
-        if(indoorTemp < this.HEATING_MAX_TEMP) {
+        if (indoorTemp < this.HEATING_MAX_TEMP) {
           this.heat(panel);
-        } else if(indoorTemp > this.AC_MIN_TEMP) {
+        } else if (indoorTemp > this.AC_MIN_TEMP) {
           this.cool(panel);
         }
     }

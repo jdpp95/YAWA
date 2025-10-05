@@ -181,7 +181,7 @@
         <ul class="list-group">
           <li *ngIf="weatherData.windSpeed > 5" class="list-group-item list-group-item-action">Wind: {{weatherData.windSpeed | number: '.0-0'}}
             km/h</li>
-          <li *ngIf="weatherData.visibility < 5" class="list-group-item list-group-item-action">Visibility:
+          <li *ngIf="weatherData.visibility < 5 || true" class="list-group-item list-group-item-action">Visibility:
             {{weatherData.visibility*1000 | number: '.0-0'}} m</li>
           <li *ngIf="breathCondensation > 0" class="list-group-item list-group-item-action">Breath condensation:
             {{breathCondensation | number: '.0-2'}}</li>
