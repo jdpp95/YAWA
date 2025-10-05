@@ -80,7 +80,7 @@
               </label>
             </div>
             <div *ngIf="!nowIsChecked">
-              <div class="input-group mb-2">
+              <div class="input-group mb-2 align-items-center">
                 <label class="mr-2">Date:</label>
                 <input #dateInput id="datepicker" [matDatepicker]="myDatepicker" formControlName="myDatepicker"
                   (dateChange)="onDateChange(dateInput.value)">
