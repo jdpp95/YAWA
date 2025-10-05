@@ -293,8 +293,7 @@ export class AppComponent implements OnInit {
   updateVisibility() {
     if (this.weatherData.visibility === null || this.weatherData.visibility === undefined) {
       const { humidity, cloudiness } = this.weatherData;
-      const visibility = 10 * Math.exp(-3.2 * humidity) * Math.exp(-0.5 * cloudiness);
-      console.log(`Visibility proposed by Github Copilot: ${(visibility * 1000).toFixed(0)} m`);
+      const visibility = 10 ** ((1 - humidity * cloudiness) * 10 - 2);
       this.weatherData.visibility = visibility;
     }
   }

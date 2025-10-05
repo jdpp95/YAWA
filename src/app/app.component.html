@@ -185,14 +185,14 @@
         <ul class="list-group">
           <li *ngIf="weatherData.windSpeed > 5" class="list-group-item list-group-item-action">Wind: {{weatherData.windSpeed | number: '.0-0'}}
             km/h</li>
-          <li *ngIf="weatherData.visibility < 5 || true" class="list-group-item list-group-item-action">Visibility:
-            {{weatherData.visibility*1000 | number: '.0-0'}} m</li>
+          <li *ngIf="weatherData.visibility < 5" class="list-group-item list-group-item-action">Visibility:
+            {{weatherData.visibility * 1000 | number: '.0-0'}} m</li>
           <li *ngIf="breathCondensation > 0" class="list-group-item list-group-item-action">Breath condensation:
             {{breathCondensation | number: '.0-2'}}</li>
           <li *ngIf="snowProbability > 0 && weatherData.rainIntensity >=1" class="list-group-item list-group-item-action">Snow
             Probability:
             {{snowProbability | percent}}</li>
-          <li *ngIf="weatherData.rainIntensity >= 1" class="list-group-item list-group-item-action">
+          <li *ngIf="weatherData.rainIntensity >= 1 || weatherData.visibility < 1000" class="list-group-item list-group-item-action">
             Rain intensity: {{weatherData.rainIntensity | number: '.0-1'}}
           </li>
           <li class="list-group-item list-group-item-action">Elevation: {{weatherData.actualElevation}} m</li>
