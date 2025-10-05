@@ -299,6 +299,11 @@ export class AppComponent implements OnInit {
     }
   }
 
+  setToday(datepicker: any) {
+    this.locationForm.get('myDatepicker')?.setValue(new Date());
+    datepicker.close();
+  }
+
   private updateBackgroundColor() {
     this.updateVisibility()
     const { temperature, cloudiness, rainIntensity, visibility, sunAngle, apparentT } = this.weatherData;
