@@ -87,7 +87,8 @@
                 <mat-datepicker-toggle [for]="myDatepicker" class="text-dark"></mat-datepicker-toggle>
                 <mat-datepicker #myDatepicker>
                   <mat-datepicker-actions>
-                    <button mat-button class="btn btn-sm btn-primary" (click)="setToday(myDatepicker)">Today</button>
+                    <button mat-button class="btn btn-sm btn-primary mr-2" (click)="setToday(myDatepicker)">Today</button>
+                    <button mat-button class="btn btn-sm btn-success" matDatepickerApply>OK</button>
                   </mat-datepicker-actions>
                 </mat-datepicker>
               </div>
