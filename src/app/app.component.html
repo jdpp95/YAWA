@@ -162,7 +162,7 @@
               <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon3">Humidity: </span>
               </div>
-              <input #humidity type="text" class="form-control" (change)="onHumidityChanged(true, humidity.value)">
+              <input #humidity type="number" value="{{weatherData.humidity*100}}" class="form-control" (change)="onHumidityChanged(true, humidity.value)">
               <div class="input-group-append">
                 <span class="input-group-text">%</span>
               </div>

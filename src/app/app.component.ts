@@ -307,10 +307,10 @@ export class AppComponent implements OnInit {
     this.updateVisibility()
     const { temperature, cloudiness, rainIntensity, visibility, sunAngle, apparentT } = this.weatherData;
     let color1 = UtilsService.formatHSL(
-      UtilsService.colorT(temperature, cloudiness, 0, 10, sunAngle)
+      UtilsService.colorT(temperature, cloudiness, 0, sunAngle, 10)
     );
     let color2 = UtilsService.formatHSL(
-      UtilsService.colorT(apparentT, cloudiness, rainIntensity, visibility, sunAngle)
+      UtilsService.colorT(apparentT, cloudiness, rainIntensity, sunAngle, visibility)
     );
 
     const gradient = `linear-gradient(${color1}, ${color2})`;
@@ -322,7 +322,7 @@ export class AppComponent implements OnInit {
     let colorHsl = 'hsl(0, 0%, 100%)';
     if (temperature !== null) {
       colorHsl = UtilsService.formatHSL(
-        UtilsService.colorT(temperature, 0.15, 0, 10, 0)
+        UtilsService.colorT(temperature, 0.15, 0, 0, 10)
       );
     }
     const panelElement = panel === 'left' ? this.weatherDataLeftPanel : this.weatherDataRightPanel;
@@ -389,8 +389,8 @@ export class AppComponent implements OnInit {
     }
   }
 
+  // TODO: Fix breath condensation bug
   onHumidityChanged(changeDewPoint: boolean, humidity?: string) {
-    console.log({ changeDewPoint, humidity })
     if (humidity) {
       this.weatherData.humidity = parseInt(humidity) / 100.0;
     }
@@ -400,8 +400,9 @@ export class AppComponent implements OnInit {
     }
 
     this.breathCondensation = UtilsService.breathCondensation(this.weatherData.temperature, this.weatherData.humidity);
-    this.updateApparentTemperature();
     this.snowProbability = UtilsService.snowProbability(this.weatherData.temperature, this.weatherData.humidity);
+    this.weatherData.visibility = null; // Will be recalculated on updateBackgroundColor() -> updateVisibility()
+    this.updateApparentTemperature();
     this.updateBackgroundColor();
   }
 
@@ -435,6 +436,7 @@ export class AppComponent implements OnInit {
       temperature: newTemperature,
       humidity: newHumidity,
       cloudiness: rainIntensity > 0 ? 1 : this.weatherData.cloudiness,
+      visibility: null, // Will be recalculated on updateBackgroundColor() -> updateVisibility()
       rainIntensity,
     }
     this.updateApparentTemperature();
@@ -461,6 +463,7 @@ export class AppComponent implements OnInit {
     }
   }
 
+  // TODO: Make less sensible
   onSwipeEnd(event: SwipeEvent, panel: Panel): void {
     this.thermostat(panel, event.distance < 0 ? 'cool' : 'heat');
   }

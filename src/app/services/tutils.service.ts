@@ -14,7 +14,7 @@ export class UtilsService {
       this.range60.push(i);
     }
   }
-  
+
   private static gx(t, h) {
     return 3.793068 * h * Math.exp(17.2694 * t / (t + 238.3));
   }
@@ -31,7 +31,9 @@ export class UtilsService {
     return (f - 32) * (5 / 9);
   }
 
-  static colorT(t: number, cloudiness: number, rainIntensity: number, visibility: number, sunAngle: number) {
+  static colorT(t: number, cloudiness: number, rainIntensity: number, sunAngle: number, visibility?: number) {
+    const MIN_FOG_LUMINOSITY = 15, MAX_FOG_LUMINOSITY = 100, MAX_SUN_ANGLE_FOG = 24;
+
     if (!cloudiness) {
       cloudiness = 0;
     }
@@ -44,32 +46,40 @@ export class UtilsService {
       sat = Math.max(60 - (rainIntensity - 1) * 10, 30);
     }
 
-    //    if (!colors) {
     let colors = [
       [0, 270],
       [14, 240],
       [32, 180],
-      //[41, 144],
       [44.6, 150],
       [50, 120],
       [55.4, 90],
       [68, 60],
       [80, 45],
       [90, 30],
-      //[90, 255, 128, 0],
       [100, 0],
       [100, 360],
       [125, 360]
     ];
 
-    var lum = 0;
-    if (visibility < 5) {
-      lum = (0.67662 - 0.10119 * Math.log(visibility)) * 100;
+    let fogLum = 0;
+
+    if (visibility && visibility < 5) {
+      // -------------------------- A --------------------------------
+      if (sunAngle >= MAX_SUN_ANGLE_FOG) {
+        fogLum = MAX_FOG_LUMINOSITY;
+      } else if (sunAngle <= -12) {
+        fogLum = MIN_FOG_LUMINOSITY;
+      } else {
+        fogLum = this.transition(MIN_FOG_LUMINOSITY, MAX_FOG_LUMINOSITY, -12, MAX_SUN_ANGLE_FOG, sunAngle);
+      }
     } else if (t > 100) {
-      lum = Math.max(150 - t, 10);
+      fogLum = Math.max(150 - t, 10);
     } else {
-      lum = 50;
+      fogLum = 50;
     }
+    
+    const fogFactor = Math.max(Math.min(0.258977 - 0.1609112 * Math.log(visibility), 1), 0);
+    let lum = this.transition(50, fogLum, 0, 1, fogFactor);
 
     if (sunAngle <= -12) {
       lum *= 0.3;
@@ -213,9 +223,9 @@ export class UtilsService {
     const base = Math.floor(pos);
     const rest = pos - base;
     if (array[base + 1] !== undefined) {
-        return array[base] + rest * (array[base + 1] - array[base]);
+      return array[base] + rest * (array[base + 1] - array[base]);
     } else {
-        return array[base];
+      return array[base];
     }
   }
 

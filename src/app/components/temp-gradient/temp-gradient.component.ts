@@ -64,7 +64,7 @@ export class TempGradientComponent {
     let style = "";
 
     if (weatherData.length == 1) {
-      style = UtilsService.formatHSL(UtilsService.colorT(weatherData[0]['temperature'], weatherData[0]['clouds'], 0, 10, weatherData[0]['sunAngle']));
+      style = UtilsService.formatHSL(UtilsService.colorT(weatherData[0]['temperature'], weatherData[0]['clouds'], 0,  weatherData[0]['sunAngle'], 10));
     } else {
       style = "linear-gradient(90deg, ";
 
@@ -74,7 +74,7 @@ export class TempGradientComponent {
         let position = Math.round(100 * i / 24);
 
         if (weatherData[i]) {
-          style += `${UtilsService.formatHSL(UtilsService.colorT(hourlyWeather.temperature, hourlyWeather.clouds, 0, 10, hourlyWeather.sunAngle))} ${position}%, `;
+          style += `${UtilsService.formatHSL(UtilsService.colorT(hourlyWeather.temperature, hourlyWeather.clouds, 0, hourlyWeather.sunAngle, 10))} ${position}%, `;
         }
 
         if (i == 23) {
