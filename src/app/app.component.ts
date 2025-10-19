@@ -310,7 +310,7 @@ export class AppComponent implements OnInit {
     this.updateVisibility()
     const { temperature, cloudiness, rainIntensity, visibility, sunAngle, apparentT } = this.weatherData;
     let color1 = UtilsService.formatHSL(
-      UtilsService.colorT(temperature, cloudiness, 0, sunAngle, 10)
+      UtilsService.colorT(temperature, cloudiness, rainIntensity, sunAngle, 10)
     );
     let color2 = UtilsService.formatHSL(
       UtilsService.colorT(apparentT, cloudiness, rainIntensity, sunAngle, visibility)

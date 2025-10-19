@@ -64,7 +64,6 @@ export class UtilsService {
     let fogLum = 0;
 
     if (visibility && visibility < 5) {
-      // -------------------------- A --------------------------------
       if (sunAngle >= MAX_SUN_ANGLE_FOG) {
         fogLum = MAX_FOG_LUMINOSITY;
       } else if (sunAngle <= -12) {
@@ -80,6 +79,7 @@ export class UtilsService {
     
     const fogFactor = Math.max(Math.min(0.258977 - 0.1609112 * Math.log(visibility), 1), 0);
     let lum = this.transition(50, fogLum, 0, 1, fogFactor);
+    sat = this.transition(sat, 0, 0, 1, fogFactor);
 
     if (sunAngle <= -12) {
       lum *= 0.3;
