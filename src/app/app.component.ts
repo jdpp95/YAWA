@@ -21,7 +21,6 @@ import { MapboxService } from './services/mapbox.service';
 import { TempGradientComponent } from './components/temp-gradient/temp-gradient.component';
 import { WeatherItem } from './models/weatherItem.model';
 import { Elevation, ElevationUnit, WeatherDataService } from './services/weather-data.service';
-import * as e from 'express';
 import { SwipeEvent } from 'ng-swipe';
 
 const moment = _moment;
@@ -137,9 +136,7 @@ export class AppComponent implements OnInit {
     )
     this.UTC = (new Date().getTimezoneOffset()) * -1 / 60;
 
-    const initDate = moment().utc();
-    initDate.startOf('day');
-    this.onDateChange(initDate.format())
+    const initDate = this.getTodayDate();
 
     const savedFormData = localStorage.getItem('locationFormData');
     if (savedFormData) {
@@ -298,8 +295,14 @@ export class AppComponent implements OnInit {
     }
   }
 
-  setToday(datepicker: any) {
-    this.locationForm.get('myDatepicker')?.setValue(new Date());
+  getTodayDate(): moment.Moment {
+    return moment().utcOffset(0).startOf('day').utcOffset(this.UTC);
+  }
+
+  setTodayDate(datepicker?: any): void {
+    const startOfDay = this.getTodayDate();
+    this.locationForm.get('myDatepicker')?.setValue(startOfDay);
+    this.onDateChange(startOfDay.format('YYYY-MM-DD'));
     datepicker.close();
   }
 
@@ -370,10 +373,7 @@ export class AppComponent implements OnInit {
   }
 
   onDateChange(value: string) {
-    let localDate = new Date(value);
-
-    localDate.setUTCHours(0);
-    this.date = localDate;
+    this.date = moment(value).utcOffset(this.UTC).startOf('day').toDate();
     console.log(this.date);
   }
 

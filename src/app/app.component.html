@@ -40,7 +40,7 @@
     </div>
   </nav>
 
-  <app-bulk-data-modal [UTC]="UTC" [coords]="coords" [date]="date">
+  <app-bulk-data-modal [UTC]="UTC" [coords]="coords" [date]="date" [hour]="locationForm.get('hour')?.value">
   </app-bulk-data-modal>
 
   <temp-gradient [UTC]="UTC" [elevation]="fakeElevation">
@@ -87,7 +87,7 @@
                 <mat-datepicker-toggle [for]="myDatepicker" class="text-dark"></mat-datepicker-toggle>
                 <mat-datepicker #myDatepicker>
                   <mat-datepicker-actions>
-                    <button mat-button class="btn btn-sm btn-primary mr-2" (click)="setToday(myDatepicker)">Today</button>
+                    <button mat-button class="btn btn-sm btn-primary mr-2" (click)="setTodayDate(myDatepicker)">Today</button>
                     <button mat-button class="btn btn-sm btn-success" matDatepickerApply>OK</button>
                   </mat-datepicker-actions>
                 </mat-datepicker>

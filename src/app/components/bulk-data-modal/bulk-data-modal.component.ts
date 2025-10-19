@@ -10,9 +10,9 @@ import { YawaBackendService } from 'src/app/services/dark-sky.service';
   selector: 'app-bulk-data-modal',
   templateUrl: './bulk-data-modal.component.html',
   styleUrls: ['./bulk-data-modal.component.css'],
-  standalone: false 
+  standalone: false
 })
-export class BulkDataModalComponent implements OnInit, OnChanges {
+export class BulkDataModalComponent implements OnChanges {
 
   //User choices
   displayTimeCol: boolean = false;
@@ -34,6 +34,7 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
   @Input() UTC: number;
   @Input() coords: string;
   @Input() date: Date;
+  @Input() hour: string;
 
   constructor(
     private _yawaBackend: YawaBackendService,
@@ -46,25 +47,19 @@ export class BulkDataModalComponent implements OnInit, OnChanges {
 
       'finalDate': new FormControl(moment()),
 
-      'finalHour': new FormControl('0', []),
+      'finalHour': new FormControl(this.hour ?? '0', []),
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.date) {
-      const hour = this.date.getUTCHours();
-      const minutes = this.date.getUTCMinutes();
-
-      if (hour === 0 && minutes === 0) {
-        this.dataForm.controls['initDate'].setValue(this.date);
-        this.dataForm.controls['finalDate'].setValue(this.date);
-      }
+    if (this.date) {
+      this.dataForm.controls['initDate'].setValue(moment(this.date).subtract(3, 'days').utcOffset(0).startOf('day'));
+      this.dataForm.controls['finalDate'].setValue(moment(this.date).utcOffset(0).startOf('day'));
     }
-  }
 
-  ngOnInit(): void {
-
-    //this.range$ = range(24);
+    if(this.hour) {
+      this.dataForm.controls['finalHour'].setValue(this.hour);
+    }
   }
 
   onDisplayTimeColClicked() {
