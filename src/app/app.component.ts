@@ -296,12 +296,12 @@ export class AppComponent implements OnInit {
   }
 
   getTodayDate(): moment.Moment {
-    return moment().utcOffset(0).startOf('day').utcOffset(this.UTC);
+    return moment().utcOffset(this.UTC).startOf('day');
   }
 
   setTodayDate(datepicker?: any): void {
     const startOfDay = this.getTodayDate();
-    this.locationForm.get('myDatepicker')?.setValue(startOfDay);
+    this.locationForm.get('myDatepicker')?.setValue(startOfDay.format('YYYY-MM-DD'));
     this.onDateChange(startOfDay.format('YYYY-MM-DD'));
     datepicker.close();
   }
