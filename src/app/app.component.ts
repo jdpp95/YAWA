@@ -478,7 +478,7 @@ export class AppComponent implements OnInit {
       sa: this.weatherData.sunAngle.toFixed(1),
       cc: (this.weatherData.cloudiness * 100).toFixed(0),
       ...(this.weatherData.rainIntensity < 1? {} : { ri: this.weatherData.rainIntensity.toFixed(2) }),
-      ...(this.weatherData.visibility > 5 ? {} : { v: this.weatherData.visibility.toFixed(0) }),
+      ...(this.weatherData.visibility > 5 ? {} : { v: (this.weatherData.visibility * 1000).toFixed(0) }),
     }
     const url = Object.entries(queryParams).reduce((acc, [key, value]) => acc + `&${key}=${value}`, `${baseUrl}?`);
     window.open(url, '_blank');
