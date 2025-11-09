@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 //Services
 import { YawaBackendService } from 'src/app/services/dark-sky.service';
@@ -466,6 +466,22 @@ export class AppComponent implements OnInit {
   // TODO: Make less sensible
   onSwipeEnd(event: SwipeEvent, panel: Panel): void {
     this.thermostat(panel, event.distance < 0 ? 'cool' : 'heat');
+  }
+
+  onHouseClicked(): void {
+    const baseUrl = 'https://jdpp95.github.io/House';
+    const queryParams = {
+      t: this.weatherData.temperature.toFixed(1),
+      it1: this.indoorTemp.right.toFixed(1),
+      it2: this.indoorTemp.left.toFixed(1),
+      rh: (this.weatherData.humidity * 100).toFixed(0),
+      sa: this.weatherData.sunAngle.toFixed(1),
+      cc: (this.weatherData.cloudiness * 100).toFixed(0),
+      ...(this.weatherData.rainIntensity < 1? {} : { ri: this.weatherData.rainIntensity.toFixed(2) }),
+      ...(this.weatherData.visibility > 5 ? {} : { v: this.weatherData.visibility.toFixed(0) }),
+    }
+    const url = Object.entries(queryParams).reduce((acc, [key, value]) => acc + `&${key}=${value}`, `${baseUrl}?`);
+    window.open(url, '_blank');
   }
 
   private heat(panel: Panel): void {

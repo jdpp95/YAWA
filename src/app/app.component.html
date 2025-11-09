@@ -15,25 +15,30 @@
           </a>
         </li>
         <li>
-          <button class="btn btn-sm btn-secondary mr-2" (click)="displayMinMaxClicked()"
+          <button class="btn btn-sm btn-secondary mr-2 mb-2 btn-block-sm" (click)="displayMinMaxClicked()"
             [ngClass]="{'btn-info': displayMinMax}">
             Display min/max
           </button>
         </li>
         <li>
-          <button class="btn btn-sm btn-secondary mr-2" (click)="displayAverageTempClicked()"
+          <button class="btn btn-sm btn-secondary mr-2 mb-2" (click)="displayAverageTempClicked()"
             [ngClass]="{'btn-info': displayAverageTemp}">
             Display daily average temperature
           </button>
         </li>
         <li>
-          <button class="btn btn-sm btn-secondary mr-2" data-toggle="modal" data-target="#gradientModal">
+          <button class="btn btn-sm btn-secondary mr-2 mb-2" data-toggle="modal" data-target="#gradientModal">
             Display gradient
           </button>
         </li>
         <li>
-          <button class="btn btn-sm btn-secondary mr-2" (click)="copyPromptClicked()">
+          <button class="btn btn-sm btn-secondary mr-2 mb-2" (click)="copyPromptClicked()">
             Copy prompt
+          </button>
+        </li>
+        <li>
+          <button class="btn btn-sm btn-secondary icon-btn" (click)="onHouseClicked()">
+              <i class="material-icons">home</i>
           </button>
         </li>
       </ul>
@@ -87,7 +92,8 @@
                 <mat-datepicker-toggle [for]="myDatepicker" class="text-dark"></mat-datepicker-toggle>
                 <mat-datepicker #myDatepicker>
                   <mat-datepicker-actions>
-                    <button mat-button class="btn btn-sm btn-primary mr-2" (click)="setTodayDate(myDatepicker)">Today</button>
+                    <button mat-button class="btn btn-sm btn-primary mr-2"
+                      (click)="setTodayDate(myDatepicker)">Today</button>
                     <button mat-button class="btn btn-sm btn-success" matDatepickerApply>OK</button>
                   </mat-datepicker-actions>
                 </mat-datepicker>
@@ -115,31 +121,25 @@
                 'btn-outline-danger' : loadingFailed,
                 'btn-dark' : !loadingFailed
               }" [disabled]="!locationForm.valid">
-              Update
-              <div *ngIf="loading" class="spinner-border spinner-border-sm text-light ml-2" role="status">
-              </div>
-            </button>
+                Update
+                <div *ngIf="loading" class="spinner-border spinner-border-sm text-light ml-2" role="status">
+                </div>
+              </button>
+            </div>
+            <div class="col-3">
+              <button type="button" class="btn btn-sm btn-dark btn-block"
+                matTooltip="{{weatherData.sunAngle | number: '.0-0'}}°">
+                <em class="material-icons">sunny</em>
+              </button>
+            </div>
           </div>
-          <div class="col-3">
-            <button 
-              type="button" 
-              class="btn btn-sm btn-dark btn-block" 
-              matTooltip="{{weatherData.sunAngle | number: '.0-0'}}°"
-            >
-              <em class="material-icons">sunny</em>
-            </button>
-          </div>
-        </div>
 
         </form>
       </div>
-      <div class="col-lg-4 col-md-6" ngSwipe (dblclick)="thermostat('left', 'auto')" (swipeEnd)="onSwipeEnd($event, 'left')">
-        <ul
-          #weatherDataLeftPanel
-          class="list-group"
-          matTooltip="{{indoorTemp?.left | number: '.0-0'}} °C"
-          [matTooltipDisabled]="indoorTemp?.left === null"
-        >
+      <div class="col-lg-4 col-md-6" ngSwipe (dblclick)="thermostat('left', 'auto')"
+        (swipeEnd)="onSwipeEnd($event, 'left')">
+        <ul #weatherDataLeftPanel class="list-group" matTooltip="{{indoorTemp?.left | number: '.0-0'}} °C"
+          [matTooltipDisabled]="indoorTemp?.left === null">
           <li class="list-group-item list-group-item-action">
             Temperature: {{weatherData.temperature | number:'.0-0'}} °C
             ({{weatherData.temperature + 1.5 | number:'.1-1'}})
@@ -162,7 +162,8 @@
               <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon3">Humidity: </span>
               </div>
-              <input #humidity type="number" value="{{weatherData.humidity*100}}" class="form-control" (change)="onHumidityChanged(true, humidity.value)">
+              <input #humidity type="number" value="{{weatherData.humidity*100}}" class="form-control"
+                (change)="onHumidityChanged(true, humidity.value)">
               <div class="input-group-append">
                 <span class="input-group-text">%</span>
               </div>
@@ -171,39 +172,33 @@
           <li class="list-group-item list-group-item-action">
             Dew point: {{weatherData.dewPoint | number:'.0-0'}} °C
           </li>
-          <li class="list-group-item list-group-item-action">Cloudiness: {{weatherData.cloudiness*100 | number:'.0-0'}}%</li>
+          <li class="list-group-item list-group-item-action">Cloudiness: {{weatherData.cloudiness*100 | number:'.0-0'}}%
+          </li>
         </ul>
       </div>
-      <div 
-        #weatherDataRightPanel 
-        class="col-lg-4 col-md-6" 
-        matTooltip="{{indoorTemp?.right | number: '.0-0'}} °C" 
-        [matTooltipDisabled]="indoorTemp?.right === null"
-        (dblclick)="thermostat('right', 'auto')"
-        ngSwipe
-        (swipeEnd)="onSwipeEnd($event, 'right')"
-      >
+      <div #weatherDataRightPanel class="col-lg-4 col-md-6" matTooltip="{{indoorTemp?.right | number: '.0-0'}} °C"
+        [matTooltipDisabled]="indoorTemp?.right === null" (dblclick)="thermostat('right', 'auto')" ngSwipe
+        (swipeEnd)="onSwipeEnd($event, 'right')">
         <ul class="list-group">
-          <li *ngIf="weatherData.windSpeed > 5" class="list-group-item list-group-item-action">Wind: {{weatherData.windSpeed | number: '.0-0'}}
+          <li *ngIf="weatherData.windSpeed > 5" class="list-group-item list-group-item-action">Wind:
+            {{weatherData.windSpeed | number: '.0-0'}}
             km/h</li>
           <li *ngIf="weatherData.visibility < 5" class="list-group-item list-group-item-action">Visibility:
             {{weatherData.visibility * 1000 | number: '.0-0'}} m</li>
           <li *ngIf="breathCondensation > 0" class="list-group-item list-group-item-action">Breath condensation:
             {{breathCondensation | number: '.0-2'}}</li>
-          <li *ngIf="snowProbability > 0 && weatherData.rainIntensity >=1" class="list-group-item list-group-item-action">Snow
+          <li *ngIf="snowProbability > 0 && weatherData.rainIntensity >=1"
+            class="list-group-item list-group-item-action">Snow
             Probability:
             {{snowProbability | percent}}</li>
-          <li *ngIf="weatherData.rainIntensity >= 1 || weatherData.visibility < 1000" class="list-group-item list-group-item-action">
+          <li *ngIf="weatherData.rainIntensity >= 1 || weatherData.visibility < 1000"
+            class="list-group-item list-group-item-action">
             Rain intensity: {{weatherData.rainIntensity | number: '.0-1'}}
           </li>
           <li class="list-group-item list-group-item-action">Elevation: {{weatherData.actualElevation}} m</li>
           <li class="list-group-item list-group-item-action">
-            <rain-simulator 
-              [date]="date"
-              [coords]="coords"
-              [UTC]="UTC"
-              (onRainTypeSelected)="applyRain($event)" 
-            ></rain-simulator>
+            <rain-simulator [date]="date" [coords]="coords" [UTC]="UTC"
+              (onRainTypeSelected)="applyRain($event)"></rain-simulator>
           </li>
         </ul>
       </div>
