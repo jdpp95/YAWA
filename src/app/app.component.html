@@ -9,35 +9,35 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav">
-        <li>
-          <a class="btn btn-sm btn-secondary mr-2 mb-2" data-toggle="modal" data-target="#bulkDataModal" href="#">
+        <li class="nav-item">
+          <a class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2" data-toggle="modal" data-target="#bulkDataModal" href="#">
             Get bulk data
           </a>
         </li>
-        <li>
-          <button class="btn btn-sm btn-secondary mr-2 mb-2 btn-block-sm" (click)="displayMinMaxClicked()"
+        <li class="nav-item">
+          <button class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2" (click)="displayMinMaxClicked()"
             [ngClass]="{'btn-info': displayMinMax}">
             Display min/max
           </button>
         </li>
-        <li>
-          <button class="btn btn-sm btn-secondary mr-2 mb-2" (click)="displayAverageTempClicked()"
+        <li class="nav-item">
+          <button class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2" (click)="displayAverageTempClicked()"
             [ngClass]="{'btn-info': displayAverageTemp}">
             Display daily average temperature
           </button>
         </li>
-        <li>
-          <button class="btn btn-sm btn-secondary mr-2 mb-2" data-toggle="modal" data-target="#gradientModal">
+        <li class="nav-item">
+          <button class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2" data-toggle="modal" data-target="#gradientModal">
             Display gradient
           </button>
         </li>
-        <li>
-          <button class="btn btn-sm btn-secondary mr-2 mb-2" (click)="copyPromptClicked()">
+        <li class="nav-item">
+          <button class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2" (click)="copyPromptClicked()">
             Copy prompt
           </button>
         </li>
-        <li>
-          <button class="btn btn-sm btn-secondary icon-btn" (click)="onHouseClicked()">
+        <li class="nav-item">
+          <button class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2 icon-btn" (click)="onHouseClicked()">
               <i class="material-icons">home</i>
           </button>
         </li>

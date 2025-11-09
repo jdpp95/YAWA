@@ -1,8 +1,8 @@
-.notValid{
+.notValid {
   border-color: red;
 }
 
-.block{
+.block {
   display: block;
 }
 
@@ -23,9 +23,23 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.43rem 0.5rem;
+  padding: 0.25rem 0.5rem;
+  min-width: 2.2rem;
+  min-height: 1.9rem;
+  line-height: 1;
+  box-sizing: border-box;
 }
+
 .icon-btn .material-icons {
   font-size: 15px;
-  line-height: 1;
+}
+
+@media (min-width: 576px) {
+  .navbar-nav .nav-item {
+    margin-right: 0.5rem;
+  }
+
+  .navbar-nav .nav-item:last-child {
+    margin-right: 0;
+  }
 }
