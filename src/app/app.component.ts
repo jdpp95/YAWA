@@ -264,6 +264,7 @@ export class AppComponent implements OnInit {
     this.weatherDataService.computeTemperatureData(this.weatherData, response, this.nowIsChecked, this.fakeElevation);
     this.averageTemperature = this.weatherDataService.computeAverageTemperature(this.weatherData, response, this.date, this.fakeElevation);
     this.weatherDataService.assignWeatherData(this.weatherData, response, this.fakeElevation);
+    this.onHumidityChanged(false, this.weatherData.humidity ? (this.weatherData.humidity * 100).toString() : undefined);
     this.updateApparentTemperature();
     this.gradientComponent.update(response?.hourly?.data);
     this.updateBackgroundColor();
@@ -421,7 +422,7 @@ export class AppComponent implements OnInit {
     text += `\nTime of day: ${date.format('HH:mm')}`;
     text += `\nTemperature: ${this.weatherData.temperature.toFixed(0)} °C`;
     text += `\nCloud cover: ${(this.weatherData.cloudiness * 100).toFixed(0)}%`;
-    text += `\nRelative Humidity: ${(this.weatherData.humidity * 100).toFixed(0)}%`;
+    text += `\nRelative humidity: ${(this.weatherData.humidity * 100).toFixed(0)}%`;
     text += `\nWind speed: ${this.weatherData.windSpeed.toFixed(0)} km/h`;
 
     navigator.clipboard.writeText(text);
