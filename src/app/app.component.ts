@@ -311,10 +311,10 @@ export class AppComponent implements OnInit {
     this.updateVisibility()
     const { temperature, cloudiness, rainIntensity, visibility, sunAngle, apparentT } = this.weatherData;
     let color1 = UtilsService.formatHSL(
-      UtilsService.colorT(temperature, cloudiness, rainIntensity, sunAngle, 10)
+      UtilsService.colorT(temperature, cloudiness, rainIntensity, sunAngle, visibility)
     );
     let color2 = UtilsService.formatHSL(
-      UtilsService.colorT(apparentT, cloudiness, rainIntensity, sunAngle, visibility)
+      UtilsService.colorT(apparentT, cloudiness, rainIntensity, sunAngle, 10)
     );
 
     const gradient = `linear-gradient(${color1}, ${color2})`;
