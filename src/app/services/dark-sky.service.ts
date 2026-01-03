@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http'
+import { HttpClient, HttpParams } from '@angular/common/http'
 import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs';
 import { DatePipe } from '@angular/common'
@@ -16,33 +16,42 @@ export class YawaBackendService {
   constructor(private http: HttpClient, private datePipe: DatePipe) { }
 
   //Calls the API multiple times and returns a list of observables, one per call.
-  getWeatherInBulk(coords: string, initTime: number, endTime: number, utc: number = -5): Observable<any> {
+  getWeatherInBulk(coords: string, initTime: number, endTime: number, utc: number): Observable<any> {
 
     let [lat, long] = coords.split(",");
-    let url = `${this.backendURL}${this.yawaBackendPath}?lat=${lat}&long=${Number(long)}&start_timestamp=${initTime}&end_timestamp=${endTime}&utc=${utc}`;
+    let params = new HttpParams()
+      .set('lat', lat)
+      .set('long', String(Number(long)))
+      .set('start_timestamp', String(initTime))
+      .set('end_timestamp', String(endTime));
 
-    let result: Observable<any> = this.http.get(url);
-
-    return result;
-  }
-
-  getWeather(coords: string, now: boolean, date: Date, utc: string) {
-
-    let [lat, long] = coords.split(",");
-
-    let url = `${this.backendURL}${this.yawaBackendPath}?lat=${lat}&long=${Number(long)}&utc=${utc}`;
-
-    let unixTime = Math.floor(Number(date));
-
-    if (!now) {
-      url += `&timestamp=${unixTime / 1000}`;
+    if (!isNaN(utc)) {
+      params = params.set('utc', String(utc));
     }
 
-    return this.http.get(url).pipe(map(
-      (data: any) => {
+    return this.http.get(`${this.backendURL}${this.yawaBackendPath}`, { params });
+  }
+
+  getWeather(coords: string, now: boolean, date: Date, utc: number) {
+    const [lat, long] = coords.split(",");
+
+    let params = new HttpParams()
+      .set('lat', lat)
+      .set('long', String(Number(long)));
+
+    if (!isNaN(utc)) {
+      params = params.set('utc', String(utc));
+    }
+
+    if (!now) {
+      const unixTime = Math.floor(Number(date)) / 1000;
+      params = params.set('timestamp', String(unixTime));
+    }
+
+    return this.http.get(`${this.backendURL}${this.yawaBackendPath}`, { params })
+      .pipe(map((data: any) => {
         console.log(data);
-        return data
-      }
-    ));
+        return data;
+      }));
   }
 }

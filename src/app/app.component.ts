@@ -173,7 +173,8 @@ export class AppComponent implements OnInit {
     this.UTC = parseInt(this.locationForm.value.UTC);
 
     this.date = new Date(this.locationForm.value.myDatepicker);
-    this.date.setTime(this.date.getTime() - this.UTC * HOUR * 1000 + hours * HOUR * 1000 + minutes * MINUTES * 1000);
+    const ms = this.date.getTime() / 1000 - (isNaN(this.UTC) ? 0 : this.UTC) * HOUR + hours * HOUR + minutes * MINUTES;
+    this.date.setTime(ms * 1000);
   }
 
   update() {
@@ -243,7 +244,7 @@ export class AppComponent implements OnInit {
   }
 
   getWeather() {
-    this._yawaBackendService.getWeather(this.coords, this.nowIsChecked, this.date, this.UTC.toString()).subscribe(
+    this._yawaBackendService.getWeather(this.coords, this.nowIsChecked, this.date, this.UTC).subscribe(
       response => {
         this.updateWeatherData(response);
       },
@@ -268,7 +269,9 @@ export class AppComponent implements OnInit {
     this.updateApparentTemperature();
     this.gradientComponent.update(response?.hourly?.data);
     this.updateBackgroundColor();
-    this.setUtc(response.offset || this.UTC);
+    if (isNaN(this.UTC)) {
+      this.setUtc(response.offset || this.UTC);
+    }
     if (response.currently.indoorTemp) {
       this.indoorTemp.left = this.weatherDataService.computeTempFromFakeElevation(
         this.weatherData,
@@ -478,7 +481,7 @@ export class AppComponent implements OnInit {
       rh: (this.weatherData.humidity * 100).toFixed(0),
       sa: this.weatherData.sunAngle.toFixed(1),
       cc: (this.weatherData.cloudiness * 100).toFixed(0),
-      ...(this.weatherData.rainIntensity < 1? {} : { ri: this.weatherData.rainIntensity.toFixed(2) }),
+      ...(this.weatherData.rainIntensity < 1 ? {} : { ri: this.weatherData.rainIntensity.toFixed(2) }),
       ...(this.weatherData.visibility > 5 ? {} : { v: (this.weatherData.visibility * 1000).toFixed(0) }),
     }
     const url = Object.entries(queryParams).reduce((acc, [key, value]) => acc + `&${key}=${value}`, `${baseUrl}?`);
