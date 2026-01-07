@@ -45,8 +45,13 @@
     </div>
   </nav>
 
-  <app-bulk-data-modal [UTC]="UTC" [coords]="coords" [date]="date" [hour]="locationForm.get('hour')?.value">
-  </app-bulk-data-modal>
+  <app-bulk-data-modal 
+    [UTC]="UTC"
+    [coords]="coords"
+    [date]="date"
+    [hour]="locationForm.get('hour')?.value"
+    [elevationData]="{ actualElevation: weatherData.actualElevation, fakeElevation }"
+  ></app-bulk-data-modal>
 
   <temp-gradient [UTC]="UTC" [elevation]="fakeElevation">
 

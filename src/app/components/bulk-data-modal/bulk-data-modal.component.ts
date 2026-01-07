@@ -5,6 +5,8 @@ import { forkJoin } from 'rxjs';
 import { Observation } from 'src/app/models/observation.model';
 import { UtilsService } from 'src/app/services/tutils.service';
 import { YawaBackendService } from 'src/app/services/dark-sky.service';
+import { Elevation, WeatherDataService } from 'src/app/services/weather-data.service';
+import { WeatherItem } from 'src/app/models/weatherItem.model';
 
 @Component({
   selector: 'app-bulk-data-modal',
@@ -24,10 +26,6 @@ export class BulkDataModalComponent implements OnChanges {
 
   //Forms
   dataForm: FormGroup;
-  /*
-  range$: Observable<any>;
-  range: number[];
-  */
 
   observations: Observation[] = [];
 
@@ -36,9 +34,12 @@ export class BulkDataModalComponent implements OnChanges {
   @Input() date: Date;
   @Input() hour: string;
 
+  @Input() elevationData: { actualElevation: number, fakeElevation: Elevation };
+
   constructor(
     private _yawaBackend: YawaBackendService,
-    public tUtils: UtilsService
+    public tUtils: UtilsService,
+    private weatherDataService: WeatherDataService
   ) {
     this.dataForm = new FormGroup({
       'initDate': new FormControl(moment()),
@@ -57,7 +58,7 @@ export class BulkDataModalComponent implements OnChanges {
       this.dataForm.controls['finalDate'].setValue(moment(this.date).utcOffset(0).startOf('day'));
     }
 
-    if(this.hour) {
+    if (this.hour) {
       this.dataForm.controls['finalHour'].setValue(this.hour);
     }
   }
@@ -101,6 +102,11 @@ export class BulkDataModalComponent implements OnChanges {
           observation.timestamp = jsonObservation.time;
           observation.time = new Date((jsonObservation.time + HOUR * this.UTC) * 1000);
           observation.temperature = jsonObservation.temperature + Math.random() - 0.5;
+          observation.temperature = this.weatherDataService.computeTempFromFakeElevation(
+            { actualElevation: this.elevationData.actualElevation } as WeatherItem,
+            jsonObservation.temperature,
+            this.elevationData.fakeElevation
+          ) + Math.random() - 0.5;
           observation.cloudiness = jsonObservation.cloudCover;
 
           if (jsonObservation.time >= initTime && jsonObservation.time <= finalTime) {
