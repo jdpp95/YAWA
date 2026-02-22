@@ -113,17 +113,6 @@ export class WeatherDataService {
     return fakeTemperature;
   }
 
-  applyRain(weatherData: WeatherItem, rainTemperature: number, rainIntensity: number, fakeElevation: Elevation): void {
-    const newTemperature = this.computeTempFromFakeElevation(weatherData, rainTemperature, fakeElevation);
-    const newHumidity = UtilsService.humidityFromDewP(weatherData.dewPoint, newTemperature);
-
-    weatherData.temperature = newTemperature;
-    weatherData.humidity = newHumidity;
-    weatherData.cloudiness = rainIntensity > 0 ? 1 : weatherData.cloudiness;
-    weatherData.rainIntensity = rainIntensity;
-    this.updateApparentTemperature(weatherData);
-  }
-
   copyPrompt(weatherData: WeatherItem, date: Date): void {
     let text = "";
     text += `Time of day: ${moment(date).format('HH:mm')}`;
