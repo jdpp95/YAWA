@@ -433,7 +433,7 @@ export class AppComponent implements OnInit {
 
   applyRain({ rainTemperature, rainIntensity }) {
     const newTemperature = this.weatherDataService.computeTempFromFakeElevation(this.weatherData, rainTemperature, this.fakeElevation);
-    const newHumidity = Math.max(UtilsService.humidityFromDewP(this.weatherData.dewPoint, newTemperature), this.weatherData.humidity);
+    const newHumidity = UtilsService.transition(0.5, 1, 0, 1, this.weatherData.humidity); 
     const newDewPoint = rainTemperature > this.weatherData.temperature? UtilsService.dewPoint(newTemperature, newHumidity) : this.weatherData.dewPoint;
 
     this.weatherData = {
