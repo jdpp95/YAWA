@@ -39,6 +39,7 @@ export class RainSimulatorComponent implements OnInit {
     ).subscribe((weatherItems: any[]) => {
       const temperatures = weatherItems.map(item => item.temperature);
       const currentTemperature = temperatures[temperatures.length - 1];
+      const cloudCover = weatherItems[weatherItems.length - 1].cloudCover;
 
       const rainType = event.srcElement.id;
       let rainIntensity = 0;
@@ -48,15 +49,18 @@ export class RainSimulatorComponent implements OnInit {
           rainTemperature = currentTemperature;
           break;
         case 'drizzleOption':
-          rainTemperature = this.scale(temperatures, currentTemperature, 20, 65);
+          const drizzleMinPercentile = UtilsService.transition(0, 20, 1, 0, cloudCover);
+          rainTemperature = this.scale(temperatures, currentTemperature, drizzleMinPercentile, 65);
           rainIntensity = 1;
           break;
         case 'rainOption':
-          rainTemperature = this.scale(temperatures, currentTemperature, 30, 50);
+          const rainMinPercentile = UtilsService.transition(0, 30, 1, 0, cloudCover);
+          rainTemperature = this.scale(temperatures, currentTemperature, rainMinPercentile, 50);
           rainIntensity = 4;
           break;
         case 'heavyRainOption':
-          rainTemperature = this.scale(temperatures, currentTemperature, 30, 30);
+          const heavyRainMinPercentile = UtilsService.transition(0, 30, 1, 0, cloudCover);
+          rainTemperature = this.scale(temperatures, currentTemperature, heavyRainMinPercentile, 30);
           rainIntensity = 9;
           break;
       }
