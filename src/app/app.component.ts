@@ -433,8 +433,8 @@ export class AppComponent implements OnInit {
 
   applyRain({ rainTemperature, rainIntensity }) {
     const newTemperature = this.weatherDataService.computeTempFromFakeElevation(this.weatherData, rainTemperature, this.fakeElevation);
-    const newHumidity = UtilsService.transition(0.5, 1, 0, 1, this.weatherData.humidity); 
-    const newDewPoint = rainTemperature > this.weatherData.temperature? UtilsService.dewPoint(newTemperature, newHumidity) : this.weatherData.dewPoint;
+    const newHumidity = UtilsService.transition(0.5, 1, 0, 1, this.weatherData.humidity);
+    const newDewPoint = rainTemperature > this.weatherData.temperature ? UtilsService.dewPoint(newTemperature, newHumidity) : this.weatherData.dewPoint;
 
     this.weatherData = {
       ...this.weatherData,
@@ -445,6 +445,23 @@ export class AppComponent implements OnInit {
       visibility: null, // Will be recalculated on updateBackgroundColor() -> updateVisibility()
       rainIntensity,
     }
+    this.updateApparentTemperature();
+    this.updateBackgroundColor();
+  }
+
+  simulateClearSky(): void {
+    const newHumidity = Math.max(this.weatherData.humidity - 0.1, 0.01);
+    const newDewPoint = this.weatherData.dewPoint - 1;
+    const newTemperature = UtilsService.temperatureFromDewP(newDewPoint, newHumidity);
+
+    this.weatherData = {
+      ...this.weatherData,
+      humidity: newHumidity,
+      dewPoint: newDewPoint,
+      temperature: newTemperature,
+      cloudiness: this.weatherData.cloudiness / 2
+    }
+
     this.updateApparentTemperature();
     this.updateBackgroundColor();
   }

@@ -10,48 +10,47 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2" data-toggle="modal" data-target="#bulkDataModal" href="#">
+          <a class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2" data-toggle="modal"
+            data-target="#bulkDataModal" href="#">
             Get bulk data
           </a>
         </li>
         <li class="nav-item">
-          <button class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2" (click)="displayMinMaxClicked()"
-            [ngClass]="{'btn-info': displayMinMax}">
+          <button class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2"
+            (click)="displayMinMaxClicked()" [ngClass]="{'btn-info': displayMinMax}">
             Display min/max
           </button>
         </li>
         <li class="nav-item">
-          <button class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2" (click)="displayAverageTempClicked()"
-            [ngClass]="{'btn-info': displayAverageTemp}">
+          <button class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2"
+            (click)="displayAverageTempClicked()" [ngClass]="{'btn-info': displayAverageTemp}">
             Display daily average temperature
           </button>
         </li>
         <li class="nav-item">
-          <button class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2" data-toggle="modal" data-target="#gradientModal">
+          <button class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2" data-toggle="modal"
+            data-target="#gradientModal">
             Display gradient
           </button>
         </li>
         <li class="nav-item">
-          <button class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2" (click)="copyPromptClicked()">
+          <button class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2"
+            (click)="copyPromptClicked()">
             Copy prompt
           </button>
         </li>
         <li class="nav-item">
-          <button class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2 icon-btn" (click)="onHouseClicked()">
-              <i class="material-icons">home</i>
+          <button class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2 icon-btn"
+            (click)="onHouseClicked()">
+            <i class="material-icons">home</i>
           </button>
         </li>
       </ul>
     </div>
   </nav>
 
-  <app-bulk-data-modal 
-    [UTC]="UTC"
-    [coords]="coords"
-    [date]="date"
-    [hour]="locationForm.get('hour')?.value"
-    [elevationData]="{ actualElevation: weatherData.actualElevation, fakeElevation }"
-  ></app-bulk-data-modal>
+  <app-bulk-data-modal [UTC]="UTC" [coords]="coords" [date]="date" [hour]="locationForm.get('hour')?.value"
+    [elevationData]="{ actualElevation: weatherData.actualElevation, fakeElevation }"></app-bulk-data-modal>
 
   <temp-gradient [UTC]="UTC" [elevation]="fakeElevation">
 
@@ -204,6 +203,11 @@
           <li class="list-group-item list-group-item-action">
             <rain-simulator [date]="date" [coords]="coords" [UTC]="UTC"
               (onRainTypeSelected)="applyRain($event)"></rain-simulator>
+
+            <button type="button" class="mt-2 btn btn-sm btn-info btn-block ml-1" (click)="simulateClearSky()">
+              Simulate clear sky
+            </button>
+
           </li>
         </ul>
       </div>
