@@ -156,7 +156,7 @@
             Average temperature {{averageTemperature | number: '.0-1'}} °C
           </li>
           <li class="list-group-item list-group-item-action" *ngIf="!editHumidity">
-            Humidity: {{weatherData.humidity*100 | number:'.0-0'}}%
+            Humidity: {{ weatherData.humidity * 100 | number:'.0-0'}}%
             <button type="button" class="btn btn-sm btn-light ml-1" (click)="changeHumidity()">
               <i style="font-size: 18px;" class="material-icons">edit</i>
             </button>
@@ -166,7 +166,7 @@
               <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon3">Humidity: </span>
               </div>
-              <input #humidity type="number" value="{{weatherData.humidity*100}}" class="form-control"
+              <input #humidity type="number" value="{{ Math.round(weatherData.humidity * 100) }}" class="form-control"
                 (change)="onHumidityChanged(true, humidity.value)">
               <div class="input-group-append">
                 <span class="input-group-text">%</span>

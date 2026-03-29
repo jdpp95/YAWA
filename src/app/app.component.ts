@@ -391,7 +391,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  // TODO: Fix breath condensation bug
   onHumidityChanged(changeDewPoint: boolean, humidity?: string) {
     if (humidity) {
       this.weatherData.humidity = parseInt(humidity) / 100.0;
