@@ -457,6 +457,8 @@ export class AppComponent implements OnInit {
       cloudiness: Math.max(0, this.weatherData.cloudiness - 0.2)
     }
 
+    this.editHumidity = false;
+
     this.updateBackgroundColor();
   }
 
