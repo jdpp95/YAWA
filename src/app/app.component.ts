@@ -266,7 +266,6 @@ export class AppComponent implements OnInit {
     this.averageTemperature = this.weatherDataService.computeAverageTemperature(this.weatherData, response, this.date, this.fakeElevation);
     this.weatherDataService.assignWeatherData(this.weatherData, response, this.fakeElevation);
     this.onHumidityChanged(false, this.weatherData.humidity ? (this.weatherData.humidity * 100).toString() : undefined);
-    this.updateApparentTemperature();
     this.gradientComponent.update(response?.hourly?.data);
     this.updateBackgroundColor();
     if (isNaN(this.UTC)) {
@@ -292,11 +291,9 @@ export class AppComponent implements OnInit {
   }
 
   updateVisibility() {
-    if (this.weatherData.visibility === null || this.weatherData.visibility === undefined) {
-      const { humidity, cloudiness } = this.weatherData;
-      const visibility = 10 ** ((1 - humidity * cloudiness) * 10 - 2);
-      this.weatherData.visibility = visibility;
-    }
+    const { humidity, cloudiness } = this.weatherData;
+    const visibility = 10 ** ((1 - humidity * cloudiness) * 10 - 2);
+    this.weatherData.visibility = visibility;
   }
 
   getTodayDate(): moment.Moment {
@@ -311,6 +308,7 @@ export class AppComponent implements OnInit {
   }
 
   private updateBackgroundColor() {
+    this.updateApparentTemperature();
     this.updateVisibility()
     const { temperature, cloudiness, rainIntensity, visibility, sunAngle, apparentT } = this.weatherData;
     let color1 = UtilsService.formatHSL(
@@ -406,7 +404,6 @@ export class AppComponent implements OnInit {
     this.breathCondensation = UtilsService.breathCondensation(this.weatherData.temperature, this.weatherData.humidity);
     this.snowProbability = UtilsService.snowProbability(this.weatherData.temperature, this.weatherData.humidity);
     this.weatherData.visibility = null; // Will be recalculated on updateBackgroundColor() -> updateVisibility()
-    this.updateApparentTemperature();
     this.updateBackgroundColor();
   }
 
@@ -445,7 +442,6 @@ export class AppComponent implements OnInit {
       visibility: null, // Will be recalculated on updateBackgroundColor() -> updateVisibility()
       rainIntensity,
     }
-    this.updateApparentTemperature();
     this.updateBackgroundColor();
   }
 
@@ -459,10 +455,9 @@ export class AppComponent implements OnInit {
       humidity: newHumidity,
       dewPoint: newDewPoint,
       temperature: newTemperature,
-      cloudiness: this.weatherData.cloudiness / 2
+      cloudiness: Math.max(0, this.weatherData.cloudiness - 0.2)
     }
 
-    this.updateApparentTemperature();
     this.updateBackgroundColor();
   }
 
