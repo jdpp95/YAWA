@@ -494,6 +494,7 @@ export class AppComponent implements OnInit {
       t: this.weatherData.temperature.toFixed(1),
       it1: this.indoorTemp.right.toFixed(1),
       it2: this.indoorTemp.left.toFixed(1),
+      it4: 20, // TODO: Hardcoded value
       rh: (this.weatherData.humidity * 100).toFixed(0),
       sa: this.weatherData.sunAngle.toFixed(1),
       cc: (this.weatherData.cloudiness * 100).toFixed(0),
