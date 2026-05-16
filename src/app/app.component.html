@@ -59,7 +59,7 @@
   <div class="container mt-4">
     <div class="row">
       <div class="col-lg-4 col-md-6 mb-4">
-        <form [formGroup]="locationForm" (ngSubmit)="update()">
+        <form [formGroup]="locationForm" (ngSubmit)="update()" [ngClass]="{'night-mode': isNight}">
           <div class="form-group">
             <div class="row form-group mb-3">
               <div class="col-9">
@@ -123,7 +123,8 @@
             <div class="col-9">
               <button type="submit" class="btn btn-block" [ngClass]="{
                 'btn-outline-danger' : loadingFailed,
-                'btn-dark' : !loadingFailed
+                'btn-dark' : !loadingFailed && !isNight,
+                'btn-light': isNight
               }" [disabled]="!locationForm.valid">
                 Update
                 <div *ngIf="loading" class="spinner-border spinner-border-sm text-light ml-2" role="status">
@@ -131,9 +132,15 @@
               </button>
             </div>
             <div class="col-3">
-              <button type="button" class="btn btn-sm btn-dark btn-block"
-                matTooltip="{{weatherData.sunAngle | number: '.0-0'}}°">
-                <em class="material-icons">sunny</em>
+              <button type="button" class="btn btn-sm btn-block"
+                matTooltip="{{weatherData.sunAngle | number: '.0-0'}}°" [ngClass]="{
+                  'btn-dark' : !isNight,
+                  'btn-light': isNight
+                }">
+                <em class="material-icons sun-icon" [ngClass]="{
+                  'sun-icon-night': isNight,
+                  'sun-icon-day': !isNight
+                }">sunny</em>
               </button>
             </div>
           </div>

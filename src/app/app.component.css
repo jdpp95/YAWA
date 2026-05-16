@@ -43,3 +43,26 @@
     margin-right: 0;
   }
 }
+
+.night-mode label,
+.night-mode .form-check-label,
+.night-mode .input-group-text,
+.night-mode .material-icons {
+  color: #fff !important;
+}
+
+.night-button {
+  color: #fff !important;
+}
+
+.sun-icon-day {
+  color: #fff !important;
+}
+
+.sun-icon-night {
+  color: #212529 !important;
+}
+
+.night-mode button .sun-icon-night {
+  color: #212529 !important;
+}

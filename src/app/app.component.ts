@@ -98,6 +98,10 @@ export class AppComponent implements OnInit {
   displayMinMax: boolean = false;
   displayAverageTemp: boolean = false;
 
+  get isNight(): boolean {
+    return this.weatherData?.sunAngle < 0;
+  }
+
   // Constants
   HEATING_MAX_TEMP = 22.5;
   AC_MIN_TEMP = 17.5;
