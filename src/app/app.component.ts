@@ -427,6 +427,7 @@ export class AppComponent implements OnInit {
     text += `\nCloud cover: ${(this.weatherData.cloudiness * 100).toFixed(0)}%`;
     text += `\nRelative humidity: ${(this.weatherData.humidity * 100).toFixed(0)}%`;
     text += `\nWind speed: ${this.weatherData.windSpeed.toFixed(0)} km/h`;
+    text += `\nElevation: ${this.weatherData.actualElevation.toFixed(0)} m`;
 
     navigator.clipboard.writeText(text);
   }
