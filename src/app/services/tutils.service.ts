@@ -177,6 +177,13 @@ export class UtilsService {
     return Math.max(0.01, Math.min(1, this.humidityFromDewP(dewPoint, indoorTemperature)));
   }
 
+  static indoorFeelsLike(indoorTemp: number, dewPoint: number): { indoorHumidity: number, feelsLikeTemp: number } {
+    const indoorHumidity = this.indoorHumidityFromDewPoint(dewPoint, indoorTemp);
+    const feelsLikeTemp = this.heatIndex(indoorTemp, indoorHumidity);
+
+    return { indoorHumidity, feelsLikeTemp };
+  }
+
   static temperatureFromDewP(dewPoint: number, humidity: number) {
     return (dewPoint - 112 * Math.pow(humidity, 1 / 8) + 112) / (0.9 * Math.pow(humidity, 1 / 8) + 0.1);
   }

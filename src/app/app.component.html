@@ -149,7 +149,7 @@
       </div>
       <div class="col-lg-4 col-md-6" ngSwipe (dblclick)="thermostat('left', 'auto')"
         (swipeEnd)="onSwipeEnd($event, 'left')">
-        <ul #weatherDataLeftPanel class="list-group" matTooltip="{{indoorTemp?.left | number: '.0-0'}} °C"
+        <ul #weatherDataLeftPanel class="list-group" matTooltip="{{ getIndoorTooltip('left') }}"
           [matTooltipDisabled]="indoorTemp?.left === null">
           <li class="list-group-item list-group-item-action">
             Temperature: {{weatherData.temperature | number:'.0-0'}} °C
@@ -187,7 +187,7 @@
           </li>
         </ul>
       </div>
-      <div #weatherDataRightPanel class="col-lg-4 col-md-6" matTooltip="{{indoorTemp?.right | number: '.0-0'}} °C"
+      <div #weatherDataRightPanel class="col-lg-4 col-md-6" matTooltip="{{ getIndoorTooltip('right') }}"
         [matTooltipDisabled]="indoorTemp?.right === null" (dblclick)="thermostat('right', 'auto')" ngSwipe
         (swipeEnd)="onSwipeEnd($event, 'right')">
         <ul class="list-group">

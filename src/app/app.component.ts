@@ -332,14 +332,12 @@ export class AppComponent implements OnInit {
     let gradient = colorHsl;
 
     if (temperature !== null) {
-      const dewPoint = Number.isFinite(this.weatherData?.dewPoint) ? this.weatherData.dewPoint : 0;
-      const indoorHumidity = UtilsService.indoorHumidityFromDewPoint(dewPoint, temperature);
-      const apparentTemperature = UtilsService.heatIndex(temperature, indoorHumidity);
+      const { feelsLikeTemp } = this.getIndoorFeelsLikeData(temperature);
       const tempColor = UtilsService.formatHSL(
-        UtilsService.colorT(temperature, indoorHumidity, 0, 0, 10)
+        UtilsService.colorT(temperature, 0.15, 0, 0, 10)
       );
       const apparentColor = UtilsService.formatHSL(
-        UtilsService.colorT(apparentTemperature, indoorHumidity, 0, 0, 10)
+        UtilsService.colorT(feelsLikeTemp, 0.15, 0, 0, 10)
       );
 
       colorHsl = tempColor;
@@ -360,6 +358,28 @@ export class AppComponent implements OnInit {
     if (this.indoorTemp.right !== null) {
       this.updateWeatherPanelBackground(this.indoorTemp.right, 'right');
     }
+  }
+
+  private getIndoorFeelsLikeData(indoorTemp: number): { indoorHumidity: number, feelsLikeTemp: number } {
+    const dewPoint = Number.isFinite(this.weatherData?.dewPoint) ? this.weatherData.dewPoint : 0;
+    return UtilsService.indoorFeelsLike(indoorTemp, dewPoint);
+  }
+
+  getIndoorTooltip(panel: Panel): string {
+    const indoorTemp = this.indoorTemp[panel];
+    if (indoorTemp === null || indoorTemp === undefined) {
+      return '';
+    }
+
+    const { feelsLikeTemp } = this.getIndoorFeelsLikeData(indoorTemp);
+    const difference = Math.abs(feelsLikeTemp - indoorTemp);
+
+    const actualText = `${indoorTemp.toFixed(0)} °C`;
+    if (difference > 2) {
+      return `${actualText} (${feelsLikeTemp.toFixed(0)} °C)`;
+    }
+
+    return actualText;
   }
 
   onNowClicked() {
