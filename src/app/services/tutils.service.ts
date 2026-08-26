@@ -173,6 +173,10 @@ export class UtilsService {
     return Math.min(1, ew / ed);
   }
 
+  static indoorHumidityFromDewPoint(dewPoint: number, indoorTemperature: number): number {
+    return Math.max(0.01, Math.min(1, this.humidityFromDewP(dewPoint, indoorTemperature)));
+  }
+
   static temperatureFromDewP(dewPoint: number, humidity: number) {
     return (dewPoint - 112 * Math.pow(humidity, 1 / 8) + 112) / (0.9 * Math.pow(humidity, 1 / 8) + 0.1);
   }

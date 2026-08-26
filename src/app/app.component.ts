@@ -329,16 +329,37 @@ export class AppComponent implements OnInit {
 
   private updateWeatherPanelBackground(temperature: number, panel: Panel) {
     let colorHsl = 'hsl(0, 0%, 100%)';
+    let gradient = colorHsl;
+
     if (temperature !== null) {
-      colorHsl = UtilsService.formatHSL(
-        UtilsService.colorT(temperature, 0.15, 0, 0, 10)
+      const dewPoint = Number.isFinite(this.weatherData?.dewPoint) ? this.weatherData.dewPoint : 0;
+      const indoorHumidity = UtilsService.indoorHumidityFromDewPoint(dewPoint, temperature);
+      const apparentTemperature = UtilsService.heatIndex(temperature, indoorHumidity);
+      const tempColor = UtilsService.formatHSL(
+        UtilsService.colorT(temperature, indoorHumidity, 0, 0, 10)
       );
+      const apparentColor = UtilsService.formatHSL(
+        UtilsService.colorT(apparentTemperature, indoorHumidity, 0, 0, 10)
+      );
+
+      colorHsl = tempColor;
+      gradient = `linear-gradient(90deg, ${tempColor}, ${apparentColor})`;
     }
+
     const panelElement = panel === 'left' ? this.weatherDataLeftPanel : this.weatherDataRightPanel;
     const panelItems = panelElement.nativeElement.querySelectorAll('li');
     panelItems.forEach((li: HTMLElement) => {
-      li.style.backgroundColor = colorHsl;
+      li.style.backgroundImage = gradient;
     });
+  }
+
+  private refreshIndoorPanels(): void {
+    if (this.indoorTemp.left !== null) {
+      this.updateWeatherPanelBackground(this.indoorTemp.left, 'left');
+    }
+    if (this.indoorTemp.right !== null) {
+      this.updateWeatherPanelBackground(this.indoorTemp.right, 'right');
+    }
   }
 
   onNowClicked() {
@@ -408,6 +429,7 @@ export class AppComponent implements OnInit {
     this.snowProbability = UtilsService.snowProbability(this.weatherData.temperature, this.weatherData.humidity);
     this.weatherData.visibility = null; // Will be recalculated on updateBackgroundColor() -> updateVisibility()
     this.updateBackgroundColor();
+    this.refreshIndoorPanels();
   }
 
   displayMinMaxClicked() {
@@ -436,7 +458,7 @@ export class AppComponent implements OnInit {
     const newTemperature = this.weatherDataService.computeTempFromFakeElevation(this.weatherData, rainTemperature, this.fakeElevation);
     const minHumidity = 1 - (2 ** -(Math.sqrt(rainIntensity)));
     const newHumidity = UtilsService.transition(minHumidity, 1, 0, 1, this.weatherData.humidity);
-    const newDewPoint = rainTemperature > this.weatherData.temperature ? UtilsService.dewPoint(newTemperature, newHumidity) : this.weatherData.dewPoint;
+    const newDewPoint = UtilsService.dewPoint(newTemperature, newHumidity);
 
     this.weatherData = {
       ...this.weatherData,
@@ -448,6 +470,7 @@ export class AppComponent implements OnInit {
       rainIntensity,
     }
     this.updateBackgroundColor();
+    this.refreshIndoorPanels();
   }
 
   simulateClearSky(): void {
@@ -466,6 +489,7 @@ export class AppComponent implements OnInit {
     this.editHumidity = false;
 
     this.updateBackgroundColor();
+    this.refreshIndoorPanels();
   }
 
   thermostat(panel: Panel, action: ThermostatAction) {
