@@ -85,7 +85,11 @@ export class AppComponent implements OnInit {
   snowProbability: number;
   breathCondensation: number;
   averageTemperature: number = 0;
-  indoorTemp: { left: number | null, right: number | null } = { left: null, right: null };
+  indoorTemp: { left: number | null, right: number | null, extra: number | null } = {
+    left: null,
+    right: null,
+    extra: null
+  };
 
   fakeElevation: Elevation = {
     value: 0,
@@ -295,6 +299,11 @@ export class AppComponent implements OnInit {
       this.indoorTemp.right = this.weatherDataService.computeTempFromFakeElevation(
         this.weatherData,
         response.currently.indoorTemp.right,
+        this.fakeElevation
+      );
+      this.indoorTemp.extra = this.weatherDataService.computeTempFromFakeElevation(
+        this.weatherData,
+        response.currently.indoorTemp.extra,
         this.fakeElevation
       );
       this.updateWeatherPanelBackground(this.indoorTemp.left, 'left');
@@ -554,7 +563,7 @@ export class AppComponent implements OnInit {
       t: this.weatherData.temperature.toFixed(1),
       it1: this.indoorTemp.right.toFixed(1),
       it2: this.indoorTemp.left.toFixed(1),
-      it4: 20, // TODO: Hardcoded value
+      it4: this.indoorTemp.extra.toFixed(1),
       rh: (this.weatherData.humidity * 100).toFixed(0),
       sa: this.weatherData.sunAngle.toFixed(1),
       cc: (this.weatherData.cloudiness * 100).toFixed(0),
