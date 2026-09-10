@@ -45,6 +45,13 @@
             <i class="material-icons">home</i>
           </button>
         </li>
+        <li class="nav-item">
+          <button type="button" class="btn btn-sm btn-secondary d-block d-sm-inline-block w-100 w-sm-auto mb-2 icon-btn"
+            data-toggle="modal" data-target="#houseProfileModal" aria-label="House profile settings"
+            title="House profile settings">
+            <i class="material-icons">settings</i>
+          </button>
+        </li>
       </ul>
     </div>
   </nav>
@@ -142,6 +149,31 @@
                   'sun-icon-day': !isNight
                 }">sunny</em>
               </button>
+            </div>
+          </div>
+
+          <div class="modal fade" id="houseProfileModal" tabindex="-1" role="dialog"
+            aria-labelledby="houseProfileModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="houseProfileModalLabel">House profile</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <label for="house-profile">Choose the profile used for indoor temperature:</label>
+                  <select id="house-profile" class="form-control" formControlName="houseProfile">
+                    <option [value]="houseProfiles.TROPICAL">Tropical house</option>
+                    <option [value]="houseProfiles.HIGHLANDS">Highlands house</option>
+                    <option [value]="houseProfiles.OUTSIDE">Outside</option>
+                  </select>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
             </div>
           </div>
 

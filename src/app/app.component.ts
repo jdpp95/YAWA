@@ -19,6 +19,7 @@ import * as _moment from 'moment';
 import { DatePipe, PercentPipe } from '@angular/common';
 import { MapboxService } from './services/mapbox.service';
 import { TempGradientComponent } from './components/temp-gradient/temp-gradient.component';
+import { HouseProfile } from './models/house-profile.model';
 import { WeatherItem } from './models/weatherItem.model';
 import { Elevation, ElevationUnit, WeatherDataService } from './services/weather-data.service';
 import { SwipeEvent } from 'ng-swipe';
@@ -67,6 +68,7 @@ export class AppComponent implements OnInit {
   gradientComponent: TempGradientComponent;
 
   title = 'YAWA';
+  readonly houseProfiles = HouseProfile;
 
   // Forms and fields
   coords: string;
@@ -147,6 +149,7 @@ export class AppComponent implements OnInit {
       const formData = JSON.parse(savedFormData);
       this.locationForm = new FormGroup({
         coords: new FormControl(formData.coords, [Validators.required]),
+        houseProfile: new FormControl(formData.houseProfile || HouseProfile.TROPICAL, [Validators.required]),
         now: new FormControl(formData.now, []),
         myDatepicker: new FormControl(formData.myDatepicker),
         hour: new FormControl(formData.hour, []),
@@ -157,6 +160,7 @@ export class AppComponent implements OnInit {
     } else {
       this.locationForm = new FormGroup({
         coords: new FormControl('', [Validators.required]),
+        houseProfile: new FormControl(HouseProfile.TROPICAL, [Validators.required]),
         now: new FormControl(true, []),
         myDatepicker: new FormControl(initDate),
         hour: new FormControl(0, []),
@@ -238,6 +242,7 @@ export class AppComponent implements OnInit {
   saveFormDataToLocalStorage() {
     const formData = {
       coords: this.locationForm.value.coords,
+      houseProfile: this.locationForm.value.houseProfile,
       now: this.locationForm.value.now,
       myDatepicker: this.locationForm.value.myDatepicker,
       hour: this.locationForm.value.hour,
@@ -248,7 +253,13 @@ export class AppComponent implements OnInit {
   }
 
   getWeather() {
-    this._yawaBackendService.getWeather(this.coords, this.nowIsChecked, this.date, this.UTC).subscribe(
+    this._yawaBackendService.getWeather(
+      this.coords,
+      this.nowIsChecked,
+      this.date,
+      this.UTC,
+      this.locationForm.value.houseProfile
+    ).subscribe(
       response => {
         this.updateWeatherData(response);
       },

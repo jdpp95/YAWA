@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs';
 import { DatePipe } from '@angular/common'
 import { environment as env } from './../../environments/environment';
+import { HouseProfile } from '../models/house-profile.model';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +33,7 @@ export class YawaBackendService {
     return this.http.get(`${this.backendURL}${this.yawaBackendPath}`, { params });
   }
 
-  getWeather(coords: string, now: boolean, date: Date, utc: number) {
+  getWeather(coords: string, now: boolean, date: Date, utc: number, houseProfile?: HouseProfile) {
     const [lat, long] = coords.split(",");
 
     let params = new HttpParams()
@@ -46,6 +47,10 @@ export class YawaBackendService {
     if (!now) {
       const unixTime = Math.floor(Number(date)) / 1000;
       params = params.set('timestamp', String(unixTime));
+    }
+
+    if (houseProfile) {
+      params = params.set('house_profile', houseProfile);
     }
 
     return this.http.get(`${this.backendURL}${this.yawaBackendPath}`, { params })
