@@ -153,7 +153,7 @@ export class AppComponent implements OnInit {
       const formData = JSON.parse(savedFormData);
       this.locationForm = new FormGroup({
         coords: new FormControl(formData.coords, [Validators.required]),
-        houseProfile: new FormControl(formData.houseProfile || HouseProfile.TROPICAL, [Validators.required]),
+        houseProfile: new FormControl(formData.houseProfile || HouseProfile.HIGHLANDS, [Validators.required]),
         now: new FormControl(formData.now, []),
         myDatepicker: new FormControl(formData.myDatepicker),
         hour: new FormControl(formData.hour, []),
@@ -164,7 +164,7 @@ export class AppComponent implements OnInit {
     } else {
       this.locationForm = new FormGroup({
         coords: new FormControl('', [Validators.required]),
-        houseProfile: new FormControl(HouseProfile.TROPICAL, [Validators.required]),
+        houseProfile: new FormControl(HouseProfile.HIGHLANDS, [Validators.required]),
         now: new FormControl(true, []),
         myDatepicker: new FormControl(initDate),
         hour: new FormControl(0, []),
