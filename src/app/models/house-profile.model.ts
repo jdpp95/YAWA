@@ -1,5 +1,7 @@
 export enum HouseProfile {
   TROPICAL = 'tropical',
+  SEMI_TROPICAL = 'semi_tropical',
   HIGHLANDS = 'highlands',
-  OUTSIDE = 'outside'
+  OUTSIDE = 'outside',
+  BUS = 'bus'
 }
